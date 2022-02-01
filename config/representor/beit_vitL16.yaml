@@ -1,0 +1,4 @@
+name: beit_vitL16
+kwargs:
+  mode: beit
+  model: microsoft/beit-large-patch16-224-pt22k

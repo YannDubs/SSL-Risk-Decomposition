@@ -1,0 +1,4 @@
+name: dino_rn50
+kwargs:
+  mode: dino
+  model: resnet50

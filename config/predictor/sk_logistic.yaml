@@ -1,0 +1,12 @@
+name: sk_logistic
+is_sklearn: True
+metrics: [accuracy_score,log_loss]
+model:
+  _target_: sklearn.linear_model.LogisticRegression
+  penalty: "l2"
+  C: 1 #smaller regularizes more (should tune it)
+  random_state: ${seed}
+  solver: "lbfgs" # should probably use "saga" for large datasets (but might need to normalize)
+  n_jobs: -1
+  max_iter: 500
+  verbose: 1

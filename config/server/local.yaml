@@ -1,0 +1,4 @@
+# @package _global_
+defaults:
+  - base_submitit
+  - override /hydra/launcher: submitit_local

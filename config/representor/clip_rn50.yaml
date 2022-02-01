@@ -1,0 +1,4 @@
+name: clip_rn50
+kwargs:
+  mode: clip
+  model: RN50

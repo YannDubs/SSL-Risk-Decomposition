@@ -1,0 +1,4 @@
+name: swav_rn50
+kwargs:
+  mode: swav
+  model: resnet50

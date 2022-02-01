@@ -1,0 +1,61 @@
+defaults:
+
+  # GENERAL #
+  - _self_
+  - user
+
+  - server: none
+  - data: imagenet
+  - representor: swav_rn50
+  - predictor: torch_logistic
+
+########## GENERAL ##########
+experiment: ???
+job_id: ??? # unique identifier
+component: ???
+seed: 123
+timeout: 1440 # 24 hours
+time: ${hydra:job.num}_${now:%Y-%m-%d_%H-%M-%S} # add job num because time is not when job runs
+long_name: exp_${experiment}/data_${data.name}/ssl_${representor.name}/pred_${predictor.name}
+long_name_component: ${long_name}/comp_${component}
+is_nlp_cluster: False # should the working directory be used as main
+
+paths: #! the best practice is not to modify those paths but to symlink them to the places you want
+  relative_work: outputs/${now:%Y-%m-%d_%H-%M-%S}
+  work: ${hydra.runtime.cwd}/${paths.relative_work} # unfortunately cannot use hydra: in hydra so need to do everything by hand i.e. cannot use ${paths.base_dir}/outputs/{time}
+  base_dir: ${hydra:runtime.cwd} # actual script where you are running from and want to save stuff
+  tmp_dir: ${paths.base_dir} # main directory for all things that are only used when running script
+
+  data: ${paths.tmp_dir}/data
+  logs: ${paths.tmp_dir}/logs/${long_name_component}/jid_${job_id}
+  checkpoint: ${paths.tmp_dir}/checkpoints/${long_name_component}/jid_${job_id} # checkpoint to use during training
+  results: ${paths.base_dir}/results/${long_name_component}/jid_${job_id}
+
+data:
+  name: ???
+  n_classes: ???
+  kwargs:
+    seed: ${seed}
+    data_dir: ${paths.data}
+    batch_size: 256
+    num_workers: 8
+    dataset_kwargs:
+      seed: ${seed}
+      transform: null
+
+representor:
+  mode: ???
+  name: ???
+
+########## HYDRA ##########
+hydra:
+  job:
+    env_set:
+      NCCL_DEBUG: INFO
+
+  run:
+    dir: ${paths.work}
+
+  sweep:
+    dir:  ${paths.work}
+    subdir: ${hydra.job.num}_${hydra.job.id}

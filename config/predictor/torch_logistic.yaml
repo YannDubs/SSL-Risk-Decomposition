@@ -1,0 +1,12 @@
+defaults:
+  - pytorch
+
+name: torch_logistic
+metrics: [accuracy_score,log_loss]
+arch_kwargs:
+  architecture: linear
+  is_normalize: True
+opt_kwargs:
+  lr: 1e-3
+  weight_decay: 0
+  decay_factor: 1000
