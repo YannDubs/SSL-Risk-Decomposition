@@ -192,7 +192,12 @@ class ImgDataModule(LightningDataModule):
         batch_size = get_max_batchsize(dataset, self.representor)
         logger.info(f"Selected max batch size for inference: {batch_size}")
 
-        trainer = pl.Trainer(gpus=1 if torch.cuda.is_available() else 0,
+        if torch.cuda.is_available():
+            gpus, precision = 1, 16
+        else:
+            gpus, precision = 0, 32
+
+        trainer = pl.Trainer(gpus=gpus, precision=precision,
                              logger=False, callbacks=TQDMProgressBar(refresh_rate=100))
         dataloader = DataLoader(
             dataset,
@@ -219,9 +224,12 @@ def get_max_batchsize(batchsize, dataset, representor):
     """Return the largest batchsize you can fit."""
     # cannot use multiple workers with toma batch size
     dataloader = DataLoader(dataset, batch_size=batchsize, pin_memory=True)
-    trainer = pl.Trainer(gpus=1 if torch.cuda.is_available() else 0,
-                         logger=False,
-                         limit_predict_batches=2)
+    if torch.cuda.is_available():
+        gpus, precision = 1, 16
+    else:
+        gpus, precision = 0, 32
+    trainer = pl.Trainer(gpus=gpus, precision=precision,
+                         logger=False, limit_predict_batches=2)
     _ = trainer.predict(model=representor, ckpt_path=None,  dataloaders=[dataloader])
     return batchsize
 
