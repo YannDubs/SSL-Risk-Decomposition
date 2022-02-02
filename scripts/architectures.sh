@@ -18,10 +18,6 @@ representor=simclr_rn101,simclr_rn50,dino_vitS16,dino_vitB16
 "
 # also add simclr_rn50w2, dino_vitB8 from other experiments
 
-kwargs_multi="
-representor=dino_vitS16
-"
-
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
   do

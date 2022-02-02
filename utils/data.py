@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import os
 from os import path
+import math
 import abc
 import logging
 import torch
@@ -57,6 +58,7 @@ class ImgDataset(abc.ABC):
         *args,
         curr_split: str,
         transform: Optional[Callable] = None,
+
         seed: int = 123,
         **kwargs
     ) -> None:
@@ -84,6 +86,9 @@ class ImgDataModule(LightningDataModule):
     batch_size : int, optional
         Number of example per batch for training.
 
+    is_save_features : bool, optional
+        Whether to save the features to disk.
+
     seed : int, optional
         Pseudo random seed.
 
@@ -94,9 +99,11 @@ class ImgDataModule(LightningDataModule):
     def __init__(
         self,
         representor: Callable,
+        representor_name : str,
         data_dir: Union[Path, str] = DIR,
-        num_workers: int = 8,
+        num_workers: int = 6,
         batch_size: int = 128,
+        is_save_features: bool = True,
         seed: int = 123,
         dataset_kwargs: dict = {}
     ) -> None:
@@ -105,9 +112,12 @@ class ImgDataModule(LightningDataModule):
         self.data_dir = data_dir
         self.num_workers = num_workers
         self.batch_size = batch_size
+        self.is_save_features = is_save_features
         self.seed = seed
         self.dataset_kwargs = dataset_kwargs
         self.representor = representor.eval()
+        self.representor_name = representor_name
+        logger.info(f"Representing data with {representor_name}")
         self.reset()
         self.setup()
 
@@ -128,12 +138,12 @@ class ImgDataModule(LightningDataModule):
                 self.data_dir, curr_split="test", download=True, **self.dataset_kwargs
             )
             #test_dataset = Subset(test_dataset, indices=list(range(1000))) # DEV
-            self.test_dataset = SklearnDataset(*self.represent(test_dataset))
+            self.test_dataset = SklearnDataset(*self.represent(test_dataset, "test"))
 
         if stage == "fit" or stage is None:
             logger.info("Representing the train set.")
             train_dataset = self.Dataset( self.data_dir, curr_split="train", download=True, **self.dataset_kwargs )
-            self.train_dataset = SklearnDataset(*self.represent(train_dataset))
+            self.train_dataset = SklearnDataset(*self.represent(train_dataset, "train"))
             #self.train_dataset = self.test_dataset # DEV
 
     def get_train_dataset(self):
@@ -188,9 +198,40 @@ class ImgDataModule(LightningDataModule):
         """Return the correct dataset."""
         raise NotImplementedError()
 
-    def represent(self, dataset):
+    def represent(self, dataset, split, max_chunk_size = 20000):
         batch_size = get_max_batchsize(dataset, self.representor)
         logger.info(f"Selected max batch size for inference: {batch_size}")
+
+        if self.is_save_features:
+            N = len(dataset)
+            n_chunks = math.ceil(N / max_chunk_size)
+            Z_files, Y_files = [], []
+            data_path = Path(self.data_dir) / f"{self.Dataset.__name__}_{self.representor_name}" / split
+            data_path.mkdir(exist_ok=True)
+            for i, idcs in enumerate(np.array_split(np.arange(N), n_chunks)):
+                Z_file = data_path / f"Z_{i}.npy"
+                Y_file = data_path / f"Y_{i}.npy"
+                Z_files.append(Z_file)
+                Y_files.append(Y_file)
+
+                if Z_file.exists() and Y_file.exists():
+                    logger.info(f"Skipping chunk representation: found existing {Z_file}.")
+                    continue
+
+                chunk = Subset(dataset, indices=idcs)
+                Z_i, Y_i = self.represent_chunk(chunk, batch_size)
+                np.save(Z_file, Z_i)
+                np.save(Y_file, Y_i)
+                logger.info(f"Saving chunk representation to {Z_file}.")
+
+            Z = np.concatenate([np.load(Z_file, allow_pickle=True) for Z_file in Z_files], axis=0)
+            Y = np.concatenate([np.load(Y_file, allow_pickle=True) for Y_file in Y_files], axis=0)
+
+            return Z, Y
+        else:
+            return self.represent_chunk(dataset, batch_size)
+
+    def represent_chunk(self, dataset, batch_size):
 
         if torch.cuda.is_available():
             gpus, precision = 1, 16
@@ -213,10 +254,10 @@ class ImgDataModule(LightningDataModule):
             dataloaders=[dataloader],
         )
 
-        X, Y = zip(*out)
-        X = np.concatenate(X, axis=0)
+        Z, Y = zip(*out)
+        Z = np.concatenate(Z, axis=0)
         Y = np.concatenate(Y, axis=0)
-        return X, Y
+        return Z, Y
 
 
 @toma.batch(initial_batchsize=2048)  # try largest bach size possible

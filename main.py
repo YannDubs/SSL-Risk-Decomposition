@@ -110,7 +110,7 @@ def instantiate_datamodule_(cfg: Container, representor : Callable, preprocess: 
     cfgd = omegaconf2namespace(cfg.data)
     cfgd.kwargs.dataset_kwargs.transform = preprocess
     Datamodule = get_Datamodule(cfgd.name)
-    datamodule = Datamodule(representor=representor, **cfgd.kwargs)
+    datamodule = Datamodule(representor=representor, representor_name=cfg.representor.name, **cfgd.kwargs)
     return datamodule
 
 def set_component_(datamodule : pl.LightningDataModule, cfg: Container, component: str) -> NamespaceMap:
