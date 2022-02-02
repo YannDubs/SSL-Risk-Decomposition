@@ -207,7 +207,7 @@ class ImgDataModule(LightningDataModule):
             n_chunks = math.ceil(N / max_chunk_size)
             Z_files, Y_files = [], []
             data_path = Path(self.data_dir) / f"{self.Dataset.__name__}_{self.representor_name}" / split
-            data_path.mkdir(exist_ok=True)
+            data_path.mkdir(parents=True, exist_ok=True)
             for i, idcs in enumerate(np.array_split(np.arange(N), n_chunks)):
                 Z_file = data_path / f"Z_{i}.npy"
                 Y_file = data_path / f"Y_{i}.npy"
