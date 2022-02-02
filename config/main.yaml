@@ -37,7 +37,7 @@ data:
   kwargs:
     seed: ${seed}
     data_dir: ${paths.data}
-    batch_size: 256
+    batch_size: 512
     num_workers: 8
     dataset_kwargs:
       seed: ${seed}

@@ -3,6 +3,7 @@ from __future__ import annotations
 import contextlib
 import glob
 import logging
+import numbers
 import os
 import shutil
 import warnings
@@ -15,15 +16,17 @@ import torch
 from torch import nn
 import wandb
 from pathlib import Path
-from typing import Any, Iterator, Optional, Union
+from typing import Any, Dict, Iterator, Optional, Union
 import sys
 from joblib import Parallel, dump, load
 from sklearn.metrics import log_loss, accuracy_score
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import LearningRateMonitor
+import numpy as np
 
 from argparse import Namespace
 from omegaconf import Container, OmegaConf
+from torch.nn.utils.rnn import PackedSequence
 from torch.utils.data import DataLoader
 from collections.abc import MutableMapping
 
@@ -341,7 +344,24 @@ def rm_module(module: str) -> Iterator[None]:
             del sys.modules[module]
         yield
     finally:
-        sys.modules[module] = val
+        if is_module_loaded:
+            sys.modules[module] = val
+
+# from https://github.com/facebookresearch/vissl/blob/012f86f249158f00ac009a1cb7504352bcf3c6e6/vissl/utils/checkpoint.py
+def replace_module_prefix(
+    state_dict: Dict[str, Any], prefix: str, replace_with: str = ""
+):
+    """
+    Remove prefixes in a state_dict needed when loading models that are not VISSL
+    trained models.
+    Specify the prefix in the keys that should be removed.
+    """
+    state_dict = {
+        (key.replace(prefix, replace_with, 1) if key.startswith(prefix) else key): val
+        for (key, val) in state_dict.items()
+    }
+    return state_dict
+
 #
 # @contextlib.contextmanager
 # def add_sys_path(path: Union[str, os.PathLike]) -> Iterator[None]:
@@ -352,3 +372,4 @@ def rm_module(module: str) -> Iterator[None]:
 #         yield
 #     finally:
 #         sys.path.remove(path)
+

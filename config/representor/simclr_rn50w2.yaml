@@ -1,0 +1,4 @@
+name: simclr_rn50w2
+kwargs:
+  mode: vissl
+  model: simclr_rn50w2

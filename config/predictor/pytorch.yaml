@@ -3,7 +3,7 @@ predictor:
   is_sklearn: False
 
 trainer:
-  max_epochs: 300
+  max_epochs: 300 # 15 # DEV
   log_every_n_steps: 200
   flush_logs_every_n_steps: 200
   enable_checkpointing: True

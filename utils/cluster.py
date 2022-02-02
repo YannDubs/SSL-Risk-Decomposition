@@ -42,13 +42,7 @@ def nlp_cluster(cfg: Container):
     if not new_data_path.is_symlink():
         # make sure it's a symlink
         remove_rf(new_data_path, not_exist_ok=True)
-
-        if (proj_path.parents[2] / "scr0").exists():
-            # if possible symlink to scr0 as that's where most data is saved
-            new_data_path.symlink_to(proj_path.parents[2] / "scr0")
-        else:
-            # if not just use current scr
-            new_data_path.symlink_to(proj_path.parents[1])
+        new_data_path.symlink_to(user_path / "data")
 
     prev_work_dir = os.getcwd()
     curr_work_dir = user_path / str(cfg.paths.relative_work)

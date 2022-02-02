@@ -17,7 +17,9 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import pytorch_lightning as pl
 from pytorch_lightning import LightningDataModule
+from pytorch_lightning.callbacks.progress.tqdm_progress import TQDMProgressBar
 from torch.utils.data import DataLoader
+from toma import toma
 
 from torchvision.datasets import ImageNet
 
@@ -105,7 +107,7 @@ class ImgDataModule(LightningDataModule):
         self.batch_size = batch_size
         self.seed = seed
         self.dataset_kwargs = dataset_kwargs
-        self.representor=representor
+        self.representor = representor.eval()
         self.reset()
         self.setup()
 
@@ -125,14 +127,14 @@ class ImgDataModule(LightningDataModule):
             test_dataset = self.Dataset(
                 self.data_dir, curr_split="test", download=True, **self.dataset_kwargs
             )
-            #test_dataset = Subset(test_dataset, indices=list(range(1000))) #DEV
+            #test_dataset = Subset(test_dataset, indices=list(range(1000))) # DEV
             self.test_dataset = SklearnDataset(*self.represent(test_dataset))
 
         if stage == "fit" or stage is None:
             logger.info("Representing the train set.")
             train_dataset = self.Dataset( self.data_dir, curr_split="train", download=True, **self.dataset_kwargs )
             self.train_dataset = SklearnDataset(*self.represent(train_dataset))
-            #self.train_dataset = self.test_dataset #DEV
+            #self.train_dataset = self.test_dataset # DEV
 
     def get_train_dataset(self):
         if self.is_train_on_test:
@@ -187,10 +189,14 @@ class ImgDataModule(LightningDataModule):
         raise NotImplementedError()
 
     def represent(self, dataset):
-        trainer = pl.Trainer(gpus=1 if torch.cuda.is_available() else 0, logger=False)
+        batch_size = get_max_batchsize(dataset, self.representor)
+        logger.info(f"Selected max batch size for inference: {batch_size}")
+
+        trainer = pl.Trainer(gpus=1 if torch.cuda.is_available() else 0,
+                             logger=False, callbacks=TQDMProgressBar(refresh_rate=100))
         dataloader = DataLoader(
             dataset,
-            batch_size=128,
+            batch_size=batch_size,
             shuffle=False,
             num_workers=self.num_workers,
             pin_memory=True,
@@ -206,6 +212,18 @@ class ImgDataModule(LightningDataModule):
         X = np.concatenate(X, axis=0)
         Y = np.concatenate(Y, axis=0)
         return X, Y
+
+
+@toma.batch(initial_batchsize=2048)  # try largest bach size possible
+def get_max_batchsize(batchsize, dataset, representor):
+    """Return the largest batchsize you can fit."""
+    # cannot use multiple workers with toma batch size
+    dataloader = DataLoader(dataset, batch_size=batchsize, pin_memory=True)
+    trainer = pl.Trainer(gpus=1 if torch.cuda.is_available() else 0,
+                         logger=False,
+                         limit_predict_batches=2)
+    _ = trainer.predict(model=representor, ckpt_path=None,  dataloaders=[dataloader])
+    return batchsize
 
 ### HELPERS ###
 class SklearnDataset(Dataset):

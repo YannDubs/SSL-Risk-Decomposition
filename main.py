@@ -54,7 +54,7 @@ def main(cfg):
 
     ############## DOWNSTREAM PREDICTOR ##############
     results = dict()
-    for component in ["train_risk", "subset_risk", "test_risk"]:
+    for component in ["train_risk", "subset_risk_01", "subset_risk_001"]:
         logger.info(f"Stage : {component}")
         cfg_comp = set_component_(datamodule, cfg, component)
 
@@ -77,12 +77,25 @@ def main(cfg):
             _ = set_component_(datamodule, cfg, "std_risk")
             results["std_risk"] = evaluate(trainer, datamodule, cfg_comp)
 
+        elif component == "subset_risk_01":
+            # also evaluate on test
+            logger.info(f"Evaluate predictor for subset_test_risk_01 ...")
+            _ = set_component_(datamodule, cfg, "subset_test_risk_01")
+            results["subset_test_risk_01"] = evaluate(trainer, datamodule, cfg_comp)
+
+        elif component == "subset_risk_001":
+            logger.info(f"Evaluate predictor for subset_test_risk_001 ...")
+            _ = set_component_(datamodule, cfg, "subset_test_risk_001")
+            results["subset_test_risk_001"] = evaluate(trainer, datamodule, cfg_comp)
+
     # save results
     results = pd.DataFrame.from_dict(results)
     # cannot compute decodability at theis point because need to estimate approximation error
     # which is easier by checking simply online train supervised performance
-    results["pred_gen"] = results["subset_risk"] - results["train_risk"]
-    results["enc_gen"] = results["test_risk"] - results["train_risk"]
+    results["pred_gen_01"] = results["subset_risk_01"] - results["train_risk"]
+    results["pred_gen_001"] = results["subset_risk_001"] - results["train_risk"]
+    results["enc_gen_01"] = results["subset_test_risk_01"] - results["subset_risk_01"]
+    results["enc_gen_001"] = results["subset_test_risk_001"] - results["subset_risk_001"]
     cfg.component = "all"
     save_results(cfg, results)
 
@@ -120,8 +133,17 @@ def set_component_(datamodule : pl.LightningDataModule, cfg: Container, componen
     if component == "train_risk":
         datamodule.reset(is_test_on_train=True)
 
-    elif component == "subset_risk":
-        datamodule.reset(is_test_nonsubset_train=True, subset_train_size=0.4) # DEV should be 1%
+    elif component == "subset_risk_01":
+        datamodule.reset(is_test_nonsubset_train=True, subset_train_size=0.1)
+
+    elif component == "subset_risk_001":
+        datamodule.reset(is_test_nonsubset_train=True, subset_train_size=0.01) # DEV
+
+    elif component == "subset_test_risk_01":
+        datamodule.reset(is_test_nonsubset_train=False, subset_train_size=0.1)
+
+    elif component == "subset_test_risk_001":
+        datamodule.reset(is_test_nonsubset_train=False, subset_train_size=0.01) # DEV
 
     elif component == "test_risk":
         datamodule.reset(is_train_on_test=True)

@@ -1,0 +1,4 @@
+name: dino_vitS16
+kwargs:
+  mode: dino
+  model: dino_vits16

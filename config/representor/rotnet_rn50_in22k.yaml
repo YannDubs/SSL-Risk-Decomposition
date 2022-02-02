@@ -1,0 +1,4 @@
+name: rotnet_rn50_in22k
+kwargs:
+  mode: vissl
+  model: rotnet_rn50_in22k

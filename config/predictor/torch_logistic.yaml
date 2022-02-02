@@ -7,6 +7,6 @@ arch_kwargs:
   architecture: linear
   is_normalize: True
 opt_kwargs:
-  lr: 1e-3
+  lr: 3e-3
   weight_decay: 0
   decay_factor: 1000
