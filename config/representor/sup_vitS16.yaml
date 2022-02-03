@@ -1,0 +1,7 @@
+defaults:
+  - base_supervised
+
+name: sup_vitS16
+kwargs:
+  mode: vit
+  model: WinKawaks/vit-small-patch16-224

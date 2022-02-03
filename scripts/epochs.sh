@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
+experiment="epochs"
+notes="**Goal**: compare swav trained for a different number of epochs."
+
 # parses special mode for running the script
 source `dirname $0`/utils.sh
-
-experiment=$prfx"epochs"
-notes="**Goal**: compare swav trained for a different number of epochs."
 
 # define all the arguments modified or added to `conf`. If they are added use `+`
 kwargs="

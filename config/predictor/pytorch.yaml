@@ -22,13 +22,3 @@ checkpoint:
     save_last: True
     save_top_k: 1
     save_weights_only: false
-
-callbacks:
-  is_log_wandb: True
-  wandb_kwargs:
-    project: risk_dec
-    entity: ${wandb_entity}
-    group: ${experiment}
-    offline: false # Run offline (data can be streamed later to wandb servers).
-    id: ${job_id}
-    reinit: True # ensure that same wandb after preemption

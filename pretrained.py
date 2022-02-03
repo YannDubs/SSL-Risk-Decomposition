@@ -7,6 +7,7 @@ from torch import nn
 
 from utils.helpers import check_import, replace_module_prefix, rm_module
 from torchvision import transforms
+import torchvision
 import pytorch_lightning as pl
 from torchvision.models.resnet import resnet50
 
@@ -49,6 +50,8 @@ VISSL_PREPROCESSOR = transforms.Compose([
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ])
 
+TORCHVISION_PREPROCESSOR = VISSL_PREPROCESSOR
+
 SWAV_ADD_MODELS = {"resnet50_ep100": "https://dl.fbaipublicfiles.com/deepcluster/swav_100ep_pretrain.pth.tar",
                     "resnet50_ep200": "https://dl.fbaipublicfiles.com/deepcluster/swav_200ep_pretrain.pth.tar",
                     "resnet50_ep400": "https://dl.fbaipublicfiles.com/deepcluster/swav_400ep_pretrain.pth.tar"}
@@ -85,9 +88,14 @@ def available_models(mode: Optional[list[str]]=None) -> dict[str, list[str]]:
 
     if  mode is None or "beit" in mode :
         # see https://huggingface.co/models
-        available["hugging"] = "check https://huggingface.co/models?sort=downloads&search=beit"
+        available["beit"] = "check https://huggingface.co/models?sort=downloads&search=beit"
 
-    # TODO: simclr
+    if  mode is None or "torchvision" in mode :
+        available["torchvision"] = torchvision.models.__dict__.keys()
+
+    if  mode is None or "vit" in mode :
+        available["vit"] = "check https://huggingface.co/models?sort=downloads&search=vit"
+
     return available
 
 class HuggingSelector(nn.Module):
@@ -137,6 +145,13 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
         model = transformers.BeitModel.from_pretrained(f"{model}")
         encoder = HuggingSelector(model, "pooler_output")
 
+    elif mode == "vit":
+        check_import("transformers", "mode=vit in load_representor")
+        extractor = transformers.ViTFeatureExtractor.from_pretrained(f"{model}")
+        preprocess = lambda img : extractor(img, return_tensors="pt")['pixel_values'][0]
+        model = transformers.ViTForImageClassification.from_pretrained(f"{model}")
+        encoder = HuggingSelector(model, "pooler_output")
+
     elif mode == "vissl":
         check_import("vissl", "mode=vissl in load_representor")
         state_dict = load_state_dict_from_url(url=VISSL_MODELS[model], map_location="cpu" )
@@ -149,6 +164,10 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
         encoder.fc = torch.nn.Identity()
         encoder.load_state_dict(state_dict, strict=False)
         preprocess = VISSL_PREPROCESSOR
+
+    elif mode == "torchvision":
+        encoder = torchvision.models.__dict__[model](pretrained=True)
+        preprocess = TORCHVISION_PREPROCESSOR
 
     else:
         raise ValueError(f"Unknown mode={mode}.")

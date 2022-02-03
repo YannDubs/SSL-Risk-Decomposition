@@ -204,6 +204,7 @@ class ImgDataModule(LightningDataModule):
 
     def represent(self, dataset, split, max_chunk_size = 20000): # Dev
         batch_size = get_max_batchsize(dataset, self.representor)
+        torch.cuda.empty_cache()
         logger.info(f"Selected max batch size for inference: {batch_size}")
 
         if self.is_save_features:
@@ -243,7 +244,7 @@ class ImgDataModule(LightningDataModule):
             gpus, precision = 0, 32
 
         trainer = pl.Trainer(gpus=gpus, precision=precision,
-                             logger=False, callbacks=TQDMProgressBar(refresh_rate=10))
+                             logger=False, callbacks=TQDMProgressBar(refresh_rate=20))
         dataloader = DataLoader(
             dataset,
             batch_size=batch_size,

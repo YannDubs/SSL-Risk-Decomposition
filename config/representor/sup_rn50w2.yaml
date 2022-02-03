@@ -1,0 +1,7 @@
+defaults:
+  - base_supervised
+
+name: sup_rn50w2
+kwargs:
+  mode: torchvision
+  model: wide_resnet50_2

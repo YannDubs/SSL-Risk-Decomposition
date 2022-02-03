@@ -1,0 +1,7 @@
+defaults:
+  - base_supervised
+
+name: sup_vitL16
+kwargs:
+  mode: vit
+  model: google/vit-large-patch16-224

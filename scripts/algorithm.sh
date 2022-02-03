@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+
+experiment="algorithm"
+notes="**Goal**: plot all the radar charts."
+
+
 # parses special mode for running the script
 source `dirname $0`/utils.sh
-
-experiment=$prfx"algorithm"
-notes="**Goal**: plot all the radar charts."
 
 # define all the arguments modified or added to `conf`. If they are added use `+`
 kwargs="

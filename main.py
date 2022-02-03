@@ -22,10 +22,16 @@ from omegaconf import Container, OmegaConf
 
 from utils.cluster import nlp_cluster
 from utils.data import get_Datamodule
-from utils.helpers import (SklearnTrainer, get_torch_trainer, log_dict, namespace2dict, omegaconf2namespace,
+from utils.helpers import (SklearnTrainer, check_import, get_torch_trainer, log_dict, namespace2dict,
+                           omegaconf2namespace,
                            NamespaceMap, remove_rf)
 from pretrained import load_representor
 from utils.predictor import Predictor
+
+try:
+    import wandb
+except ImportError:
+    pass
 
 logger = logging.getLogger(__name__)
 RESULTS_FILE = "results_{component}.csv"
@@ -113,6 +119,23 @@ def begin(cfg: Container) -> None:
     pl.seed_everything(cfg.seed)
     cfg.paths.work = str(Path.cwd())
     logger.info(f"Workdir : {cfg.paths.work}.")
+
+
+    if cfg.is_log_wandb:
+        init_wandb(**cfg.wandb_kwargs)
+
+
+def init_wandb(offline=False, **kwargs):
+    """Initializae wandb while accepting param of pytorch lightning."""
+    check_import("wandb", "wandb")
+
+    if offline:
+        os.environ["WANDB_MODE"] = "dryrun"
+
+    wandb.init(
+        resume="allow",
+        **kwargs,
+    )
 
 def instantiate_datamodule_(cfg: Container, representor : Callable, preprocess: Callable ) -> pl.LightningDataModule:
     """Instantiate dataset."""

@@ -180,17 +180,17 @@ class SklearnTrainer:
 
 def get_torch_trainer(cfg: NamespaceMap) -> pl.Trainer:
     """Instantiate pytorch lightning trainer."""
-    if cfg.callbacks.is_log_wandb:
+    if cfg.is_log_wandb:
         check_import("wandb", "WandbLogger")
 
         # if wandb.run is not None:
         #     wandb.run.finish()  # finish previous run if still on
 
         try:
-            pl_logger = WandbLogger(**cfg.callbacks.wandb_kwargs)
+            pl_logger = WandbLogger(**cfg.wandb_kwargs)
         except Exception:
             cfg.logger.kwargs.offline = True
-            pl_logger = WandbLogger(**cfg.callbacks.wandb_kwargs)
+            pl_logger = WandbLogger(**cfg.wandb_kwargs)
     else:
         pl_logger = False
 
@@ -337,6 +337,31 @@ def replace_module_prefix(
         for (key, val) in state_dict.items()
     }
     return state_dict
+
+# modified from https://github.com/skorch-dev/skorch/blob/92ae54b/skorch/utils.py#L106
+def to_numpy(X) -> np.array:
+    """Convert tensors,list,tuples,dataframes to numpy arrays."""
+    if isinstance(X, np.ndarray):
+        return X
+
+    # the sklearn way of determining pandas dataframe
+    if hasattr(X, "iloc"):
+        return X.values
+
+    if isinstance(X, (tuple, list, numbers.Number)):
+        return np.array(X)
+
+    if not isinstance(X, (torch.Tensor, PackedSequence)):
+        raise TypeError(f"Cannot convert {type(X)} to a numpy array.")
+
+    if X.is_cuda:
+        X = X.cpu()
+
+    if X.requires_grad:
+        X = X.detach()
+
+    return X.numpy()
+
 
 #
 # @contextlib.contextmanager

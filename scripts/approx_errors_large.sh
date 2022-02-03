@@ -1,23 +1,22 @@
 #!/usr/bin/env bash
 
-experiment="architectures"
-notes="**Goal**: compare swav trained for a different number of epochs."
+experiment="approx_errors"
+notes="**Goal**: compute approx errors for common architectures."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
 
-
 # define all the arguments modified or added to `conf`. If they are added use `+`
 kwargs="
 experiment=$experiment
-timeout=$time
+timeout=2880
 "
 
-# every arguments that you are sweeping over
+# run on large server
 kwargs_multi="
-representor=simclr_rn101,simclr_rn50,dino_vitS16,dino_vitB16
+representor=sup_rn50w2,sup_vitL16
 "
-# also add simclr_rn50w2, dino_vitB8 from other experiments
+# add swav_rn50 from other experiments
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

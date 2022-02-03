@@ -10,6 +10,7 @@ defaults:
   - predictor: torch_logistic
 
 ########## GENERAL ##########
+is_log_wandb: True
 experiment: ???
 job_id: ??? # unique identifier
 component: ???
@@ -46,6 +47,14 @@ data:
 representor:
   mode: ???
   name: ???
+
+wandb_kwargs:
+  project: risk_dec
+  entity: ${wandb_entity}
+  group: ${experiment}
+  offline: false # Run offline (data can be streamed later to wandb servers).
+  id: ${job_id}
+  reinit: True # ensure that same wandb after preemption
 
 ########## HYDRA ##########
 hydra:
