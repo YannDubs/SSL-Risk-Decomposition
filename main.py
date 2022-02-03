@@ -64,9 +64,9 @@ def main(cfg):
     # those components have the same training setup so don't retrain
     components_same_train = dict(train_risk="std_risk",
                                  subset_risk_01="subset_test_risk_01",
-                                 subset_risk_001="subset_test_risk_001")
+                                 boostrap_risk="boostrap_test_risk")
 
-    for component in ["train_risk", "subset_risk_01", "subset_risk_001"]:
+    for component in ["train_risk", "subset_risk_01", "boostrap_risk"]:
         logger.info(f"Stage : {component}")
         cfg_comp = set_component_(datamodule, cfg, component)
 
@@ -104,9 +104,9 @@ def main(cfg):
     # cannot compute decodability at theis point because need to estimate approximation error
     # which is easier by checking simply online train supervised performance
     results["pred_gen_01"] = results["subset_risk_01"] - results["train_risk"]
-    results["pred_gen_001"] = results["subset_risk_001"] - results["train_risk"]
+    results["pred_gen"] = results["boostrap_risk"] - results["train_risk"]
     results["enc_gen_01"] = results["subset_test_risk_01"] - results["subset_risk_01"]
-    results["enc_gen_001"] = results["subset_test_risk_001"] - results["subset_risk_001"]
+    results["enc_gen"] = results["boostrap_test_risk"] - results["boostrap_risk"]
     cfg.component = "all"
     save_results(cfg, results)
 
@@ -168,14 +168,16 @@ def set_component_(datamodule : pl.LightningDataModule, cfg: Container, componen
     elif component == "subset_risk_01":
         datamodule.reset(is_test_nonsubset_train=True, subset_train_size=0.1)
 
-    elif component == "subset_risk_001":
-        datamodule.reset(is_test_nonsubset_train=True, subset_train_size=0.01) # Dev
+    elif component == "boostrap_risk":
+        n_test = len(datamodule.test_dataset)  # use exactly same number as test
+        datamodule.reset(is_test_nonsubset_train=True, subset_train_size=n_test)
 
     elif component == "subset_test_risk_01":
         datamodule.reset(is_test_nonsubset_train=False, subset_train_size=0.1)
 
-    elif component == "subset_test_risk_001":
-        datamodule.reset(is_test_nonsubset_train=False, subset_train_size=0.01) # Dev
+    elif component == "boostrap_test_risk":
+        n_test = len(datamodule.test_dataset)  # use exactly same number as test
+        datamodule.reset(is_test_nonsubset_train=False, subset_train_size=n_test)
 
     elif component == "test_risk":
         datamodule.reset(is_train_on_test=True)

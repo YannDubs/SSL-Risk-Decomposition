@@ -150,7 +150,7 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
         extractor = transformers.ViTFeatureExtractor.from_pretrained(f"{model}")
         preprocess = lambda img : extractor(img, return_tensors="pt")['pixel_values'][0]
         model = transformers.ViTForImageClassification.from_pretrained(f"{model}")
-        encoder = HuggingSelector(model, "pooler_output")
+        encoder = HuggingSelector(model, "logits")
 
     elif mode == "vissl":
         check_import("vissl", "mode=vissl in load_representor")
