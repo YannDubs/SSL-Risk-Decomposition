@@ -221,30 +221,6 @@ def log_dict(trainer: pl.Trainer, to_log: dict, is_param: bool) -> None:
     except:
         pass
 
-def replace_str(s, old, new, is_prfx=False, is_sffx=False):
-    """replace optionally only at the start or end"""
-    assert not (is_prfx and is_sffx)
-
-    if is_prfx:
-        if s.startswith(old):
-            s = new + s[len(old) :]
-    elif is_sffx:
-        if s.endswith(old):
-            s = s[: -len(old)] + new
-    else:
-        s = s.replace(old, new)
-
-    return s
-
-
-def replace_keys(
-    d: dict[str, ...], old: str, new: str, is_prfx: bool = False, is_sffx: bool = False
-) -> dict[str, ...]:
-    """replace keys in a dict."""
-    return {
-        replace_str(k, old, new, is_prfx=is_prfx, is_sffx=is_sffx): v
-        for k, v in d.items()
-    }
 
 # taken from https://github.com/rwightman/pytorch-image-models/blob/d5ed58d623be27aada78035d2a19e2854f8b6437/timm/models/layers/weight_init.py
 def variance_scaling_(tensor, scale=1.0, mode='fan_in', distribution='truncated_normal'):

@@ -137,14 +137,14 @@ class ImgDataModule(LightningDataModule):
             test_dataset = self.Dataset(
                 self.data_dir, curr_split="test", download=True, **self.dataset_kwargs
             )
-            #test_dataset = Subset(test_dataset, indices=list(range(1000))) # DEV
+            #test_dataset = Subset(test_dataset, indices=list(range(10000))) # Dev
             self.test_dataset = SklearnDataset(*self.represent(test_dataset, "test"))
 
         if stage == "fit" or stage is None:
             logger.info("Representing the train set.")
             train_dataset = self.Dataset( self.data_dir, curr_split="train", download=True, **self.dataset_kwargs )
             self.train_dataset = SklearnDataset(*self.represent(train_dataset, "train"))
-            #self.train_dataset = self.test_dataset # DEV
+            #self.train_dataset = self.test_dataset # Dev
 
     def get_train_dataset(self):
         if self.is_train_on_test:
@@ -198,7 +198,11 @@ class ImgDataModule(LightningDataModule):
         """Return the correct dataset."""
         raise NotImplementedError()
 
-    def represent(self, dataset, split, max_chunk_size = 20000):
+    @property
+    def features_path(self):
+        return Path(self.data_dir) / f"{self.Dataset.__name__}_{self.representor_name}"
+
+    def represent(self, dataset, split, max_chunk_size = 20000): # Dev
         batch_size = get_max_batchsize(dataset, self.representor)
         logger.info(f"Selected max batch size for inference: {batch_size}")
 
@@ -206,7 +210,7 @@ class ImgDataModule(LightningDataModule):
             N = len(dataset)
             n_chunks = math.ceil(N / max_chunk_size)
             Z_files, Y_files = [], []
-            data_path = Path(self.data_dir) / f"{self.Dataset.__name__}_{self.representor_name}" / split
+            data_path = self.features_path / split
             data_path.mkdir(parents=True, exist_ok=True)
             for i, idcs in enumerate(np.array_split(np.arange(N), n_chunks)):
                 Z_file = data_path / f"Z_{i}.npy"
@@ -239,7 +243,7 @@ class ImgDataModule(LightningDataModule):
             gpus, precision = 0, 32
 
         trainer = pl.Trainer(gpus=gpus, precision=precision,
-                             logger=False, callbacks=TQDMProgressBar(refresh_rate=100))
+                             logger=False, callbacks=TQDMProgressBar(refresh_rate=10))
         dataloader = DataLoader(
             dataset,
             batch_size=batch_size,

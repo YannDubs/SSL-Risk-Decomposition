@@ -23,7 +23,7 @@ from omegaconf import Container, OmegaConf
 from utils.cluster import nlp_cluster
 from utils.data import get_Datamodule
 from utils.helpers import (SklearnTrainer, get_torch_trainer, log_dict, namespace2dict, omegaconf2namespace,
-                           NamespaceMap, replace_keys)
+                           NamespaceMap, remove_rf)
 from pretrained import load_representor
 from utils.predictor import Predictor
 
@@ -54,6 +54,12 @@ def main(cfg):
 
     ############## DOWNSTREAM PREDICTOR ##############
     results = dict()
+
+    # those components have the same training setup so don't retrain
+    components_same_train = dict(train_risk="std_risk",
+                                 subset_risk_01="subset_test_risk_01",
+                                 subset_risk_001="subset_test_risk_001")
+
     for component in ["train_risk", "subset_risk_01", "subset_risk_001"]:
         logger.info(f"Stage : {component}")
         cfg_comp = set_component_(datamodule, cfg, component)
@@ -66,27 +72,26 @@ def main(cfg):
             predictor = Predictor(cfg_comp, datamodule.z_dim, datamodule.n_labels)
             trainer = get_torch_trainer(cfg_comp)
 
-        fit_(trainer, predictor, datamodule, cfg_comp)
+        try:
+            # try to load in case already precomputed
+            results[component] = load_results(cfg_comp)
+            for src_comp, tgt_comp in components_same_train.items():
+                if component == src_comp:
+                    results[tgt_comp] = load_results(cfg_comp)
+            logger.info(f"Skipping {component} as already computed ...")
 
-        logger.info(f"Evaluate predictor for {component} ...")
-        results[component] = evaluate(trainer, datamodule, cfg_comp)
+        except FileNotFoundError:
+            fit_(trainer, predictor, datamodule, cfg_comp)
 
-        if component == "train_risk":
-            # also add the standard risk
-            logger.info(f"Evaluate predictor for std_risk ...")
-            _ = set_component_(datamodule, cfg, "std_risk")
-            results["std_risk"] = evaluate(trainer, datamodule, cfg_comp)
+            logger.info(f"Evaluate predictor for {component} ...")
+            results[component] = evaluate(trainer, datamodule, cfg_comp)
 
-        elif component == "subset_risk_01":
-            # also evaluate on test
-            logger.info(f"Evaluate predictor for subset_test_risk_01 ...")
-            _ = set_component_(datamodule, cfg, "subset_test_risk_01")
-            results["subset_test_risk_01"] = evaluate(trainer, datamodule, cfg_comp)
-
-        elif component == "subset_risk_001":
-            logger.info(f"Evaluate predictor for subset_test_risk_001 ...")
-            _ = set_component_(datamodule, cfg, "subset_test_risk_001")
-            results["subset_test_risk_001"] = evaluate(trainer, datamodule, cfg_comp)
+            # evaluate component with same train
+            for src_comp, tgt_comp in components_same_train.items():
+                if component == src_comp:
+                    logger.info(f"Evaluate predictor for {tgt_comp} ...")
+                    cfg_comp = set_component_(datamodule, cfg, tgt_comp)
+                    results[tgt_comp] = evaluate(trainer, datamodule, cfg_comp)
 
     # save results
     results = pd.DataFrame.from_dict(results)
@@ -98,6 +103,10 @@ def main(cfg):
     results["enc_gen_001"] = results["subset_test_risk_001"] - results["subset_risk_001"]
     cfg.component = "all"
     save_results(cfg, results)
+
+    # remove all saved features at the end
+    remove_rf(datamodule.features_path, not_exist_ok=True)
+
 
 def begin(cfg: Container) -> None:
     """Script initialization."""
@@ -137,13 +146,13 @@ def set_component_(datamodule : pl.LightningDataModule, cfg: Container, componen
         datamodule.reset(is_test_nonsubset_train=True, subset_train_size=0.1)
 
     elif component == "subset_risk_001":
-        datamodule.reset(is_test_nonsubset_train=True, subset_train_size=0.01) # DEV
+        datamodule.reset(is_test_nonsubset_train=True, subset_train_size=0.01) # Dev
 
     elif component == "subset_test_risk_01":
         datamodule.reset(is_test_nonsubset_train=False, subset_train_size=0.1)
 
     elif component == "subset_test_risk_001":
-        datamodule.reset(is_test_nonsubset_train=False, subset_train_size=0.01) # DEV
+        datamodule.reset(is_test_nonsubset_train=False, subset_train_size=0.01) # Dev
 
     elif component == "test_risk":
         datamodule.reset(is_train_on_test=True)
@@ -180,14 +189,21 @@ def evaluate(
 ) -> pd.Series:
     """Evaluate the trainer by logging all the metrics from the test set from the best model."""
     eval_dataloader = datamodule.test_dataloader()
-    test_res = trainer.test(dataloaders=eval_dataloader, ckpt_path="best")[0]
-    log_dict(trainer, test_res, is_param=False)
-    results = replace_keys(test_res, f"test/{cfg.component}/", "", is_prfx=True)
+    results = trainer.test(dataloaders=eval_dataloader, ckpt_path="best")[0]
+    log_dict(trainer, results, is_param=False)
+    # only keep the metric
+    results = { k.split("/")[-1]: v for k, v in results.items() }
 
     results = pd.Series(results)
     save_results(cfg, results)
 
     return results
+
+def load_results(cfg):
+    results_path = Path(cfg.paths.results)
+    filename = RESULTS_FILE.format(component=cfg.component)
+    path = results_path / filename
+    return pd.read_csv(path, index_col=0).squeeze("columns")
 
 def save_results(cfg, results):
     results_path = Path(cfg.paths.results)
