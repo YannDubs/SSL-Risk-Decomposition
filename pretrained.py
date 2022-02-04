@@ -99,7 +99,7 @@ def available_models(mode: Optional[list[str]]=None) -> dict[str, list[str]]:
 
 def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
     """Return the encoder and the preprocessor."""
-    arch = model.split("_")[1]
+
 
     if mode == "clip":
         check_import("clip", "mode=clip in load_representor")
@@ -108,6 +108,7 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
         encoder = model.visual.float()  # only keep the image model
 
     elif mode == "dino":
+        arch = model.split("_")[1]
         with rm_module("utils"):
             # dirty but if not there's collision of modules
             encoder = torch.hub.load("facebookresearch/dino:main", model)
@@ -144,6 +145,7 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
         encoder = HuggingSelector(model, "logits")
 
     elif mode == "vissl":
+        arch = model.split("_")[1]
         check_import("vissl", "mode=vissl in load_representor")
         state_dict = load_state_dict_from_url(url=VISSL_MODELS[model], map_location="cpu", file_name=model)
         if "classy_state_dict" in state_dict.keys():
