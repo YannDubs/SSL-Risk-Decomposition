@@ -80,12 +80,13 @@ class Predictor(pl.LightningModule):
 
     def configure_optimizers(self):
         cfgo = self.hparams.predictor.opt_kwargs
-        optimizer = torch.optim.AdamW(self.predictor.parameters(),
+
+        optimizer = torch.optim.SGD(self.predictor.parameters(),
                                       lr=cfgo.lr,
                                       weight_decay=cfgo.weight_decay)
-        sched_warm = LinearLR(optimizer, start_factor=1 / 100, total_iters=10)
-        n_epochs_post_warm = self.hparams.trainer.max_epochs - 10
-        gamma = (1 / cfgo.decay_factor) ** (1 / n_epochs_post_warm)
-        sched_exp = ExponentialLR(optimizer, gamma)
-        schedulers = [sched_warm, sched_exp]
-        return [optimizer], schedulers
+
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer, self.hparams.trainer.max_epochs, eta_min=0
+        )
+
+        return {"optimizer": optimizer, "lr_scheduler":scheduler}

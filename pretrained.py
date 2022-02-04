@@ -127,7 +127,7 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
         )
         state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
         encoder.fc = torch.nn.Identity()
-        encoder.load_state_dict(state_dict)
+        encoder.load_state_dict(state_dict, strict=False)
         preprocess = SWAV_PREPROCESSOR
 
     elif mode == "beit":
@@ -178,7 +178,7 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
         else:
             raise ValueError(f"Unknown arch={arch}.")
 
-        encoder.load_state_dict(state_dict)
+        encoder.load_state_dict(state_dict, strict=False)
         preprocess = VISSL_PREPROCESSOR
 
     elif mode == "torchvision":

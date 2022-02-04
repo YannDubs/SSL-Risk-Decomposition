@@ -63,10 +63,10 @@ def main(cfg):
 
     # those components have the same training setup so don't retrain
     components_same_train = dict(train_risk="std_risk",
-                                 subset_risk_01="subset_test_risk_01",
-                                 boostrap_risk="boostrap_test_risk")
+                                 boostrap_risk="boostrap_test_risk",
+                                 subset_risk_01="subset_test_risk_01")
 
-    for component in ["train_risk", "subset_risk_01", "boostrap_risk"]:
+    for component in ["train_risk", "boostrap_risk", "subset_risk_01"]:
         logger.info(f"Stage : {component}")
         cfg_comp = set_component_(datamodule, cfg, component)
 

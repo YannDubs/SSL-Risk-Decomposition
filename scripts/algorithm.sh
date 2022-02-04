@@ -18,8 +18,10 @@ timeout=$time
 kwargs_multi="
 representor=simclr_rn50,swav_rn50,clip_rn50,dino_rn50,barlow_rn50,mocov2_rn50
 "
-# also add simclr_rn50 from other experiments
 
+kwargs_multi="
+representor=clip_rn50
+"
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

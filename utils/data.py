@@ -137,7 +137,7 @@ class ImgDataModule(LightningDataModule):
             test_dataset = self.Dataset(
                 self.data_dir, curr_split="test", download=True, **self.dataset_kwargs
             )
-            #test_dataset = Subset(test_dataset, indices=list(range(10000))) # Dev
+            #test_dataset = Subset(test_dataset, indices=list(range(1000))) # Dev
             self.test_dataset = SklearnDataset(*self.represent(test_dataset, "test"))
 
         if stage == "fit" or stage is None:
