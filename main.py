@@ -111,7 +111,7 @@ def main(cfg):
     save_results(cfg, results)
 
     # remove all saved features at the end
-    remove_rf(datamodule.features_path, not_exist_ok=True)
+    #remove_rf(datamodule.features_path, not_exist_ok=True)
 
 
 def begin(cfg: Container) -> None:
@@ -122,8 +122,10 @@ def begin(cfg: Container) -> None:
 
 
     if cfg.is_log_wandb:
-        init_wandb(**cfg.wandb_kwargs)
-
+        try:
+            init_wandb(**cfg.wandb_kwargs)
+        except Exception:
+            init_wandb(offline=True, **cfg.wandb_kwargs)
 
 def init_wandb(offline=False, **kwargs):
     """Initializae wandb while accepting param of pytorch lightning."""

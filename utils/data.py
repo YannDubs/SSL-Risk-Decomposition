@@ -202,7 +202,7 @@ class ImgDataModule(LightningDataModule):
     def features_path(self):
         return Path(self.data_dir) / f"{self.Dataset.__name__}_{self.representor_name}"
 
-    def represent(self, dataset, split, max_chunk_size = 20000): # Dev
+    def represent(self, dataset, split, max_chunk_size = 20000):
         batch_size = get_max_batchsize(dataset, self.representor)
         torch.cuda.empty_cache()
         logger.info(f"Selected max batch size for inference: {batch_size}")

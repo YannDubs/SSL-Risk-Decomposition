@@ -17,10 +17,6 @@ kwargs_multi="
 representor=beit_vitL16,dino_vitB8,clip_vitL14,simclr_rn50w2
 "
 
-kwargs_multi="
-representor=beit_vitL16,clip_vitL14,simclr_rn50w2
-"
-
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
   do

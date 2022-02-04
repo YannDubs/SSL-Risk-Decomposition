@@ -9,7 +9,7 @@ from utils.helpers import check_import, replace_module_prefix, rm_module
 from torchvision import transforms
 import torchvision
 import pytorch_lightning as pl
-from torchvision.models.resnet import resnet50
+from torchvision.models.resnet import resnet50, wide_resnet50_2, resnet101
 
 from torch.hub import load_state_dict_from_url
 
@@ -52,9 +52,10 @@ VISSL_PREPROCESSOR = transforms.Compose([
 
 TORCHVISION_PREPROCESSOR = VISSL_PREPROCESSOR
 
-SWAV_ADD_MODELS = {"resnet50_ep100": "https://dl.fbaipublicfiles.com/deepcluster/swav_100ep_pretrain.pth.tar",
-                    "resnet50_ep200": "https://dl.fbaipublicfiles.com/deepcluster/swav_200ep_pretrain.pth.tar",
-                    "resnet50_ep400": "https://dl.fbaipublicfiles.com/deepcluster/swav_400ep_pretrain.pth.tar"}
+SWAV_MODELS = {"resnet50": "https://dl.fbaipublicfiles.com/deepcluster/swav_800ep_pretrain.pth.tar",
+               "resnet50_ep100": "https://dl.fbaipublicfiles.com/deepcluster/swav_100ep_pretrain.pth.tar",
+                "resnet50_ep200": "https://dl.fbaipublicfiles.com/deepcluster/swav_200ep_pretrain.pth.tar",
+                "resnet50_ep400": "https://dl.fbaipublicfiles.com/deepcluster/swav_400ep_pretrain.pth.tar"}
 
 VISSL_MODELS = {"barlow_rn50": "https://dl.fbaipublicfiles.com/vissl/model_zoo/barlow_twins/barlow_twins_32gpus_4node_imagenet1k_1000ep_resnet50.torch",
                 "mocov2_rn50": "https://dl.fbaipublicfiles.com/vissl/model_zoo/moco_v2_1node_lr.03_step_b32_zero_init/model_final_checkpoint_phase199.torch",
@@ -78,9 +79,7 @@ def available_models(mode: Optional[list[str]]=None) -> dict[str, list[str]]:
             available["dino"] = list(torch.hub.list("facebookresearch/dino:main"))
 
     if  mode is None or "swav" in mode :
-        # more models available at `https://github.com/facebookresearch/swav` e.g. different epochs and batch-size
-        available["swav"] = list(torch.hub.list("facebookresearch/swav:main"))
-        available["swav"].update(SWAV_ADD_MODELS)
+        available["swav"].update(SWAV_MODELS)
 
     if  mode is None or "swav" in mode :
         # more models available at `https://github.com/facebookresearch/swav` e.g. different epochs and batch-size
@@ -98,18 +97,10 @@ def available_models(mode: Optional[list[str]]=None) -> dict[str, list[str]]:
 
     return available
 
-class HuggingSelector(nn.Module):
-    """Wrapper around hugging face model to select correct output while enable `.cuda()` etc."""
-    def __init__(self, model : nn.Module, select : str):
-        super().__init__()
-        self.model = model
-        self.select = select
-
-    def forward(self, x : torch.Tensor):
-        return self.model(x)[self.select]
-
 def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
     """Return the encoder and the preprocessor."""
+    arch = model.split("_")[1]
+
     if mode == "clip":
         check_import("clip", "mode=clip in load_representor")
         device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -120,22 +111,22 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
         with rm_module("utils"):
             # dirty but if not there's collision of modules
             encoder = torch.hub.load("facebookresearch/dino:main", model)
-        encoder.fc = torch.nn.Identity()
+
+        if "vit" in arch:
+            encoder = VITDinoWrapper(encoder, arch)
+
         preprocess = DINO_PREPROCESSOR
 
     elif mode == "swav":
-        try:
-            encoder = torch.hub.load("facebookresearch/swav:main", model)
-        except RuntimeError:
-            encoder = resnet50(pretrained=False)
-            state_dict = load_state_dict_from_url(
-                url=SWAV_ADD_MODELS[model],
-                map_location="cpu",
-            )
-            state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
-            encoder.load_state_dict(state_dict, strict=False)
-
+        encoder = resnet50(pretrained=False, num_classes=0)
+        state_dict = load_state_dict_from_url(
+            url=SWAV_MODELS[model],
+            map_location="cpu",
+            file_name=model
+        )
+        state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
         encoder.fc = torch.nn.Identity()
+        encoder.load_state_dict(state_dict)
         preprocess = SWAV_PREPROCESSOR
 
     elif mode == "beit":
@@ -154,15 +145,38 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
 
     elif mode == "vissl":
         check_import("vissl", "mode=vissl in load_representor")
-        state_dict = load_state_dict_from_url(url=VISSL_MODELS[model], map_location="cpu" )
+        state_dict = load_state_dict_from_url(url=VISSL_MODELS[model], map_location="cpu", file_name=model)
         if "classy_state_dict" in state_dict.keys():
             state_dict = state_dict["classy_state_dict"]["base_model"]["model"]["trunk"]
         elif "model_state_dict" in state_dict.keys():
             state_dict = state_dict["model_state_dict"]
-        state_dict = replace_module_prefix(state_dict, "_feature_blocks.")
-        encoder = resnet50(pretrained=False)
-        encoder.fc = torch.nn.Identity()
-        encoder.load_state_dict(state_dict, strict=False)
+
+        if arch in "rn50":
+            state_dict = replace_module_prefix(state_dict, "_feature_blocks.")
+            encoder = resnet50(pretrained=False, num_classes=0)
+            encoder.fc = torch.nn.Identity()
+        elif arch == "rn101":
+            state_dict = replace_module_prefix(state_dict, "_feature_blocks.")
+            encoder = resnet101(pretrained=False, num_classes=0)
+            encoder.fc = torch.nn.Identity()
+        elif arch == "rn50w2":
+            from vissl.config import AttrDict
+            from vissl.models.trunks.resnext import ResNeXt
+            # annoying but VISSL doesn't have defaults in the code (only hydra)
+            dflt_rn_cfg = AttrDict({"INPUT_TYPE": "rgb",
+                                    "ACTIVATION_CHECKPOINTING": {"USE_ACTIVATION_CHECKPOINTING": False,
+                                                                 "NUM_ACTIVATION_CHECKPOINTING_SPLITS": 2},
+                                    "TRUNK": {"RESNETS": {"DEPTH": 50, "WIDTH_MULTIPLIER": 1, "NORM": "BatchNorm",
+                                                          "GROUPNORM_GROUPS": 32, "STANDARDIZE_CONVOLUTIONS": False,
+                                                          "GROUPS": 1, "ZERO_INIT_RESIDUAL": False,
+                                                          "WIDTH_PER_GROUP": 64, "LAYER4_STRIDE": 2}}})
+            dflt_rn_cfg.TRUNK.RESNETS.WIDTH_MULTIPLIER = 2
+            encoder = ResNeXt(dflt_rn_cfg, "resnet")
+            encoder.feat_eval_mapping = None
+        else:
+            raise ValueError(f"Unknown arch={arch}.")
+
+        encoder.load_state_dict(state_dict)
         preprocess = VISSL_PREPROCESSOR
 
     elif mode == "torchvision":
@@ -175,13 +189,58 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
     representor = LightningWrapper(encoder)
     return representor, preprocess
 
+class HuggingSelector(nn.Module):
+    """Wrapper around hugging face model to select correct output while enable `.cuda()` etc."""
+    def __init__(self, model : nn.Module, select : str):
+        super().__init__()
+        self.model = model
+        self.select = select
+
+    def forward(self, x : torch.Tensor):
+        #, output_hidden_states = True
+        return self.model(x)[self.select]
+
+class VITDinoWrapper(nn.Module):
+    def __init__(self, encoder, arch):
+        super().__init__()
+        self.encoder = encoder
+        self.arch = arch
+
+    def forward(self, x: torch.Tensor):
+        """
+        Follows https://github.com/facebookresearch/dino/blob/cb711401860da580817918b9167ed73e3eef3dcf/eval_linear.py#L196
+        VIT dino should use only the CLS of the last layer for large, but concat last 4 for small.
+        """
+        if "vitb" in self.arch.lower():
+            n_last_blocks = 1
+            avgpool_patchtokens = True
+        elif "vits" in self.arch.lower():
+            n_last_blocks = 4
+            avgpool_patchtokens = False
+        else:
+            raise ValueError(f"Unknown arch={self.arch}")
+
+        intermediate_output = self.encoder.get_intermediate_layers(x, n_last_blocks)
+        out = torch.cat([x[:, 0] for x in intermediate_output], dim=-1)
+        if avgpool_patchtokens:
+            out = torch.cat((out.unsqueeze(-1), torch.mean(intermediate_output[-1][:, 1:], dim=1).unsqueeze(-1)), dim=-1)
+            out = out.reshape(out.shape[0], -1)
+
+        return out
+
+
 class LightningWrapper(pl.LightningModule):
     def __init__(self, encoder):
         super().__init__()
         self.encoder = encoder
 
     def forward(self, x: torch.Tensor):
-        return self.encoder(x)
+        out = self.encoder(x)
+        if isinstance(out, (tuple, list)):
+            # for vissl models like rn50w2 will return list
+            assert len(out) == 1
+            out = out[0]
+        return out
 
     def predict_step(self, batch, batch_idx):
         x, y = batch

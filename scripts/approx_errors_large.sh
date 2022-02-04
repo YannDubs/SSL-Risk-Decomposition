@@ -17,8 +17,6 @@ kwargs_multi="
 representor=sup_rn50w2,sup_vitL16
 "
 
-# add swav_rn50 from other experiments
-
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
   do

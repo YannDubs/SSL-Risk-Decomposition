@@ -56,7 +56,7 @@ def main(cfg):
     save_results(cfg, results)
 
     # remove all saved features at the end
-    remove_rf(datamodule.features_path, not_exist_ok=True)
+    #remove_rf(datamodule.features_path, not_exist_ok=True)
 
 
 if __name__ == "__main__":
