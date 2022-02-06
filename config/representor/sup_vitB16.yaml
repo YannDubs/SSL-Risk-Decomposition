@@ -3,5 +3,5 @@ defaults:
 
 name: sup_vitB16
 kwargs:
-  mode: vit
-  model: google/vit-base-patch16-224
+  mode: timm
+  model: vit_base_patch16_224

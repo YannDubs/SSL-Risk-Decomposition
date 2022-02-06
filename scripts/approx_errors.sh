@@ -12,17 +12,19 @@ experiment=$experiment
 timeout=2880
 "
 
-# run on large server
 kwargs_multi="
-representor=sup_rn50,sup_rn101,sup_vitS16,sup_vitB16
+representor=sup_vitS16_dino,sup_vitB16_dino
 "
-# add swav_rn50 from other experiments
+
+kwargs_multi="
+representor=sup_rn50,sup_rn101,sup_vitB16
+"
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
   do
 
-    python approx_error.py +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m &
+    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m &
 
     sleep 10
 

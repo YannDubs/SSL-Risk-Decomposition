@@ -23,6 +23,8 @@ from sklearn.metrics import log_loss, accuracy_score
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import LearningRateMonitor
 import numpy as np
+from torchvision.transforms import functional as F_trnsf
+from torchvision.transforms import InterpolationMode
 
 from argparse import Namespace
 from omegaconf import Container, OmegaConf
@@ -245,6 +247,17 @@ def variance_scaling_(tensor, scale=1.0, mode='fan_in', distribution='truncated_
         tensor.uniform_(-bound, bound)
     else:
         raise ValueError(f"invalid distribution {distribution}")
+
+def npimg_resize(np_imgs, size):
+    """Batchwise resizing numpy images."""
+    if np_imgs.ndim == 3:
+        np_imgs = np_imgs[:, :, :, None]
+
+    torch_imgs = torch.from_numpy(np_imgs.transpose((0, 3, 1, 2))).contiguous()
+    torch_imgs = F_trnsf.resize(torch_imgs, size=size, interpolation=InterpolationMode.BICUBIC)
+    np_imgs = to_numpy(torch_imgs).transpose((0, 2, 3, 1))
+    return np_imgs
+
 
 def init_std_modules(module: nn.Module, nonlinearity: str = "relu") -> bool:
     """Initialize standard layers and return whether was initialized."""

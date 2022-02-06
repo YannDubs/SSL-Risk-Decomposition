@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 experiment="architectures"
-notes="**Goal**: compare swav trained for a different number of epochs."
+notes="**Goal**: compare classical (pre simclr) methods."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -15,9 +15,9 @@ timeout=$time
 
 # every arguments that you are sweeping over
 kwargs_multi="
-representor=simclr_rn101,dino_vitS16,dino_vitB16
+representor=jigsaw_rn50,colorization_rn50,npid_rn50,clusterfit_rn50
 "
-# also add simclr_rn50w2, simclr_rn50, dino_vitB8 from other experiments
+# also add simclr_rn50, rotnet_rn50_in1k
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

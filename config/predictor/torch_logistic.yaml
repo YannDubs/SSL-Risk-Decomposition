@@ -2,8 +2,6 @@ defaults:
   - pytorch
 
 # using param like https://github.com/facebookresearch/barlowtwins/blob/main/evaluate.py
-
-
 name: torch_logistic
 metrics: [accuracy_score,log_loss]
 arch_kwargs:

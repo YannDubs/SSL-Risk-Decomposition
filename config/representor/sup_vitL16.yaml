@@ -4,4 +4,4 @@ defaults:
 name: sup_vitL16
 kwargs:
   mode: vit
-  model: google/vit-large-patch16-224
+  model: vit_large_patch16_224

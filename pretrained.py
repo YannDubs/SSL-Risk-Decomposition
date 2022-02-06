@@ -9,7 +9,7 @@ from utils.helpers import check_import, replace_module_prefix, rm_module
 from torchvision import transforms
 import torchvision
 import pytorch_lightning as pl
-from torchvision.models.resnet import resnet50, wide_resnet50_2, resnet101
+import torchvision.models as tmodels
 
 from torch.hub import load_state_dict_from_url
 
@@ -19,12 +19,15 @@ except ImportError:
     pass
 
 try:
-    import transformers
+    import vissl
 except ImportError:
     pass
 
+
 try:
-    import vissl
+    import timm
+    from timm.data import resolve_data_config
+    from timm.data.transforms_factory import create_transform
 except ImportError:
     pass
 
@@ -50,6 +53,13 @@ VISSL_PREPROCESSOR = transforms.Compose([
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ])
 
+VIT_PREPROCESSOR = transforms.Compose([
+        transforms.Resize(248, interpolation=3),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize([0.5000, 0.5000, 0.5000], [0.5000, 0.5000, 0.5000])
+    ])
+
 TORCHVISION_PREPROCESSOR = VISSL_PREPROCESSOR
 
 SWAV_MODELS = {"resnet50": "https://dl.fbaipublicfiles.com/deepcluster/swav_800ep_pretrain.pth.tar",
@@ -63,7 +73,17 @@ VISSL_MODELS = {"barlow_rn50": "https://dl.fbaipublicfiles.com/vissl/model_zoo/b
                 "rotnet_rn50_in22k": "https://dl.fbaipublicfiles.com/vissl/model_zoo/converted_vissl_rn50_rotnet_in22k_ep105.torch",
                 "simclr_rn50": "https://dl.fbaipublicfiles.com/vissl/model_zoo/simclr_rn50_1000ep_simclr_8node_resnet_16_07_20.afe428c7/model_final_checkpoint_phase999.torch",
                 "simclr_rn50w2": "https://dl.fbaipublicfiles.com/vissl/model_zoo/simclr_rn50w2_1000ep_simclr_8node_resnet_16_07_20.e1e3bbf0/model_final_checkpoint_phase999.torch",
-                "simclr_rn101": "https://dl.fbaipublicfiles.com/vissl/model_zoo/simclr_rn101_1000ep_simclr_8node_resnet_16_07_20.35063cea/model_final_checkpoint_phase999.torch"}
+                "simclr_rn101": "https://dl.fbaipublicfiles.com/vissl/model_zoo/simclr_rn101_1000ep_simclr_8node_resnet_16_07_20.35063cea/model_final_checkpoint_phase999.torch",
+                "jigsaw_rn50": "https://dl.fbaipublicfiles.com/vissl/model_zoo/converted_vissl_rn50_jigsaw_in1k_goyal19.torch",
+                "colorization_rn50": "https://dl.fbaipublicfiles.com/vissl/model_zoo/converted_vissl_rn50_colorization_in1k_goyal19.torch",
+                "clusterfit_rn50": "https://dl.fbaipublicfiles.com/vissl/model_zoo/converted_vissl_rn50_rotnet_16kclusters_in1k_ep105.torch",
+                "npid_rn50": "https://dl.fbaipublicfiles.com/vissl/model_zoo/npid_1node_200ep_4kneg_npid_8gpu_resnet_23_07_20.9eb36512/model_final_checkpoint_phase199.torch"
+                }
+
+# weights from https://github.com/rwightman/pytorch-image-models/blob/7c67d6aca992f039eece0af5f7c29a43d48c00e4/timm/models/vision_transformer.py
+SUP_DINO_MODELS = {"vitb8": 'https://storage.googleapis.com/vit_models/augreg/B_8-i21k-300ep-lr_0.001-aug_medium1-wd_0.1-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.01-res_224.npz',
+               "vitb16": "https://storage.googleapis.com/vit_models/augreg/B_16-i21k-300ep-lr_0.001-aug_medium1-wd_0.1-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.01-res_224.npz",
+                "vits16": "https://storage.googleapis.com/vit_models/augreg/S_16-i21k-300ep-lr_0.001-aug_light1-wd_0.03-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.03-res_224.npz"}
 
 
 def available_models(mode: Optional[list[str]]=None) -> dict[str, list[str]]:
@@ -81,23 +101,25 @@ def available_models(mode: Optional[list[str]]=None) -> dict[str, list[str]]:
     if  mode is None or "swav" in mode :
         available["swav"].update(SWAV_MODELS)
 
-    if  mode is None or "swav" in mode :
+    if  mode is None or "vissl" in mode :
         # more models available at `https://github.com/facebookresearch/swav` e.g. different epochs and batch-size
         available["vissl"] = VISSL_MODELS
 
     if  mode is None or "beit" in mode :
         # see https://huggingface.co/models
         available["beit"] = "check https://huggingface.co/models?sort=downloads&search=beit"
+        # TODO add instead with timm
 
     if  mode is None or "torchvision" in mode :
         available["torchvision"] = torchvision.models.__dict__.keys()
 
-    if  mode is None or "vit" in mode :
-        available["vit"] = "check https://huggingface.co/models?sort=downloads&search=vit"
+    if  mode is None or "timm" in mode :
+        available["timm"] = timm.list_models(pretrained=True)
+        # there are a lot you can search using wild cards like  `timm.list_models('vit_*', pretrained=True)`
 
     return available
 
-def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
+def load_representor(name : str, mode: str, model: str) -> Union[Callable, Callable]:
     """Return the encoder and the preprocessor."""
 
 
@@ -107,7 +129,21 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
         model, preprocess = clip.load(model, device, jit=False)  # might have to try False
         encoder = model.visual.float()  # only keep the image model
 
+        if hasattr(encoder, "proj"):
+            # not clear form the code, but when doing linear probing they remove the projection
+            # https://github.com/openai/CLIP/blob/3b473b0e682c091a9e53623eebc1ca1657385717/clip/model.py#L233
+            encoder.proj = None
+        else:
+            # as discussed here: https://github.com/openai/CLIP/issues/42 the projection head is proj of attn
+            # set it manually to identity while ensuring that still linear layer:
+            N = encoder.attnpool.c_proj.in_features
+            identity = torch.nn.Linear(N, N)
+            nn.init.zeros_(identity.bias)
+            identity.weight.data.copy_(torch.eye(N))
+            encoder.attnpool.c_proj = identity
+
     elif mode == "dino":
+        # sup_dino means that you want vit supervised weights but evaluate like dino by predicting from multiple layers
         arch = model.split("_")[1]
         with rm_module("utils"):
             # dirty but if not there's collision of modules
@@ -119,49 +155,46 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
         preprocess = DINO_PREPROCESSOR
 
     elif mode == "swav":
-        encoder = resnet50(pretrained=False, num_classes=0)
+        encoder = tmodels.resnet.resnet50(pretrained=False, num_classes=0)
         state_dict = load_state_dict_from_url(
             url=SWAV_MODELS[model],
             map_location="cpu",
-            file_name=model
+            file_name=name
         )
         state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
         encoder.fc = torch.nn.Identity()
         encoder.load_state_dict(state_dict, strict=False)
         preprocess = SWAV_PREPROCESSOR
 
-    elif mode == "beit":
-        check_import("transformers", "mode=beit in load_representor")
-        extractor = transformers.BeitFeatureExtractor.from_pretrained(f"{model}")
-        preprocess = lambda img : extractor(img, return_tensors="pt")['pixel_values'][0]
-        model = transformers.BeitModel.from_pretrained(f"{model}")
-        encoder = HuggingSelector(model, "pooler_output")
+    elif mode == "timm":
+        check_import("timm", "mode=timm in load_representor")
+        encoder = timm.create_model(model, pretrained=True)
+        config = resolve_data_config({}, model=encoder)
+        preprocess = create_transform(**config)
 
-    elif mode == "vit":
-        check_import("transformers", "mode=vit in load_representor")
-        extractor = transformers.ViTFeatureExtractor.from_pretrained(f"{model}")
-        preprocess = lambda img : extractor(img, return_tensors="pt")['pixel_values'][0]
-        model = transformers.ViTForImageClassification.from_pretrained(f"{model}")
-        encoder = HuggingSelector(model, "logits")
+        # add VITDinoWrapper(encoder, arch) type
 
     elif mode == "vissl":
         arch = model.split("_")[1]
         check_import("vissl", "mode=vissl in load_representor")
-        state_dict = load_state_dict_from_url(url=VISSL_MODELS[model], map_location="cpu", file_name=model)
+        state_dict = load_state_dict_from_url(url=VISSL_MODELS[model], map_location="cpu", file_name=name)
         if "classy_state_dict" in state_dict.keys():
             state_dict = state_dict["classy_state_dict"]["base_model"]["model"]["trunk"]
         elif "model_state_dict" in state_dict.keys():
             state_dict = state_dict["model_state_dict"]
 
-        if arch in "rn50":
+        is_vissl = (arch in ["rn50w2"]) or (model in ["colorization_rn50"])
+        is_torchvision = not is_vissl
+
+        if is_torchvision:
             state_dict = replace_module_prefix(state_dict, "_feature_blocks.")
-            encoder = resnet50(pretrained=False, num_classes=0)
+            architectures = dict(rn50=tmodels.resnet.resnet50,
+                                 rn101=tmodels.resnet.resnet101)
+            architecture = architectures[arch]
+            encoder = architecture(pretrained=False, num_classes=0)
             encoder.fc = torch.nn.Identity()
-        elif arch == "rn101":
-            state_dict = replace_module_prefix(state_dict, "_feature_blocks.")
-            encoder = resnet101(pretrained=False, num_classes=0)
-            encoder.fc = torch.nn.Identity()
-        elif arch == "rn50w2":
+
+        else:
             from vissl.config import AttrDict
             from vissl.models.trunks.resnext import ResNeXt
             # annoying but VISSL doesn't have defaults in the code (only hydra)
@@ -172,11 +205,16 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
                                                           "GROUPNORM_GROUPS": 32, "STANDARDIZE_CONVOLUTIONS": False,
                                                           "GROUPS": 1, "ZERO_INIT_RESIDUAL": False,
                                                           "WIDTH_PER_GROUP": 64, "LAYER4_STRIDE": 2}}})
-            dflt_rn_cfg.TRUNK.RESNETS.WIDTH_MULTIPLIER = 2
+            if arch == "rn50w2":
+                dflt_rn_cfg.TRUNK.RESNETS.WIDTH_MULTIPLIER = 2
+            elif model == "colorization_rn50":
+                dflt_rn_cfg.INPUT_TYPE = "lab"
+                dflt_rn_cfg.TRUNK.RESNETS.LAYER4_STRIDE = 1
+            else:
+                raise ValueError(f"Unkown model={model}")
+
             encoder = ResNeXt(dflt_rn_cfg, "resnet")
             encoder.feat_eval_mapping = None
-        else:
-            raise ValueError(f"Unknown arch={arch}.")
 
         encoder.load_state_dict(state_dict, strict=False)
         preprocess = VISSL_PREPROCESSOR
@@ -191,16 +229,6 @@ def load_representor(mode: str, model: str) -> Union[Callable, Callable]:
     representor = LightningWrapper(encoder)
     return representor, preprocess
 
-class HuggingSelector(nn.Module):
-    """Wrapper around hugging face model to select correct output while enable `.cuda()` etc."""
-    def __init__(self, model : nn.Module, select : str):
-        super().__init__()
-        self.model = model
-        self.select = select
-
-    def forward(self, x : torch.Tensor):
-        #, output_hidden_states = True
-        return self.model(x)[self.select]
 
 class VITDinoWrapper(nn.Module):
     def __init__(self, encoder, arch):
@@ -247,3 +275,32 @@ class LightningWrapper(pl.LightningModule):
     def predict_step(self, batch, batch_idx):
         x, y = batch
         return self(x).cpu(), y.cpu()
+
+class HuggingVITDinoWrapper(nn.Module):
+    """Same as `VITDinoWrapper` but using model from """
+    def __init__(self, encoder, arch):
+        super().__init__()
+        self.encoder = encoder
+        self.arch = arch
+
+    def forward(self, x: torch.Tensor):
+        """
+        Follows https://github.com/facebookresearch/dino/blob/cb711401860da580817918b9167ed73e3eef3dcf/eval_linear.py#L196
+        VIT dino should use only the CLS of the last layer for large, but concat last 4 for small.
+        """
+        if "vitb" in self.arch.lower():
+            n_last_blocks = 1
+            avgpool_patchtokens = True
+        elif "vits" in self.arch.lower():
+            n_last_blocks = 4
+            avgpool_patchtokens = False
+        else:
+            raise ValueError(f"Unknown arch={self.arch}")
+
+        intermediate_output = self.encoder.get_intermediate_layers(x, n_last_blocks)
+        out = torch.cat([x[:, 0] for x in intermediate_output], dim=-1)
+        if avgpool_patchtokens:
+            out = torch.cat((out.unsqueeze(-1), torch.mean(intermediate_output[-1][:, 1:], dim=1).unsqueeze(-1)), dim=-1)
+            out = out.reshape(out.shape[0], -1)
+
+        return out

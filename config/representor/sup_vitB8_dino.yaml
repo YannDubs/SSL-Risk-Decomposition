@@ -1,0 +1,7 @@
+defaults:
+  - base_supervised
+
+name: sup_vitB8_dino
+kwargs:
+  mode: sup_dino
+  model: dino_vitb8

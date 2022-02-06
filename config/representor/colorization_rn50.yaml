@@ -1,0 +1,4 @@
+name: colorization_rn50
+kwargs:
+  mode: vissl
+  model: colorization_rn50

@@ -14,14 +14,20 @@ timeout=2880
 
 # run on large server
 kwargs_multi="
+representor=sup_vitB8_dino
+"
+
+# run on large server
+kwargs_multi="
 representor=sup_rn50w2,sup_vitL16
 "
+
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
   do
 
-    python approx_error.py +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m &
+    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m &
 
     sleep 10
 

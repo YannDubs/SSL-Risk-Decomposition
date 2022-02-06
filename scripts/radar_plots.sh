@@ -14,7 +14,7 @@ timeout=7200
 
 # run on large server
 kwargs_multi="
-representor=beit_vitL16,dino_vitB8,clip_vitL14,simclr_rn50w2
+representor=beit_vitL16
 "
 
 kwargs_multi="

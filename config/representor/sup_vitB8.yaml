@@ -1,7 +1,0 @@
-defaults:
-  - base_supervised
-
-name: sup_vitB8
-kwargs:
-  mode: vit
-  model: google/vit-base-patch16-224 # should use the new weights in timm
