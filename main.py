@@ -150,14 +150,14 @@ def run_component_(component : str, datamodule : pl.LightningDataModule, cfg : C
         fit_(trainer, predictor, datamodule, cfg_comp)
 
         logger.info(f"Evaluate predictor for {component} ...")
-        results[component] = evaluate(trainer, datamodule, cfg_comp, component)
+        results[component] = evaluate(trainer, datamodule, cfg_comp, component, model=predictor)
 
         # evaluate component with same train
         for other_comp in components_same_train.get(component, []):
             logger.info(f"Evaluate predictor for {other_comp} without retraining ...")
             cfg_comp, datamodule = set_component_(datamodule, cfg, other_comp)
-            trainer = set_component_trainer_(trainer, cfg_comp, other_comp)
-            results[other_comp] = evaluate(trainer, datamodule, cfg_comp, other_comp)
+            trainer = set_component_trainer_(trainer, cfg_comp, other_comp, model=predictor)
+            results[other_comp] = evaluate(trainer, datamodule, cfg_comp, other_comp, model=predictor)
 
     return results
 
@@ -187,7 +187,7 @@ def set_component_(datamodule : pl.LightningDataModule, cfg: Container, componen
 
     return omegaconf2namespace(cfg), datamodule
 
-def set_component_trainer_(trainer: pl.Trainer, cfg: NamespaceMap, component: str):
+def set_component_trainer_(trainer: pl.Trainer, cfg: NamespaceMap, component: str, model: torch.nn.Module):
     hparams = copy.deepcopy(cfg)
     hparams.component = component
 
@@ -195,6 +195,7 @@ def set_component_trainer_(trainer: pl.Trainer, cfg: NamespaceMap, component: st
         trainer.hparams = hparams
     else:
         trainer.lightning_module.hparams.update(hparams)
+        model.hparams.update(hparams)
 
     return trainer
 
