@@ -276,6 +276,7 @@ class ImgDataModule(LightningDataModule):
     def reset(self, is_train_on = "train", is_test_on= "test"):
         self.is_train_on = is_train_on
         self.is_test_on = is_test_on
+        logger.info(f"Set model to use is_test_on={self.is_test_on} and is_train_on={self.is_train_on}.")
 
     def setup(self, stage: Optional[str] = None) -> None:
 
@@ -290,6 +291,7 @@ class ImgDataModule(LightningDataModule):
             logger.info("Representing the train set.")
             if self.train_dataset is None:
                 if self.is_debug:
+                    logger.info("Using test for train during debug.")
                     self.train_dataset = self.test_dataset
                 else:
                     train_dataset = self.Dataset( self.data_dir, curr_split="train", download=True, **self.dataset_kwargs )
@@ -330,7 +332,7 @@ class ImgDataModule(LightningDataModule):
             else:
                 size = ast.literal_eval(sizestr)
 
-            dataset = BalancedSubset(dataset, stratify=Y, size=self.size, seed=self.seed, is_complement=is_complement)
+            dataset = BalancedSubset(dataset, stratify=Y, size=size, seed=self.seed, is_complement=is_complement)
 
         return dataset
 

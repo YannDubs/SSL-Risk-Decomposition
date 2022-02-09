@@ -3,5 +3,5 @@ defaults:
 
 name: sup_vitL16
 kwargs:
-  mode: vit
+  mode: timm
   model: vit_large_patch16_224

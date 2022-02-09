@@ -12,12 +12,14 @@ experiment=$experiment
 timeout=2880
 "
 
-kwargs_multi="
-representor=sup_vitS16_dino,sup_vitB16_dino
-"
 
 kwargs_multi="
 representor=sup_rn50,sup_rn101,sup_vitB16
+"
+
+
+kwargs_multi="
+representor=sup_vitS16_dino,sup_vitB16_dino
 "
 
 if [ "$is_plot_only" = false ] ; then

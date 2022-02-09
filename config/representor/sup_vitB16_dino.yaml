@@ -4,4 +4,4 @@ defaults:
 name: sup_vitB16_dino
 kwargs:
   mode: sup_dino
-  model: dino_vitb16
+  model: vit_base_patch16_224

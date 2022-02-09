@@ -14,11 +14,11 @@ timeout=7200
 
 # run on large server
 kwargs_multi="
-representor=beit_vitL16
+representor=dino_vitB8,clip_vitL14,simclr_rn50w2,beit_vitL16
 "
 
 kwargs_multi="
-representor=dino_vitB8,clip_vitL14,simclr_rn50w2
+representor=clip_vitL14
 "
 
 if [ "$is_plot_only" = false ] ; then

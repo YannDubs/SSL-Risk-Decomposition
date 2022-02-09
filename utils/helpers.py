@@ -38,6 +38,11 @@ try:
 except ImportError:
     pass
 
+try:
+    import cv2
+except ImportError:
+    pass
+
 logger = logging.getLogger(__name__)
 
 def mean(array):
@@ -164,7 +169,7 @@ class SklearnTrainer:
         y_pred_proba = model.predict_proba(data.X)
 
         results = {}
-        name = f"test/{self.hparams.component}"
+        name = f"test/{self.hparams.data.name}/{self.hparams.component}"
         results[f"{name}/acc"] = accuracy_score(y, y_pred)
         results[f"{name}/err"] = 1 - results[f"{name}/acc"]
         results[f"{name}/loss"] = log_loss(y, y_pred_proba)
@@ -387,3 +392,45 @@ def to_numpy(X) -> np.array:
 #     finally:
 #         sys.path.remove(path)
 
+class ImgPil2LabTensor(torch.nn.Module):
+    """
+    Convert a PIL image to LAB tensor of shape C x H x W
+    This transform was proposed in Colorization - https://arxiv.org/abs/1603.08511
+    The input image is PIL Image. We first convert it to tensor
+    HWC which has channel order RGB. We then convert the RGB to BGR
+    and use OpenCV to convert the image to LAB. The LAB image is
+    8-bit image in range > L [0, 255], A [0, 255], B [0, 255]. We
+    rescale it to: L [0, 100], A [-128, 127], B [-128, 127]
+    The output is image torch tensor.
+    """
+
+    def __init__(self, indices = []):
+        super().__init__()
+        check_import("cv2", "ImgPil2LabTensor")
+        self.indices = indices
+
+    def forward(self, image):
+        img_tensor = np.array(image)
+        # PIL image tensor is RGB. Convert to BGR
+        img_bgr = img_tensor[:, :, ::-1]
+        img_lab = self._convertbgr2lab(img_bgr.astype(np.uint8))
+        # convert HWC -> CHW. The image is LAB.
+        img_lab = np.transpose(img_lab, (2, 0, 1))
+        # torch tensor output
+        img_lab_tensor = torch.from_numpy(img_lab).float()
+
+        return img_lab_tensor
+
+    def _convertbgr2lab(self, img):
+
+        # img is [0, 255] , HWC, BGR format, uint8 type
+        assert len(img.shape) == 3, "Image should have dim H x W x 3"
+        assert img.shape[2] == 3, "Image should have dim H x W x 3"
+        assert img.dtype == np.uint8, "Image should be uint8 type"
+        img_lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+        # 8-bit image range -> L [0, 255], A [0, 255], B [0, 255]. Rescale it to:
+        # L [0, 100], A [-128, 127], B [-128, 127]
+        img_lab = img_lab.astype(np.float32)
+        img_lab[:, :, 0] = (img_lab[:, :, 0] * (100.0 / 255.0)) - 50.0
+        img_lab[:, :, 1:] = img_lab[:, :, 1:] - 128.0
+        return img_lab

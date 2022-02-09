@@ -16,8 +16,9 @@ trainer:
 checkpoint:
   kwargs:
     dirpath: ${paths.checkpoint}
-    monitor: train/${component}/loss
+    monitor: null #train/${component}/loss
     mode: "min"
+    every_n_epochs: 1 # don't monitor loss just save all
     verbose: true
     save_last: True
     save_top_k: 1

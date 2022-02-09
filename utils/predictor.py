@@ -5,7 +5,6 @@ from torch.nn import functional as F
 import pytorch_lightning as pl
 from typing import Any, Optional, Union
 from torchmetrics.functional import accuracy
-from torch.optim.lr_scheduler import LinearLR, ExponentialLR
 
 
 from utils.architectures import get_Architecture
@@ -63,9 +62,10 @@ class Predictor(pl.LightningModule):
     ) -> Optional[torch.Tensor]:
         loss, logs = self.step(batch)
 
+        name = f"{mode}/{self.hparams.data.name}/{self.hparams.component}"
         self.log_dict(
             {
-                f"{mode}/{self.hparams.component}/{k}": v
+                f"{name}/{k}": v
                 for k, v in logs.items()
             },
         )

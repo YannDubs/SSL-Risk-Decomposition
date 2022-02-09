@@ -12,16 +12,17 @@ experiment=$experiment
 timeout=2880
 "
 
+
+
+# run on large server
+kwargs_multi="
+representor=sup_rn50w2,sup_vitL16,sup_vitL16_beit
+"
+
 # run on large server
 kwargs_multi="
 representor=sup_vitB8_dino
 "
-
-# run on large server
-kwargs_multi="
-representor=sup_rn50w2,sup_vitL16
-"
-
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
