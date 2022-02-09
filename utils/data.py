@@ -276,7 +276,7 @@ class ImgDataModule(LightningDataModule):
     def reset(self, is_train_on = "train", is_test_on= "test"):
         self.is_train_on = is_train_on
         self.is_test_on = is_test_on
-        logger.info(f"Set model to use is_test_on={self.is_test_on} and is_train_on={self.is_train_on}.")
+        logger.info(f"Set model to use is_train_on={self.is_train_on} and is_test_on={self.is_test_on}.")
 
     def setup(self, stage: Optional[str] = None) -> None:
 
@@ -288,12 +288,12 @@ class ImgDataModule(LightningDataModule):
             self.test_dataset = SklearnDataset(*self.represent(test_dataset, "test"))
 
         if stage == "fit" or stage is None:
-            logger.info("Representing the train set.")
             if self.train_dataset is None:
                 if self.is_debug:
                     logger.info("Using test for train during debug.")
                     self.train_dataset = self.test_dataset
                 else:
+                    logger.info("Representing the train set.")
                     train_dataset = self.Dataset( self.data_dir, curr_split="train", download=True, **self.dataset_kwargs )
                     self.train_dataset = SklearnDataset(*self.represent(train_dataset, "train"))
 

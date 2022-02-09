@@ -37,7 +37,6 @@ try:
 except ImportError:
     pass
 
-
 DINO_PREPROCESSOR = transforms.Compose([
         transforms.Resize(256, interpolation=3),
         transforms.CenterCrop(224),
@@ -59,11 +58,7 @@ VISSL_PREPROCESSOR = transforms.Compose([
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ])
 
-COLORIZATION_PREPROCESSOR = transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-        ImgPil2LabTensor()
-    ])
+
 
 VIT_PREPROCESSOR = transforms.Compose([
         transforms.Resize(248, interpolation=3),
@@ -222,7 +217,12 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
             elif model == "colorization_rn50":
                 dflt_rn_cfg.INPUT_TYPE = "lab"
                 dflt_rn_cfg.TRUNK.RESNETS.LAYER4_STRIDE = 1
-                preprocess = COLORIZATION_PREPROCESSOR
+                # initialize here in case you don't have cv2 needed for `ImgPil2LabTensor`
+                preprocess = transforms.Compose([
+                                transforms.Resize(256),
+                                transforms.CenterCrop(224),
+                                ImgPil2LabTensor()
+                            ])
             else:
                 raise ValueError(f"Unknown model={model}")
 

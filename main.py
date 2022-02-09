@@ -190,10 +190,11 @@ def set_component_trainer_(trainer: pl.Trainer, cfg: NamespaceMap, component: st
     hparams = copy.deepcopy(cfg)
     hparams.component = component
 
+    breakpoint()
     if cfg.predictor.is_sklearn:
         trainer.hparams = hparams
     else:
-        trainer.lightning_module.hparams = hparams
+        trainer.lightning_module.save_hyperparameters(hparams)
 
     return trainer
 
