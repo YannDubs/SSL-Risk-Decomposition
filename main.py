@@ -19,6 +19,7 @@ from typing import Union
 
 import pandas as pd
 import hydra
+import torch
 from hydra.utils import instantiate
 import pytorch_lightning as pl
 import omegaconf
@@ -190,11 +191,10 @@ def set_component_trainer_(trainer: pl.Trainer, cfg: NamespaceMap, component: st
     hparams = copy.deepcopy(cfg)
     hparams.component = component
 
-    breakpoint()
     if cfg.predictor.is_sklearn:
         trainer.hparams = hparams
     else:
-        trainer.lightning_module.save_hyperparameters(hparams)
+        trainer.lightning_module.hparams.update(hparams)
 
     return trainer
 
@@ -219,14 +219,15 @@ def evaluate(
     trainer: pl.Trainer,
     datamodule : pl.LightningDataModule,
     cfg: NamespaceMap,
-    component: str
+    component: str,
+    model : torch.nn.Module
 ) -> pd.Series:
     """Evaluate the trainer by logging all the metrics from the test set from the best model."""
     cfg = copy.deepcopy(cfg)
     cfg.component = component
 
     eval_dataloader = datamodule.test_dataloader()
-    results = trainer.test(dataloaders=eval_dataloader, ckpt_path=None)[0]
+    results = trainer.test(dataloaders=eval_dataloader, ckpt_path=None, model=model)[0]
     log_dict(trainer, results, is_param=False)
     # only keep the metric
     results = { k.split("/")[-1]: v for k, v in results.items() }
@@ -254,7 +255,7 @@ def save_results(cfg : NamespaceMap, results : Union[pd.Series,pd.DataFrame], co
     filename = RESULTS_FILE.format(component=cfg.component)
     path = results_path / filename
     results.to_csv(path, header=True, index=True)
-    logger.info(f"Logging results to {path}.")
+    logger.info(f"Logging {component} results to {path}.")
 
 def run_robustness_decomposition(rob_dataset : str, old_datamodule: pl.LightningDataModule, cfg: Container,
                                  representor : Callable, preprocess: Callable):

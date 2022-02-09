@@ -157,13 +157,16 @@ class SklearnTrainer:
         dump(self.model, ckpt_path)
 
     def test(
-        self, dataloaders: DataLoader, ckpt_path: Union[str, Path]
+        self, dataloaders: DataLoader, ckpt_path: Union[str, Path], model: torch.nn.Module=None
     ) -> list[dict[str, float]]:
         data = dataloaders.dataset
-        if ckpt_path is not None and ckpt_path != "best":
-            self.model = load(ckpt_path)
 
-        model = self.model
+        if model is not  None:
+            model = self.model
+
+        if ckpt_path is not None and ckpt_path != "best":
+            model = load(ckpt_path)
+
         y = data.Y
         y_pred = model.predict(data.X)
         y_pred_proba = model.predict_proba(data.X)
