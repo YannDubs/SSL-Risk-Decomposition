@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-experiment="epochs"
-notes="**Goal**: compare swav trained for a different number of epochs."
+experiment="classical"
+notes="**Goal**: compare classical (pre simclr) methods."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
+
 
 # define all the arguments modified or added to `conf`. If they are added use `+`
 kwargs="
@@ -14,10 +15,13 @@ timeout=$time
 
 # every arguments that you are sweeping over
 kwargs_multi="
-representor=swav_rn50_ep100,swav_rn50_ep200,swav_rn50_ep400
+representor=jigsaw_rn50,colorization_rn50,npid_rn50,clusterfit_rn50
 "
-# also add swav_rn50 from other
+# also add simclr_rn50, rotnet_rn50_in1k
 
+kwargs_multi="
+representor=colorization_rn50
+"
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

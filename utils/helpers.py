@@ -23,6 +23,8 @@ from sklearn.metrics import log_loss, accuracy_score
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import LearningRateMonitor
 import numpy as np
+from torchvision.transforms import functional as F_trnsf
+from torchvision.transforms import InterpolationMode
 
 from argparse import Namespace
 from omegaconf import Container, OmegaConf
@@ -33,6 +35,11 @@ from collections.abc import MutableMapping
 
 try:
     import wandb
+except ImportError:
+    pass
+
+try:
+    import cv2
 except ImportError:
     pass
 
@@ -150,19 +157,22 @@ class SklearnTrainer:
         dump(self.model, ckpt_path)
 
     def test(
-        self, dataloaders: DataLoader, ckpt_path: Union[str, Path]
+        self, dataloaders: DataLoader, ckpt_path: Union[str, Path], model: torch.nn.Module=None
     ) -> list[dict[str, float]]:
         data = dataloaders.dataset
-        if ckpt_path is not None and ckpt_path != "best":
-            self.model = load(ckpt_path)
 
-        model = self.model
+        if model is not  None:
+            model = self.model
+
+        if ckpt_path is not None and ckpt_path != "best":
+            model = load(ckpt_path)
+
         y = data.Y
         y_pred = model.predict(data.X)
         y_pred_proba = model.predict_proba(data.X)
 
         results = {}
-        name = f"test/{self.hparams.component}"
+        name = f"test/{self.hparams.data.name}/{self.hparams.component}"
         results[f"{name}/acc"] = accuracy_score(y, y_pred)
         results[f"{name}/err"] = 1 - results[f"{name}/acc"]
         results[f"{name}/loss"] = log_loss(y, y_pred_proba)
@@ -180,17 +190,17 @@ class SklearnTrainer:
 
 def get_torch_trainer(cfg: NamespaceMap) -> pl.Trainer:
     """Instantiate pytorch lightning trainer."""
-    if cfg.callbacks.is_log_wandb:
+    if cfg.is_log_wandb:
         check_import("wandb", "WandbLogger")
 
         # if wandb.run is not None:
         #     wandb.run.finish()  # finish previous run if still on
 
         try:
-            pl_logger = WandbLogger(**cfg.callbacks.wandb_kwargs)
+            pl_logger = WandbLogger(**cfg.wandb_kwargs)
         except Exception:
             cfg.logger.kwargs.offline = True
-            pl_logger = WandbLogger(**cfg.callbacks.wandb_kwargs)
+            pl_logger = WandbLogger(**cfg.wandb_kwargs)
     else:
         pl_logger = False
 
@@ -245,6 +255,17 @@ def variance_scaling_(tensor, scale=1.0, mode='fan_in', distribution='truncated_
         tensor.uniform_(-bound, bound)
     else:
         raise ValueError(f"invalid distribution {distribution}")
+
+def npimg_resize(np_imgs, size):
+    """Batchwise resizing numpy images."""
+    if np_imgs.ndim == 3:
+        np_imgs = np_imgs[:, :, :, None]
+
+    torch_imgs = torch.from_numpy(np_imgs.transpose((0, 3, 1, 2))).contiguous()
+    torch_imgs = F_trnsf.resize(torch_imgs, size=size, interpolation=InterpolationMode.BICUBIC)
+    np_imgs = to_numpy(torch_imgs).transpose((0, 2, 3, 1))
+    return np_imgs
+
 
 def init_std_modules(module: nn.Module, nonlinearity: str = "relu") -> bool:
     """Initialize standard layers and return whether was initialized."""
@@ -338,6 +359,31 @@ def replace_module_prefix(
     }
     return state_dict
 
+# modified from https://github.com/skorch-dev/skorch/blob/92ae54b/skorch/utils.py#L106
+def to_numpy(X) -> np.array:
+    """Convert tensors,list,tuples,dataframes to numpy arrays."""
+    if isinstance(X, np.ndarray):
+        return X
+
+    # the sklearn way of determining pandas dataframe
+    if hasattr(X, "iloc"):
+        return X.values
+
+    if isinstance(X, (tuple, list, numbers.Number)):
+        return np.array(X)
+
+    if not isinstance(X, (torch.Tensor, PackedSequence)):
+        raise TypeError(f"Cannot convert {type(X)} to a numpy array.")
+
+    if X.is_cuda:
+        X = X.cpu()
+
+    if X.requires_grad:
+        X = X.detach()
+
+    return X.numpy()
+
+
 #
 # @contextlib.contextmanager
 # def add_sys_path(path: Union[str, os.PathLike]) -> Iterator[None]:
@@ -349,3 +395,45 @@ def replace_module_prefix(
 #     finally:
 #         sys.path.remove(path)
 
+class ImgPil2LabTensor(torch.nn.Module):
+    """
+    Convert a PIL image to LAB tensor of shape C x H x W
+    This transform was proposed in Colorization - https://arxiv.org/abs/1603.08511
+    The input image is PIL Image. We first convert it to tensor
+    HWC which has channel order RGB. We then convert the RGB to BGR
+    and use OpenCV to convert the image to LAB. The LAB image is
+    8-bit image in range > L [0, 255], A [0, 255], B [0, 255]. We
+    rescale it to: L [0, 100], A [-128, 127], B [-128, 127]
+    The output is image torch tensor.
+    """
+
+    def __init__(self, indices = []):
+        super().__init__()
+        check_import("cv2", "ImgPil2LabTensor")
+        self.indices = indices
+
+    def forward(self, image):
+        img_tensor = np.array(image)
+        # PIL image tensor is RGB. Convert to BGR
+        img_bgr = img_tensor[:, :, ::-1]
+        img_lab = self._convertbgr2lab(img_bgr.astype(np.uint8))
+        # convert HWC -> CHW. The image is LAB.
+        img_lab = np.transpose(img_lab, (2, 0, 1))
+        # torch tensor output
+        img_lab_tensor = torch.from_numpy(img_lab).float()
+
+        return img_lab_tensor
+
+    def _convertbgr2lab(self, img):
+
+        # img is [0, 255] , HWC, BGR format, uint8 type
+        assert len(img.shape) == 3, "Image should have dim H x W x 3"
+        assert img.shape[2] == 3, "Image should have dim H x W x 3"
+        assert img.dtype == np.uint8, "Image should be uint8 type"
+        img_lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+        # 8-bit image range -> L [0, 255], A [0, 255], B [0, 255]. Rescale it to:
+        # L [0, 100], A [-128, 127], B [-128, 127]
+        img_lab = img_lab.astype(np.float32)
+        img_lab[:, :, 0] = (img_lab[:, :, 0] * (100.0 / 255.0)) - 50.0
+        img_lab[:, :, 1:] = img_lab[:, :, 1:] - 128.0
+        return img_lab

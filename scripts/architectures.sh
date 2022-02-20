@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
+experiment="architectures"
+notes="**Goal**: compare swav trained for a different number of epochs."
+
 # parses special mode for running the script
 source `dirname $0`/utils.sh
 
-experiment=$prfx"architectures"
-notes="**Goal**: compare swav trained for a different number of epochs."
 
 # define all the arguments modified or added to `conf`. If they are added use `+`
 kwargs="
@@ -14,9 +15,9 @@ timeout=$time
 
 # every arguments that you are sweeping over
 kwargs_multi="
-representor=simclr_rn101,simclr_rn50,dino_vitS16,dino_vitB16
+representor=simclr_rn101,dino_vitS16,dino_vitB16
 "
-# also add simclr_rn50w2, dino_vitB8 from other experiments
+# also add simclr_rn50w2, simclr_rn50, dino_vitB8 from other experiments
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

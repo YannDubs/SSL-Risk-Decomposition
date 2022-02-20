@@ -1,0 +1,19 @@
+torch
+torchvision
+ftfy
+regex
+tqdm
+einops
+hydra-core
+matplotlib
+seaborn
+pandas
+wandb
+toma
+scipy
+torchmetrics
+scikit-learn
+hydra-submitit-launcher
+clip @ git+https://github.com/openai/CLIP.git@40f5484c1c74edd83cb9cf687c6ab92b28d8b656
+transformers
+vissl

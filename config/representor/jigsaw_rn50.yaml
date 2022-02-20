@@ -1,0 +1,4 @@
+name: jigsaw_rn50
+kwargs:
+  mode: vissl
+  model: jigsaw_rn50

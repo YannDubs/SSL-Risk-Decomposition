@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
+experiment="data"
+notes="**Goal**: compare rotnet trained on different size of data."
+
 # parses special mode for running the script
 source `dirname $0`/utils.sh
-
-experiment=$prfx"data"
-notes="**Goal**: compare rotnet trained on different size of data."
 
 # define all the arguments modified or added to `conf`. If they are added use `+`
 kwargs="

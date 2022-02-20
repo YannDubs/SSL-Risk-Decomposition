@@ -1,0 +1,13 @@
+experiment: ???
+agg_mode: [summarize_metrics] # plot_scatter_lines
+base_path: results/exp_${experiment}
+
+patterns:
+  all: "${base_path}/**/results_all.csv"
+
+kwargs:
+  base_dir: ${hydra:runtime.cwd}
+  save_dir: ${base_path}
+  prfx: ""
+  dpi: 300
+  pretty_renamer: {}

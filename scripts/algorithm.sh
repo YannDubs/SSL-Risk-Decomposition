@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+
+experiment="algorithm"
+notes="**Goal**: plot all the radar charts."
+
+
 # parses special mode for running the script
 source `dirname $0`/utils.sh
-
-experiment=$prfx"algorithm"
-notes="**Goal**: plot all the radar charts."
 
 # define all the arguments modified or added to `conf`. If they are added use `+`
 kwargs="
@@ -16,8 +18,6 @@ timeout=$time
 kwargs_multi="
 representor=simclr_rn50,swav_rn50,clip_rn50,dino_rn50,barlow_rn50,mocov2_rn50
 "
-# also add simclr_rn50 from other experiments
-
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-experiment="epochs"
-notes="**Goal**: compare swav trained for a different number of epochs."
+
+experiment="tmp"
+notes="**Goal**: plot all the radar charts."
+
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -14,10 +16,9 @@ timeout=$time
 
 # every arguments that you are sweeping over
 kwargs_multi="
-representor=swav_rn50_ep100,swav_rn50_ep200,swav_rn50_ep400
+representor=simclr_rn50
+trainer.max_epochs=15
 "
-# also add swav_rn50 from other
-
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

@@ -1,0 +1,8 @@
+defaults:
+  - base_supervised
+
+name: sup_rn50w2
+kwargs:
+  mode: torchvision
+  model: wide_resnet50_2
+   # this is not absolutely correct: resnet50w2 and wide resnet differ a little, but can't find supervised weights for 50w2

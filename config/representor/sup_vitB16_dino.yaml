@@ -1,0 +1,7 @@
+defaults:
+  - base_supervised
+
+name: sup_vitB16_dino
+kwargs:
+  mode: sup_dino
+  model: vit_base_patch16_224

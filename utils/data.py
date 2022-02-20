@@ -4,6 +4,7 @@ Most code is reused from: https://github.com/YannDubs/lossyless/tree/main/utils/
 """
 from __future__ import annotations
 
+import ast
 import os
 from os import path
 import math
@@ -13,17 +14,32 @@ import torch
 from pathlib import Path
 from typing import Any, Optional, Union
 from collections.abc import Callable
-from torch.utils.data import Dataset, Subset
+from torch.utils.data import Dataset, Subset, DataLoader, ConcatDataset
 from sklearn.model_selection import train_test_split
 import numpy as np
 import pytorch_lightning as pl
 from pytorch_lightning import LightningDataModule
 from pytorch_lightning.callbacks.progress.tqdm_progress import TQDMProgressBar
-from torch.utils.data import DataLoader
 from toma import toma
+from tqdm import tqdm
+from PIL import Image
 
-from torchvision.datasets import ImageNet
+from torchvision.datasets import ImageNet, ImageFolder
 
+from utils.helpers import check_import, npimg_resize, remove_rf
+
+try:
+    # useful to avoid "too many open files" error. See : https://github.com/tensorflow/datasets/issues/1441
+    import resource
+    low, high = resource.getrlimit(resource.RLIMIT_NOFILE)
+    resource.setrlimit(resource.RLIMIT_NOFILE, (high, high))
+
+    import tensorflow_datasets as tfds  # only used for tfds data
+except ImportError:
+    pass
+
+
+EXIST_DATA = "data_exist.txt"
 DIR = Path(__file__).parents[2].joinpath("data")
 logger = logging.getLogger(__name__)
 
@@ -34,6 +50,14 @@ def get_Datamodule(datamodule: str) -> type:
     datamodule = datamodule.lower()
     if datamodule == "imagenet":
         return ImagenetDataModule
+    elif datamodule == "imagenet_v2":
+        return ImageNetV2DataModule
+    elif datamodule == "imagenet_sketch":
+        return ImageNetSketchDataModule
+    elif datamodule == "imagenet_r":
+        return ImageNetRDataModule
+    elif datamodule == "imagenet_a":
+        return ImageNetADataModule
     else:
         raise ValueError(f"Unknown datamodule: {datamodule}")
 
@@ -68,6 +92,119 @@ class ImgDataset(abc.ABC):
         self.transform = transform
         self.seed = seed
 
+
+### Tensorflow Datasets Modules ###
+class TensorflowBaseDataset(ImgDataset, ImageFolder):
+    """Base class for tensorflow-datasets.
+
+    Parameters
+    ----------
+    root : str or Path
+        Path to directory for saving data.
+
+    split : str, optional
+        Split to use, depends on data but usually ["train","test"]
+
+    download : bool, optional
+        Whether to download the data if it is not existing.
+
+    kwargs :
+        Additional arguments to `ImgDataset` and `ImageFolder`.
+
+    class attributes
+    ----------------
+    min_size : int, optional
+        Resizing of the smaller size of an edge to a certain value. If `None` does not resize.
+        Recommended for images that will be always rescaled to a smaller version (for memory gains).
+        Only used when downloading.
+    """
+
+    min_size = 256
+
+    def __init__(
+        self, root, curr_split="train", download=True,  **kwargs,
+    ):
+        check_import("tensorflow_datasets", "TensorflowBaseDataset")
+
+        self.root = root
+        self.curr_split = curr_split
+
+        if download and not self.is_exist_data:
+            self.download()
+
+        super().__init__(
+            root=self.get_dir(self.curr_split),
+            curr_split=curr_split,
+            **kwargs,
+        )
+        self.root = root  # overwirte root for which is currently split folder
+
+    def get_dir(self, split=None):
+        """Return the main directory or the one for a split."""
+        main_dir = Path(self.root) / self.dataset_name
+        if split is None:
+            return main_dir
+        else:
+            return main_dir / split
+
+    @property
+    def is_exist_data(self):
+        """Whether the data is available."""
+        is_exist = True
+        for split in self.get_available_splits():
+            check_file = self.get_dir(split) / EXIST_DATA
+            is_exist &= check_file.is_file()
+        return is_exist
+
+    def download(self):
+        """Download the data."""
+        tfds_splits = self.get_available_splits()
+        tfds_datasets, metadata = tfds.load(
+            name=self.dataset_name,
+            batch_size=1,
+            data_dir=self.root,
+            as_supervised=True,
+            split=tfds_splits,
+            with_info=True,
+        )
+        np_datasets = tfds.as_numpy(tfds_datasets)
+        metadata.write_to_directory(self.get_dir())
+
+        for split, np_data in zip(tfds_splits, np_datasets):
+            split_path = self.get_dir(split)
+            remove_rf(split_path, not_exist_ok=True)
+            split_path.mkdir()
+            for i, (x, y) in enumerate(tqdm(np_data)):
+                if self.min_size is not None:
+                    x = npimg_resize(x, self.min_size)
+
+                x = x.squeeze()  # given as batch of 1 (and squeeze if single channel)
+                target = y.squeeze().item()
+
+                label_name = metadata.features["label"].int2str(target)
+                label_name = label_name.replace(" ", "_")
+                label_name = label_name.replace("/", "")
+
+                label_dir = split_path / label_name
+                label_dir.mkdir(exist_ok=True)
+
+                img_file = label_dir / f"{i}.jpeg"
+                Image.fromarray(x).save(img_file)
+
+        for split in self.get_available_splits():
+            check_file = self.get_dir(split) / EXIST_DATA
+            check_file.touch()
+
+        # remove all downloading files
+        remove_rf(Path(metadata.data_dir))
+
+    @classmethod
+    @property
+    def dataset_name(cls) -> str:
+        """Name of datasets to load, this should be the same as found at `www.tensorflow.org/datasets/catalog/`."""
+        raise NotImplementedError()
+
+
 ### Base Datamodule ###
 # cannot use abc because inheriting from lightning :(
 class ImgDataModule(LightningDataModule):
@@ -92,6 +229,12 @@ class ImgDataModule(LightningDataModule):
     seed : int, optional
         Pseudo random seed.
 
+    is_debug : bool, optional
+        Whether debugging, if so uses test set for train to be quicker.
+
+    train_dataset : Dataset, optional
+        Training dataset. Useful for robustness benchmarks that do not have a training set.
+
     dataset_kwargs : dict, optional
         Additional arguments for the dataset.
     """
@@ -105,6 +248,8 @@ class ImgDataModule(LightningDataModule):
         batch_size: int = 128,
         is_save_features: bool = True,
         seed: int = 123,
+        is_debug: int=False,
+        train_dataset: Optional[Dataset] = None,
         dataset_kwargs: dict = {}
     ) -> None:
         super().__init__()
@@ -117,6 +262,8 @@ class ImgDataModule(LightningDataModule):
         self.dataset_kwargs = dataset_kwargs
         self.representor = representor.eval()
         self.representor_name = representor_name
+        self.is_debug = is_debug
+        self.train_dataset = train_dataset
         logger.info(f"Representing data with {representor_name}")
         self.reset()
         self.setup()
@@ -124,11 +271,12 @@ class ImgDataModule(LightningDataModule):
         self.z_dim = self.train_dataset.X.shape[1]
         self.n_labels = len(np.unique(self.train_dataset.Y))
 
-    def reset(self, subset_train_size=None, is_train_on_test = False, is_test_on_train=False, is_test_nonsubset_train=False):
-        self.subset_train_size = subset_train_size
-        self.is_train_on_test = is_train_on_test
-        self.is_test_on_train = is_test_on_train
-        self.is_test_nonsubset_train = is_test_nonsubset_train
+        logger.info(f"z_dim={self.z_dim}")
+
+    def reset(self, is_train_on = "train", is_test_on= "test"):
+        self.is_train_on = is_train_on
+        self.is_test_on = is_test_on
+        logger.info(f"Set model to use is_train_on={self.is_train_on} and is_test_on={self.is_test_on}.")
 
     def setup(self, stage: Optional[str] = None) -> None:
 
@@ -137,38 +285,62 @@ class ImgDataModule(LightningDataModule):
             test_dataset = self.Dataset(
                 self.data_dir, curr_split="test", download=True, **self.dataset_kwargs
             )
-            #test_dataset = Subset(test_dataset, indices=list(range(10000))) # Dev
             self.test_dataset = SklearnDataset(*self.represent(test_dataset, "test"))
 
         if stage == "fit" or stage is None:
-            logger.info("Representing the train set.")
-            train_dataset = self.Dataset( self.data_dir, curr_split="train", download=True, **self.dataset_kwargs )
-            self.train_dataset = SklearnDataset(*self.represent(train_dataset, "train"))
-            #self.train_dataset = self.test_dataset # Dev
+            if self.train_dataset is None:
+                if self.is_debug:
+                    logger.info("Using test for train during debug.")
+                    self.train_dataset = self.test_dataset
+                else:
+                    logger.info("Representing the train set.")
+                    train_dataset = self.Dataset( self.data_dir, curr_split="train", download=True, **self.dataset_kwargs )
+                    self.train_dataset = SklearnDataset(*self.represent(train_dataset, "train"))
+
+    def get_dataset(self, name):
+        """Given a string of the form 'data-split-size' or 'data' return the correct dataset."""
+        separator_data_split = "-"
+        if separator_data_split in name:
+            data, split, sizestr = name.split(separator_data_split)
+
+            if split == "sbst":
+                is_complement = False
+            elif split == "cmplmnt":
+                is_complement = True
+            else:
+                raise ValueError(f"Unknown split={split}.")
+
+        else:
+            data = name
+            split = "all"
+
+        if data == "train":
+            dataset = self.train_dataset
+        elif data == "test":
+            dataset = self.test_dataset
+        elif data == "union":
+            dataset = SklearnConcatDataset([self.train_dataset, self.test_dataset])
+        else:
+            raise ValueError(f"Unknown data={data}")
+
+        if split == "all":
+            pass
+        else:
+            Y = dataset.Y
+            if sizestr == "ntest":
+                size = len(self.test_dataset)  # use exactly same number as test
+            else:
+                size = ast.literal_eval(sizestr)
+
+            dataset = BalancedSubset(dataset, stratify=Y, size=size, seed=self.seed, is_complement=is_complement)
+
+        return dataset
 
     def get_train_dataset(self):
-        if self.is_train_on_test:
-            dataset = self.test_dataset
-        else:
-            dataset = self.train_dataset
-
-        if self.subset_train_size is not None:
-            Y = dataset.Y
-            dataset = BalancedSubset(dataset, stratify=Y, size=self.subset_train_size, seed=self.seed)
-
-        return dataset
+        return self.get_dataset(self.is_train_on)
 
     def get_test_dataset(self):
-        if self.is_test_on_train or self.is_test_nonsubset_train:
-            dataset = self.train_dataset
-        else:
-            dataset = self.test_dataset
-
-        if self.is_test_nonsubset_train:
-            Y = dataset.Y
-            dataset = BalancedSubset(dataset, stratify=Y, size=self.subset_train_size, seed=self.seed, is_complement=True)
-
-        return dataset
+        return self.get_dataset(self.is_test_on)
 
     def train_dataloader(self) -> DataLoader:
         """Return the training dataloader."""
@@ -202,8 +374,9 @@ class ImgDataModule(LightningDataModule):
     def features_path(self):
         return Path(self.data_dir) / f"{self.Dataset.__name__}_{self.representor_name}"
 
-    def represent(self, dataset, split, max_chunk_size = 20000): # Dev
+    def represent(self, dataset, split, max_chunk_size = 20000):
         batch_size = get_max_batchsize(dataset, self.representor)
+        torch.cuda.empty_cache()
         logger.info(f"Selected max batch size for inference: {batch_size}")
 
         if self.is_save_features:
@@ -243,7 +416,7 @@ class ImgDataModule(LightningDataModule):
             gpus, precision = 0, 32
 
         trainer = pl.Trainer(gpus=gpus, precision=precision,
-                             logger=False, callbacks=TQDMProgressBar(refresh_rate=10))
+                             logger=False, callbacks=TQDMProgressBar(refresh_rate=20))
         dataloader = DataLoader(
             dataset,
             batch_size=batch_size,
@@ -299,6 +472,15 @@ class SklearnDataset(Dataset):
         y = self.Y[idx]
         return x, y
 
+class SklearnConcatDataset(ConcatDataset):
+    @property
+    def X(self):
+        return np.concatenate([d.X for d in self.datasets], axis=0)
+
+    @property
+    def Y(self):
+        return np.concatenate([d.Y for d in self.datasets], axis=0)
+
 class BalancedSubset(Subset):
     """Split the dataset into a subset with possibility of stratifying.
 
@@ -343,7 +525,7 @@ class BalancedSubset(Subset):
     def Y(self):
         return self.dataset.Y[self.indices]
 
-    ### DATA ###
+### DATA ###
 
 # Imagenet #
 class ImageNetDataset(ImgDataset, ImageNet):
@@ -388,3 +570,88 @@ class ImagenetDataModule(ImgDataModule):
     @property
     def Dataset(cls) -> Any:
         return ImageNetDataset
+
+# ImageNetV2 #
+class ImageNetV2Dataset(TensorflowBaseDataset):
+    min_size = 256
+
+    @classmethod
+    @property
+    def dataset_name(cls):
+        return "imagenet_v2"
+
+    @classmethod
+    def get_available_splits(cls):
+        return ["test"]
+
+
+class ImageNetV2DataModule(ImgDataModule):
+
+    @classmethod
+    @property
+    def Dataset(cls):
+        return ImageNetV2Dataset
+
+# ImageNetSketch #
+class ImageNetSketchDataset(TensorflowBaseDataset):
+    min_size = 256
+
+    @classmethod
+    @property
+    def dataset_name(cls):
+        return "imagenet_sketch"
+
+    @classmethod
+    def get_available_splits(cls):
+        return ["test"]
+
+
+class ImageNetSketchDataModule(ImgDataModule):
+
+    @classmethod
+    @property
+    def Dataset(cls):
+        return ImageNetSketchDataset
+
+# ImageNetSketch #
+class ImageNetRDataset(TensorflowBaseDataset):
+    min_size = 256
+
+    @classmethod
+    @property
+    def dataset_name(cls):
+        return "imagenet_r"
+
+    @classmethod
+    def get_available_splits(cls):
+        return ["test"]
+
+
+class ImageNetRDataModule(ImgDataModule):
+
+    @classmethod
+    @property
+    def Dataset(cls):
+        return ImageNetRDataset
+
+
+# ImageNetSketch #
+class ImageNetADataset(TensorflowBaseDataset):
+    min_size = 256
+
+    @classmethod
+    @property
+    def dataset_name(cls):
+        return "imagenet_a"
+
+    @classmethod
+    def get_available_splits(cls):
+        return ["test"]
+
+
+class ImageNetADataModule(ImgDataModule):
+
+    @classmethod
+    @property
+    def Dataset(cls):
+        return ImageNetADataset
