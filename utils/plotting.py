@@ -116,10 +116,20 @@ def radar_factory(num_vars, frame='circle'):
     """
     # calculate evenly-spaced axis angles
     theta = np.linspace(0, 2*np.pi, num_vars, endpoint=False)
+    
+    class RadarTransform(PolarAxes.PolarTransform):
+        def transform_path_non_affine(self, path):
+            # Paths with non-unit interpolation steps correspond to gridlines,
+            # in which case we force interpolation (to defeat PolarTransform's
+            # autoconversion to circular arcs).
+            if path._interpolation_steps > 1:
+                path = path.interpolated(num_vars)
+            return Path(self.transform(path.vertices), path.codes)
 
     class RadarAxes(PolarAxes):
 
         name = 'radar'
+        PolarTransform = RadarTransform
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
@@ -153,8 +163,7 @@ def radar_factory(num_vars, frame='circle'):
             if frame == 'circle':
                 return Circle((0.5, 0.5), 0.5)
             elif frame == 'polygon':
-                return RegularPolygon((0.5, 0.5), num_vars,
-                                      radius=.5, edgecolor="k")
+                return RegularPolygon((0.5, 0.5), num_vars, radius=0.5, edgecolor="k")
             else:
                 raise ValueError("unknown value for 'frame': %s" % frame)
 
@@ -165,7 +174,6 @@ def radar_factory(num_vars, frame='circle'):
                 for gl in gridlines:
                     gl.get_path()._interpolation_steps = num_vars
             super().draw(renderer)
-
 
         def _gen_axes_spines(self):
             if frame == 'circle':
@@ -180,8 +188,6 @@ def radar_factory(num_vars, frame='circle'):
                 # 0.5) in axes coordinates.
                 spine.set_transform(Affine2D().scale(.5).translate(.5, .5)
                                     + self.transAxes)
-
-
                 return {'polar': spine}
             else:
                 raise ValueError("unknown value for 'frame': %s" % frame)
