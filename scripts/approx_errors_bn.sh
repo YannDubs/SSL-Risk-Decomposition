@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
-
-experiment="tmp"
-notes="**Goal**: plot all the radar charts."
-
+experiment="approx_errors"
+notes="**Goal**: compute approx errors for batch norm experiment."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -14,17 +12,19 @@ experiment=$experiment
 timeout=$time
 "
 
-# every arguments that you are sweeping over
+
 kwargs_multi="
-representor=simclr_rn50
-trainer.max_epochs=15
+representor=sup_rn50
+predictor=torch_bnlinear
+seed=123,124,125
 "
+
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
   do
 
-    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m &
+    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m >> logs/"$experiment".log 2>&1 &
 
     sleep 10
 

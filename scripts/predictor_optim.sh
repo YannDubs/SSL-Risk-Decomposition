@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+experiment="predictor_optim"
+notes="**Goal**: compare optimization of predictors."
+
+# parses special mode for running the script
+source `dirname $0`/utils.sh
+
+
+# define all the arguments modified or added to `conf`. If they are added use `+`
+kwargs="
+experiment=$experiment
+timeout=$time
+"
+
+# every arguments that you are sweeping over
+kwargs_multi="
+representor=simclr_rn50
+predictor=torch_linear
+seed=123,124,125
+"
+
+if [ "$is_plot_only" = false ] ; then
+  for kwargs_dep in "predictor=torch_linear,torch_momlinear" # "predictor.opt_kwargs.lr=3e-3,3e-2" "predictor.opt_kwargs.weight_decay=0,1e-4" "trainer.max_epochs=33,300" "data.kwargs.batch_size=64,1024"
+  do
+
+    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m >> logs/"$experiment".log 2>&1 &
+
+    sleep 10
+
+  done
+fi
+
+wait
+
+# ADD plotting behavior

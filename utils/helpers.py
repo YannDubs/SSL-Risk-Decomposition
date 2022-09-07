@@ -1,20 +1,18 @@
 from __future__ import annotations
 
 import contextlib
-import glob
+import json
 import logging
 import numbers
-import os
 import shutil
-import warnings
-from contextlib import contextmanager
+from tqdm import tqdm
+import urllib.request
 from copy import deepcopy
-from functools import partial
+from functools import  wraps
 import pytorch_lightning as pl
 import math
 import torch
 from torch import nn
-import wandb
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional, Union
 import sys
@@ -44,6 +42,21 @@ except ImportError:
     pass
 
 logger = logging.getLogger(__name__)
+
+def file_cache(filename):
+    """Decorator to cache the output of a function to disk."""
+    def decorator(f):
+        @wraps(f)
+        def decorated(self, directory, *args, **kwargs):
+            filepath = Path(directory) / filename
+            if filepath.is_file():
+                out = json.loads(filepath.read_text())
+            else:
+                out = f(self, directory, *args, **kwargs)
+                filepath.write_text(json.dumps(out))
+            return out
+        return decorated
+    return decorator
 
 def mean(array):
     """Take mean of array like."""
@@ -437,3 +450,27 @@ class ImgPil2LabTensor(torch.nn.Module):
         img_lab[:, :, 0] = (img_lab[:, :, 0] * (100.0 / 255.0)) - 50.0
         img_lab[:, :, 1:] = img_lab[:, :, 1:] - 128.0
         return img_lab
+
+class DownloadProgressBar(tqdm):
+    """Progress bar for downloading files."""
+
+    def update_to(self, b=1, bsize=1, tsize=None):
+        if tsize is not None:
+            self.total = tsize
+        self.update(b * bsize - self.n)
+
+# Modified from https://stackoverflow.com/questions/15644964/python-progress-bar-and-downloads
+def download_url(url, save_dir, filename=None):
+    """Download a url to `save_dir`."""
+    if filename is None:
+        filename = url.split("/")[-1]
+    save_dir = Path(save_dir)
+    save_dir.mkdir(parents=True, exist_ok=True)
+
+    with DownloadProgressBar(
+        unit="B", unit_scale=True, miniters=1, desc=url.split("/")[-1]
+    ) as t:
+
+        urllib.request.urlretrieve(
+            url, filename=save_dir / filename, reporthook=t.update_to
+        )

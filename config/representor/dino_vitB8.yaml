@@ -1,4 +1,4 @@
 name: dino_vitB8
 kwargs:
-  mode: dino
+  mode: dino_extractB
   model: dino_vitb8

@@ -6,10 +6,11 @@ defaults:
 
   - server: none
   - data: imagenet
-  - predictor: torch_logistic
+  - predictor: torch_linear
   - representor: swav_rn50
 
 ########## GENERAL ##########
+n_runs: 1
 is_debug: False
 is_log_wandb: True
 experiment: ???
@@ -22,28 +23,34 @@ long_name: exp_${experiment}/data_${data.name}/ssl_${representor.name}/pred_${pr
 long_name_component: ${long_name}/comp_${component}
 is_nlp_cluster: False # should the working directory be used as main
 
+is_supervised: False # whether currently running supervised benchmark
+is_run_in_dist: True
+is_run_out_dist: False # whether to evaluate out of distribution
+out_dist_datasets : ["imagenet_v2","imagenet_a","imagenet_r","imagenet_sketch"] # out_dist data to evaluate on
+
 paths: #! the best practice is not to modify those paths but to symlink them to the places you want
   relative_work: outputs/${now:%Y-%m-%d_%H-%M-%S}
   work: ${hydra.runtime.cwd}/${paths.relative_work} # unfortunately cannot use hydra: in hydra so need to do everything by hand i.e. cannot use ${paths.base_dir}/outputs/{time}
   base_dir: ${hydra:runtime.cwd} # actual script where you are running from and want to save stuff
   tmp_dir: ${paths.base_dir} # main directory for all things that are only used when running script
 
-  data: ${paths.base_dir}/data
+  data: /self/scr-sync/nlp
+  features: /juice/scr/scr110/scr/nlp/data/ImageNetDataset_pretrained_ssl_features
   logs: ${paths.tmp_dir}/logs/${long_name_component}/jid_${job_id}
   checkpoint: ${paths.tmp_dir}/checkpoints/${long_name_component}/jid_${job_id} # checkpoint to use during training
   results: ${paths.base_dir}/results/${long_name}/
 
-robustness_datasets : ["imagenet_v2","imagenet_a","imagenet_r","imagenet_sketch"] # robustness data to evaluate on
-is_only_robustness: False
-
 data:
   name: ???
   n_classes: ???
+  n_train: ???
   kwargs:
     seed: ${seed}
     data_dir: ${paths.data}
+    features_basedir: ${paths.features}
     batch_size: 256
     num_workers: 6
+    is_add_idx: False
     is_debug: ${is_debug}
     dataset_kwargs:
       seed: ${seed}
@@ -54,6 +61,16 @@ representor:
   kwargs:
     mode: ???
     model: ???
+
+shatterability:
+  n_bin_tasks: 10000
+
+rand_task:
+  n_runs: 1
+  is_sum_tasks: False
+  n_rand_tasks: 10000
+  n_label_per_task: 2
+  components: ["train_train"]
 
 wandb_kwargs:
   project: risk_dec

@@ -26,7 +26,7 @@ from PIL import Image
 
 from torchvision.datasets import ImageNet, ImageFolder
 
-from utils.helpers import check_import, npimg_resize, remove_rf
+from utils.helpers import check_import, file_cache, npimg_resize, remove_rf
 
 try:
     # useful to avoid "too many open files" error. See : https://github.com/tensorflow/datasets/issues/1441
@@ -82,7 +82,6 @@ class ImgDataset(abc.ABC):
         *args,
         curr_split: str,
         transform: Optional[Callable] = None,
-
         seed: int = 123,
         **kwargs
     ) -> None:
@@ -233,7 +232,7 @@ class ImgDataModule(LightningDataModule):
         Whether debugging, if so uses test set for train to be quicker.
 
     train_dataset : Dataset, optional
-        Training dataset. Useful for robustness benchmarks that do not have a training set.
+        Training dataset. Useful for out_dist benchmarks that do not have a training set.
 
     dataset_kwargs : dict, optional
         Additional arguments for the dataset.
@@ -244,17 +243,21 @@ class ImgDataModule(LightningDataModule):
         representor: Callable,
         representor_name : str,
         data_dir: Union[Path, str] = DIR,
+        features_basedir: Union[Path, str] = DIR,
         num_workers: int = 6,
         batch_size: int = 128,
         is_save_features: bool = True,
         seed: int = 123,
         is_debug: int=False,
         train_dataset: Optional[Dataset] = None,
+        is_predict_on_test: bool = True,
+        is_add_idx: bool=False,
         dataset_kwargs: dict = {}
     ) -> None:
         super().__init__()
 
         self.data_dir = data_dir
+        self.features_basedir = features_basedir
         self.num_workers = num_workers
         self.batch_size = batch_size
         self.is_save_features = is_save_features
@@ -264,12 +267,19 @@ class ImgDataModule(LightningDataModule):
         self.representor_name = representor_name
         self.is_debug = is_debug
         self.train_dataset = train_dataset
+        self.is_add_idx = is_add_idx
+        self.is_predict_on_test = is_predict_on_test
         logger.info(f"Representing data with {representor_name}")
         self.reset()
         self.setup()
 
         self.z_dim = self.train_dataset.X.shape[1]
-        self.n_labels = len(np.unique(self.train_dataset.Y))
+
+        Y_train = self.train_dataset.Y
+        if self.is_add_idx:
+            Y_train = Y_train[:, 0]
+
+        self.n_labels = len(np.unique(Y_train))
 
         logger.info(f"z_dim={self.z_dim}")
 
@@ -285,7 +295,7 @@ class ImgDataModule(LightningDataModule):
             test_dataset = self.Dataset(
                 self.data_dir, curr_split="test", download=True, **self.dataset_kwargs
             )
-            self.test_dataset = SklearnDataset(*self.represent(test_dataset, "test"))
+            self.test_dataset = SklearnDataset(*self.represent(test_dataset, "test"), is_add_idx=self.is_add_idx)
 
         if stage == "fit" or stage is None:
             if self.train_dataset is None:
@@ -295,10 +305,11 @@ class ImgDataModule(LightningDataModule):
                 else:
                     logger.info("Representing the train set.")
                     train_dataset = self.Dataset( self.data_dir, curr_split="train", download=True, **self.dataset_kwargs )
-                    self.train_dataset = SklearnDataset(*self.represent(train_dataset, "train"))
+                    self.train_dataset = SklearnDataset(*self.represent(train_dataset, "train"), is_add_idx=self.is_add_idx)
 
     def get_dataset(self, name):
         """Given a string of the form 'data-split-size' or 'data' return the correct dataset."""
+
         separator_data_split = "-"
         if separator_data_split in name:
             data, split, sizestr = name.split(separator_data_split)
@@ -327,6 +338,10 @@ class ImgDataModule(LightningDataModule):
             pass
         else:
             Y = dataset.Y
+
+            if self.is_add_idx:
+                Y = Y[:,0]  # for subseting use real label
+
             if sizestr == "ntest":
                 size = len(self.test_dataset)  # use exactly same number as test
             else:
@@ -364,6 +379,12 @@ class ImgDataModule(LightningDataModule):
             batch_size=self.batch_size
         )
 
+    def predict_dataloader(self) -> DataLoader:
+        if self.is_predict_on_test:
+            return self.test_dataloader()
+        else:
+            return self.train_dataloader()
+
     @classmethod
     @property
     def Dataset(cls) -> Any:
@@ -372,7 +393,7 @@ class ImgDataModule(LightningDataModule):
 
     @property
     def features_path(self):
-        return Path(self.data_dir) / f"{self.Dataset.__name__}_{self.representor_name}"
+        return Path(self.features_basedir) / f"{self.Dataset.__name__}_{self.representor_name}"
 
     def represent(self, dataset, split, max_chunk_size = 20000):
         batch_size = get_max_batchsize(dataset, self.representor)
@@ -437,7 +458,7 @@ class ImgDataModule(LightningDataModule):
         return Z, Y
 
 
-@toma.batch(initial_batchsize=2048)  # try largest bach size possible
+@toma.batch(initial_batchsize=128)  # try largest bach size possible #DEV
 def get_max_batchsize(batchsize, dataset, representor):
     """Return the largest batchsize you can fit."""
     # cannot use multiple workers with toma batch size
@@ -459,10 +480,14 @@ class SklearnDataset(Dataset):
         self,
         X: np.ndarray,
         y: np.ndarray,
+        is_add_idx: bool = False
     ) -> None:
         super().__init__()
         self.X = X
         self.Y = y
+        self.is_add_idx = is_add_idx
+        if self.is_add_idx:
+            self.Y = np.stack([self.Y, np.arange(len(self.Y))], axis=-1)
 
     def __len__(self) -> int:
         return len(self.X)
@@ -525,6 +550,15 @@ class BalancedSubset(Subset):
     def Y(self):
         return self.dataset.Y[self.indices]
 
+    def __getitem__(self, idx):
+        if self.dataset.is_add_idx:
+            X, Y = self.dataset[self.indices[idx]]
+            Y[1] = idx
+            return X, Y
+        else:
+            return self.dataset[self.indices[idx]]
+
+
 ### DATA ###
 
 # Imagenet #
@@ -562,6 +596,16 @@ class ImageNetDataset(ImgDataset, ImageNet):
             transform=transform,
             **kwargs,
         )
+
+    @file_cache(filename="cached_classes.json")
+    def find_classes(self, directory: str, *args, **kwargs) -> tuple[list[str], dict[str, int]]:
+        classes = super().find_classes(directory, *args, **kwargs)
+        return classes
+
+    @file_cache(filename="cached_structure.json")
+    def make_dataset(self, directory: str, *args, **kwargs) -> list[tuple[str, int]]:
+        dataset = super().make_dataset(directory, *args, **kwargs)
+        return dataset
 
 
 class ImagenetDataModule(ImgDataModule):

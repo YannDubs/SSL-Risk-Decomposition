@@ -1,0 +1,4 @@
+name: mugs_vitb16_ep400
+kwargs:
+  mode: mugs
+  model: mugs_vitb16_ep400

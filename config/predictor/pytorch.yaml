@@ -1,6 +1,15 @@
 # @package _global_
 predictor:
   is_sklearn: False
+  architecture: ${predictor.arch_kwargs.architecture} # used for naming
+  name: torch_${predictor.architecture}_lr${predictor.opt_kwargs.lr}_wdec${predictor.opt_kwargs.weight_decay}_ep${trainer.max_epochs}_bs${data.kwargs.batch_size}
+  metrics: [ accuracy_score,log_loss ]
+  arch_kwargs:
+    architecture: ???
+  opt_kwargs:
+    lr: 0.3
+    weight_decay: 1e-6
+    momentum: 0 # should really be usign 0.9 historical reasons 0.0
 
 trainer:
   max_epochs:  100

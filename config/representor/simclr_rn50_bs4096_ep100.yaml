@@ -1,0 +1,4 @@
+name: simclr_rn50_bs4096_ep100
+kwargs:
+  mode: vissl
+  model: simclr_rn50_bs4096_ep100 # different with simclr_rn50 is that only 100 epochs to be comparable to bs512

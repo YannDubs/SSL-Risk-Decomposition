@@ -1,0 +1,4 @@
+name: mocov3_vitB_ep300
+kwargs:
+  mode: moco
+  model: mocov3_vitB_ep300

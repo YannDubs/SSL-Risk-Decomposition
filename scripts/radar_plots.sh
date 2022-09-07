@@ -9,23 +9,19 @@ source `dirname $0`/utils.sh
 # define all the arguments modified or added to `conf`. If they are added use `+`
 kwargs="
 experiment=$experiment
-timeout=7200
+timeout=$time
 "
 
 # run on large server
 kwargs_multi="
-representor=dino_vitB8,clip_vitL14,simclr_rn50w2,beit_vitL16
-"
-
-kwargs_multi="
-representor=clip_vitL14
+seed=123,124,125
 "
 
 if [ "$is_plot_only" = false ] ; then
-  for kwargs_dep in ""
+  for kwargs_dep in "representor=clip_vitL14,simclr_rn50w2,beit_vitL16 predictor=torch_linear" "dino_vitB8 predictor=torch_linear_dino"
   do
 
-    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m &
+    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m >> logs/"$experiment".log 2>&1 &
 
     sleep 10
 

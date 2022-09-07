@@ -1,0 +1,4 @@
+name: ibot_vitS16
+kwargs:
+  mode: ibot
+  model: vits16

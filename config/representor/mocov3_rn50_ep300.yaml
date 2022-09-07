@@ -1,0 +1,4 @@
+name: mocov3_rn50_ep300
+kwargs:
+  mode: moco
+  model: mocov3_rn50_ep300

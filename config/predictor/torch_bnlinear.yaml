@@ -1,0 +1,7 @@
+defaults:
+  - pytorch
+
+architecture: bnlinear
+arch_kwargs:
+  architecture: linear
+  is_normalize: True

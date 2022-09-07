@@ -1,0 +1,4 @@
+name: simsiam_rn50_bs256_ep100
+kwargs:
+  mode: simsiam
+  model: simsiam_rn50_bs256_ep100

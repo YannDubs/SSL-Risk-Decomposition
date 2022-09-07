@@ -1,0 +1,4 @@
+name: npidpp_rn50w2
+kwargs:
+  mode: vissl
+  model: npidpp_rn50w2

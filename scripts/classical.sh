@@ -15,19 +15,17 @@ timeout=$time
 
 # every arguments that you are sweeping over
 kwargs_multi="
-representor=jigsaw_rn50,colorization_rn50,npid_rn50,clusterfit_rn50
+representor=jigsaw_rn50,npid_rn50,clusterfit_rn50,pirl_rn50,npidpp_rn50
+seed=123,124,125
 "
-# also add simclr_rn50, rotnet_rn50_in1k
+# should add colorization
 
-kwargs_multi="
-representor=colorization_rn50
-"
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
   do
 
-    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m &
+    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m >> logs/"$experiment".log 2>&1 &
 
     sleep 10
 

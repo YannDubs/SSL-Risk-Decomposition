@@ -1,0 +1,4 @@
+name: dino_vitS16_extractB
+kwargs:
+  mode: dino_extractB # extract as if base even if small
+  model: dino_vits16

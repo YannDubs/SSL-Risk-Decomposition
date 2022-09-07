@@ -1,0 +1,4 @@
+name: pirl_rn50_headMLP
+kwargs:
+  mode: vissl
+  model: pirl_rn50_headMLP

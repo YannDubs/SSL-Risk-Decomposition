@@ -1,0 +1,4 @@
+name: simclr_rn101_ep100
+kwargs:
+  mode: vissl
+  model: simclr_rn101_ep100

@@ -1,0 +1,4 @@
+name: clip_vitB16
+kwargs:
+  mode: clip
+  model: ViT-B/16

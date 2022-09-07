@@ -1,0 +1,7 @@
+defaults:
+  - base_supervised
+
+name: sup_vitB8
+kwargs:
+  mode: timm
+  model: vit_base_patch8_224

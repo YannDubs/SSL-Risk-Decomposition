@@ -1,13 +1,10 @@
 defaults:
   - pytorch
 
-# using param like https://github.com/facebookresearch/barlowtwins/blob/main/evaluate.py
-name: torch_logistic
-metrics: [accuracy_score,log_loss]
+architecture: momlinear
 arch_kwargs:
   architecture: linear
-  is_normalize: False
+  is_normalize: True
+
 opt_kwargs:
-  lr: 0.3
-  weight_decay: 1e-6 # only diff is that you don't want to
-  momentum: 0.9
+  momentum: 0.9 # should really be usign 0.9 historical reasons 0.0

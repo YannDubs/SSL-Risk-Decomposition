@@ -1,0 +1,4 @@
+name: mugs_vits16_ep300
+kwargs:
+  mode: mugs
+  model: mugs_vits16_ep300

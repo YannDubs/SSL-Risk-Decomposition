@@ -1,4 +1,4 @@
-"""Entry point to compute the loss decomposition for differen models.
+"""Entry point to compute the loss decomposition for different models.
 
 This should be called by `python main.py <conf>` where <conf> sets all configs from the cli, see
 the file `config/main.yaml` for details about the configs. or use `python main.py -h`.
@@ -23,7 +23,7 @@ import torch
 from hydra.utils import instantiate
 import pytorch_lightning as pl
 import omegaconf
-from omegaconf import Container, OmegaConf
+from omegaconf import Container
 
 from utils.cluster import nlp_cluster
 from utils.data import get_Datamodule
@@ -68,29 +68,47 @@ def main(cfg):
 
     # those components have the same training setup so don't retrain
     components_same_train = {"train_train": ["train_test"],
-                             "train-sbst-ntest_train-cmplmnt-ntest": ["train-sbst-ntest_test"],
-                             "train-sbst-0.1_train": ["train-sbst-0.1_test"]}
+                             "train-cmplmnt-ntest_train-sbst-ntest": ["train-cmplmnt-ntest_test"],
+                             #"train-sbst-0.01_train-cmplmnt-0.01": ["train-sbst-0.01_test"]
+                             }
 
-    if not cfg.is_only_robustness:
-        for component in [ "train_train", "train-sbst-ntest_train-cmplmnt-ntest", "train-sbst-0.1_train"]:
+    if cfg.is_run_in_dist:
+
+        if cfg.is_supervised:
+            # only need train on train for supervised baselines (i.e. approx error) and train on test (agg risk)
+            components = ["train_train", "train-cmplmnt-ntest_train-sbst-ntest"]
+        else:
+            components = ["train_train", "train-cmplmnt-ntest_train-sbst-ntest",
+                          #"train-sbst-0.01_train-cmplmnt-0.01", "train-sbst-0.01_train-sbst-0.01"
+                          "union_test"]  # for other ~equivalent decomposition.
+
+        for component in components:
             results = run_component_(component, datamodule, cfg, results, components_same_train)
 
         # save results
         results = pd.DataFrame.from_dict(results)
-        # cannot compute decodability at theis point because need to estimate approximation error
-        # which is easier by checking simply online train supervised performance
-        results["pred_gen"] = results["train-sbst-ntest_train-cmplmnt-ntest"] - results["train_train"]
-        results["enc_gen"] = results["train-sbst-ntest_test"] - results["train-sbst-ntest_train-cmplmnt-ntest"]
-        results["pred_gen_01"] = results["train-sbst-0.1_train"] - results["train_train"]
-        results["enc_gen_01"] = results["train-sbst-0.1_test"] - results["train-sbst-0.1_train"]
+
+        if not cfg.is_supervised:
+            # cannot compute decodability at theis point because need to estimate approximation error
+            # which is easier by checking simply online train supervised performance
+            results["pred_gen"] = results["train-cmplmnt-ntest_train-sbst-ntest"] - results["train_train"]
+            results["enc_gen"] = results["train-cmplmnt-ntest_test"] - results["train-cmplmnt-ntest_train-sbst-ntest"]
+            # this is for the other decomposition that nearly equivalent to the above. Choice is ~arbitrary.
+            results["pred_gen_switched"] = results["union_test"] - results["train_train"]
+            results["enc_gen_switched"] = results["train-cmplmnt-ntest_test"] - results["union_test"]
+
+            # results["pred_gen_001"] = results["train-sbst-0.01_train-cmplmnt-0.01"] - results["train_train"]
+            # results["enc_gen_001"] = results["train-sbst-0.01_test"] - results["train-sbst-0.01_train-cmplmnt-0.01"]
+
         save_results(cfg, results, "all")
 
-    # Only if want robustness results
-    for rob_dataset in cfg.robustness_datasets:
-        run_robustness_decomposition(rob_dataset, datamodule, cfg, representor, preprocess)
+    if cfg.is_run_out_dist:
+        # Only if want out_dist results
+        for rob_dataset in cfg.out_dist_datasets:
+            run_out_dist_decomposition(rob_dataset, datamodule, cfg, representor, preprocess)
 
     # remove all saved features at the end
-    #remove_rf(datamodule.features_path, not_exist_ok=True)
+    # remove_rf(datamodule.features_path, not_exist_ok=True)
 
 
 def begin(cfg: Container) -> None:
@@ -105,9 +123,10 @@ def begin(cfg: Container) -> None:
             init_wandb(offline=True, **cfg.wandb_kwargs)
 
     logger.info(f"Workdir : {cfg.paths.work}.")
+    logger.info(f"Job id : {cfg.job_id}.")
 
 def init_wandb(offline=False, **kwargs):
-    """Initializae wandb while accepting param of pytorch lightning."""
+    """Initialize wandb while accepting param of pytorch lightning."""
     check_import("wandb", "wandb")
 
     if offline:
@@ -120,14 +139,14 @@ def init_wandb(offline=False, **kwargs):
 
 def instantiate_datamodule_(cfg: Container, representor : Callable, preprocess: Callable, **kwargs) -> pl.LightningDataModule:
     """Instantiate dataset."""
-    cfgd = omegaconf2namespace(cfg.data)
-    cfgd.kwargs.dataset_kwargs.transform = preprocess
-    Datamodule = get_Datamodule(cfgd.name)
-    datamodule = Datamodule(representor=representor, representor_name=cfg.representor.name, **cfgd.kwargs, **kwargs)
+    data_kwargs = omegaconf2namespace(cfg.data.kwargs)
+    data_kwargs.dataset_kwargs.transform = preprocess
+    Datamodule = get_Datamodule(cfg.data.name)
+    datamodule = Datamodule(representor=representor, representor_name=cfg.representor.name, **data_kwargs, **kwargs)
     return datamodule
 
 def run_component_(component : str, datamodule : pl.LightningDataModule, cfg : Container, results : dict,
-                   components_same_train : dict ={}):
+                   components_same_train : dict ={}, Predictor=Predictor, **kwargs):
     logger.info(f"Stage : {component}")
     cfg_comp, datamodule = set_component_(datamodule, cfg, component)
 
@@ -150,14 +169,14 @@ def run_component_(component : str, datamodule : pl.LightningDataModule, cfg : C
         fit_(trainer, predictor, datamodule, cfg_comp)
 
         logger.info(f"Evaluate predictor for {component} ...")
-        results[component] = evaluate(trainer, datamodule, cfg_comp, component, model=predictor)
+        results[component] = evaluate(trainer, datamodule, cfg_comp, component, model=predictor, **kwargs)
 
         # evaluate component with same train
         for other_comp in components_same_train.get(component, []):
             logger.info(f"Evaluate predictor for {other_comp} without retraining ...")
             cfg_comp, datamodule = set_component_(datamodule, cfg, other_comp)
             trainer = set_component_trainer_(trainer, cfg_comp, other_comp, model=predictor)
-            results[other_comp] = evaluate(trainer, datamodule, cfg_comp, other_comp, model=predictor)
+            results[other_comp] = evaluate(trainer, datamodule, cfg_comp, other_comp, model=predictor, **kwargs)
 
     return results
 
@@ -180,10 +199,15 @@ def set_component_(datamodule : pl.LightningDataModule, cfg: Container, componen
     is_train_on, is_test_on = component.split(separator_tr_te)
     datamodule.reset(is_train_on=is_train_on, is_test_on=is_test_on)
 
+    cfg.data.n_train = len(datamodule.get_train_dataset())
+
     if not cfg.predictor.is_sklearn:
-        if len(datamodule.get_train_dataset()) < len(datamodule.train_dataset) // 5:
-            # if training on very small subset multiply by 5 n epochs
-            cfg.trainer.max_epochs = cfg.trainer.max_epochs * 5
+        # if training on very small subset increase number of epochs (sqrt to avoid long++)
+        orig_size = len(datamodule.train_dataset)
+        factor = orig_size / cfg.data.n_train  # how many times larger is original
+        if factor > 1:
+            mult_factor = max(1, round(factor**0.5))
+            cfg.trainer.max_epochs = cfg.trainer.max_epochs * mult_factor
 
     return omegaconf2namespace(cfg), datamodule
 
@@ -221,7 +245,8 @@ def evaluate(
     datamodule : pl.LightningDataModule,
     cfg: NamespaceMap,
     component: str,
-    model : torch.nn.Module
+    model : torch.nn.Module,
+    is_per_task_results = False
 ) -> pd.Series:
     """Evaluate the trainer by logging all the metrics from the test set from the best model."""
     cfg = copy.deepcopy(cfg)
@@ -232,6 +257,13 @@ def evaluate(
     log_dict(trainer, results, is_param=False)
     # only keep the metric
     results = { k.split("/")[-1]: v for k, v in results.items() }
+
+    if is_per_task_results:
+        predict_dataloader = datamodule.predict_dataloader()
+        per_task_results = trainer.predict(dataloaders=predict_dataloader, ckpt_path=None, model=model)
+        per_task_results = torch.stack(per_task_results,dim=0).mean(0)
+        for i in range(per_task_results.shape[0]):
+            results[f"acc_{i}"] = per_task_results[i].item()
 
     results = pd.Series(results)
     save_results(cfg, results, component)
@@ -258,16 +290,16 @@ def save_results(cfg : NamespaceMap, results : Union[pd.Series,pd.DataFrame], co
     results.to_csv(path, header=True, index=True)
     logger.info(f"Logging {component} results to {path}.")
 
-def run_robustness_decomposition(rob_dataset : str, old_datamodule: pl.LightningDataModule, cfg: Container,
+def run_out_dist_decomposition(rob_dataset : str, old_datamodule: pl.LightningDataModule, cfg: Container,
                                  representor : Callable, preprocess: Callable):
-    """Run the robustness decomposition."""
-    logger.info("Stage : Robustness")
+    """Run the out_dist decomposition."""
+    logger.info("Stage : Out of distribution")
 
     main_data = cfg.data.name
     cfg = copy.deepcopy(cfg)  # not inplace
     results = dict()
 
-    # for loading test set use robustness data only, then use old training set
+    # for loading test set use out_dist data only, then use old training set
     cfg.data.name = rob_dataset
     datamodule = instantiate_datamodule_(cfg, representor, preprocess, train_dataset=old_datamodule.train_dataset)
     cfg.data.name = f"{main_data}-{rob_dataset}"  # for saving you want to remember both datasets: train and test
@@ -284,7 +316,9 @@ def run_robustness_decomposition(rob_dataset : str, old_datamodule: pl.Lightning
 if __name__ == "__main__":
     try:
         main_except()
-    except Exception as e:
+    except:
         # exit gracefully, so wandb logs the problem
         print(traceback.print_exc(), file=sys.stderr)
         exit(1)
+    finally:
+        wandb.finish()

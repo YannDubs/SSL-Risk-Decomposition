@@ -3,5 +3,5 @@ defaults:
 
 name: sup_vitB8_dino
 kwargs:
-  mode: sup_dino
+  mode: sup_dino_extractB
   model: vit_base_patch8_224

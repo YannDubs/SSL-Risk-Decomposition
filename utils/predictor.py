@@ -35,18 +35,18 @@ class Predictor(pl.LightningModule):
         Y_pred = self.predictor(z)
         return Y_pred
 
-    def step(self, batch: torch.Tensor) -> tuple[torch.Tensor, dict]:
+    def step(self, batch: torch.Tensor) -> tuple[torch.Tensor, dict, dict]:
         x, y = batch
 
         # list of Y_hat. Each Y_hat shape: [batch_size,  y_dim]
         Y_hat = self(x)
 
         # Shape: []
-        loss, logs = self.loss(Y_hat, y)
+        loss, logs, other = self.loss(Y_hat, y)
 
-        return loss, logs
+        return loss, logs, other
 
-    def loss(self, Y_hat: torch.Tensor, y: torch.Tensor,) -> tuple[torch.Tensor, dict]:
+    def loss(self, Y_hat: torch.Tensor, y: torch.Tensor,) -> tuple[torch.Tensor, dict, dict]:
         """Compute the MSE or cross entropy loss."""
         loss = F.cross_entropy(Y_hat, y.squeeze().long())
 
@@ -55,12 +55,12 @@ class Predictor(pl.LightningModule):
         logs["err"] = 1- logs["acc"]
         logs["loss"] = loss
 
-        return loss, logs
+        return loss, logs, dict()
 
     def shared_step(
-        self, batch: torch.Tensor, batch_idx: int, mode: str
+        self, batch: torch.Tensor, mode: str, *args, **kwargs
     ) -> Optional[torch.Tensor]:
-        loss, logs = self.step(batch)
+        loss, logs, other = self.step(batch)
 
         name = f"{mode}/{self.hparams.data.name}/{self.hparams.component}"
         self.log_dict(
@@ -72,18 +72,18 @@ class Predictor(pl.LightningModule):
         return loss
 
 
-    def test_step(self, batch, batch_idx):
-        return self.shared_step(batch, batch_idx, "test")
+    def test_step(self, batch, *args, **kwargs):
+        return self.shared_step(batch, "test", *args, **kwargs)
 
-    def training_step(self, batch, batch_idx):
-        return self.shared_step(batch, batch_idx, "train")
+    def training_step(self, batch, *args, **kwargs):
+        return self.shared_step(batch, "train", *args, **kwargs)
 
     def configure_optimizers(self):
         cfgo = self.hparams.predictor.opt_kwargs
 
-        optimizer = torch.optim.SGD(self.predictor.parameters(),
-                                      lr=cfgo.lr,
-                                      weight_decay=cfgo.weight_decay)
+        optimizer = torch.optim.SGD(self.predictor.parameters(), cfgo.lr,
+                                momentum=cfgo.momentum,
+                                weight_decay=cfgo.weight_decay)
 
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
             optimizer, self.hparams.trainer.max_epochs, eta_min=0

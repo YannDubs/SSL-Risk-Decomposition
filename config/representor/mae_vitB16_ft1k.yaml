@@ -1,0 +1,4 @@
+name: mae_vitB16_ft1k
+kwargs:
+  mode: mae
+  model: mae_vitB16_ft1k

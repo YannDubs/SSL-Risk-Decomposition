@@ -1,0 +1,4 @@
+name: dino_vitS16_last
+kwargs:
+  mode: dino_last
+  model: dino_vits16

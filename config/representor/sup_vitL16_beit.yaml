@@ -1,3 +1,6 @@
+defaults:
+  - base_supervised
+
 name: sup_vitL16_beit
 kwargs:
   mode: beit
