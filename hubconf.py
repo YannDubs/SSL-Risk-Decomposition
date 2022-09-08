@@ -25,7 +25,7 @@ def _issl(objective, base, dim=None, sffx="", pretrained=True, **kwargs):
     resnet.fc = torch.nn.Identity()
 
     if pretrained:
-        dir_path = "https://github.com/YannDubs/Invariant-Self-Supervised-Learning/releases/download/v0.1"
+        dir_path = "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1"
         ckpt_path = f"{dir_path}/{objective}_{base}_d{dim}{sffx}.torch"
         state_dict = torch.hub.load_state_dict_from_url(url=ckpt_path, map_location="cpu")
         # torchvision models do not have a resizer
@@ -34,39 +34,39 @@ def _issl(objective, base, dim=None, sffx="", pretrained=True, **kwargs):
 
     return resnet
 
-def dissl_resnet50_d2048_e100_m2_augLarge(pretrained=True, **kwargs):
+def dissl_resnet50_dNone_e100_m2_augLarge(pretrained=True, **kwargs):
     return _issl(objective="dissl", base="resnet50", dim=None, sffx="_e100_m2_augLarge", pretrained=pretrained, **kwargs)
 
-def dissl_resnet50_d2048_e100_m2_augSmall(pretrained=True, **kwargs):
+def dissl_resnet50_dNone_e100_m2_augSmall(pretrained=True, **kwargs):
     return _issl(objective="dissl",base="resnet50", dim=None, sffx="_e100_m2_augSmall", pretrained=pretrained, **kwargs)
 
-def dissl_resnet50_d2048_e100_m2_headTLinSLin(pretrained=True, **kwargs):
+def dissl_resnet50_dNone_e100_m2_headTLinSLin(pretrained=True, **kwargs):
     return _issl(objective="dissl",base="resnet50", dim=None, sffx="_e100_m2_headTLinSLin", pretrained=pretrained, **kwargs)
 
-def dissl_resnet50_d2048_e100_m2_headTMlpSMlp(pretrained=True, **kwargs):
+def dissl_resnet50_dNone_e100_m2_headTMlpSMlp(pretrained=True, **kwargs):
     return _issl(objective="dissl",base="resnet50", dim=None, sffx="_e100_m2_headTMlpSMlp", pretrained=pretrained, **kwargs)
 
 def dissl_resnet50_d4096_e100_m2(pretrained=True, **kwargs):
-    return _issl(objective="dissl", base="resnet50", dim=4096, sffx="_d4096_e100_m2", pretrained=pretrained, **kwargs)
+    return _issl(objective="dissl", base="resnet50", dim=4096, sffx="_e100_m2", pretrained=pretrained, **kwargs)
 
-def simclr_resnet50_d2048_e100_m2(pretrained=True, **kwargs):
+def simclr_resnet50_dNone_e100_m2(pretrained=True, **kwargs):
     return _issl(objective="simclr", base="resnet50", dim=None, sffx="_e100_m2", pretrained=pretrained, **kwargs)
 
-def simclr_resnet50_d2048_e100_m2_data010(pretrained=True, **kwargs):
+def simclr_resnet50_dNone_e100_m2_data010(pretrained=True, **kwargs):
     return _issl(objective="simclr", base="resnet50", dim=None, sffx="_e100_m2_data010", pretrained=pretrained, **kwargs)
 
-def simclr_resnet50_d2048_e100_m2_data030(pretrained=True, **kwargs):
+def simclr_resnet50_dNone_e100_m2_data030(pretrained=True, **kwargs):
     return _issl(objective="simclr",base="resnet50", dim=None, sffx="_e100_m2_data030", pretrained=pretrained, **kwargs)
 
-def simclr_resnet50_d2048_e100_m2_headTLinSLin(pretrained=True, **kwargs):
+def simclr_resnet50_dNone_e100_m2_headTLinSLin(pretrained=True, **kwargs):
     return _issl(objective="simclr", base="resnet50", dim=None, sffx="_e100_m2_headTLinSLin", pretrained=pretrained, **kwargs)
 
-def simclr_resnet50_d2048_e100_m2_headTMlpSLin(pretrained=True, **kwargs):
+def simclr_resnet50_dNone_e100_m2_headTMlpSLin(pretrained=True, **kwargs):
     return _issl(objective="simclr", base="resnet50", dim=None, sffx="_e100_m2_headTMlpSLin", pretrained=pretrained, **kwargs)
 
-def simclr_resnet50_d2048_e100_m2_headTMlpSMlp(pretrained=True, **kwargs):
+def simclr_resnet50_dNone_e100_m2_headTMlpSMlp(pretrained=True, **kwargs):
     return _issl(objective="simclr", base="resnet50", dim=None, sffx="_e100_m2_headTMlpSMlp", pretrained=pretrained, **kwargs)
 
-def simclr_resnet50_d2048_e100_m2_headTMlpSMlp(pretrained=True, **kwargs):
+def simclr_resnet50_dNone_e100_m2_headTNoneSNone(pretrained=True, **kwargs):
     return _issl(objective="simclr", base="resnet50", dim=None, sffx="_e100_m2_headTNoneSNone", pretrained=pretrained, **kwargs)
 
