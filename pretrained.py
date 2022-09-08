@@ -28,11 +28,6 @@ except ImportError:
     pass
 
 try:
-    import utils.mae
-except ImportError:
-    pass
-
-try:
     import transformers
 except ImportError:
     pass
@@ -41,6 +36,7 @@ try:
     import timm
     from timm.data import resolve_data_config
     from timm.data.transforms_factory import create_transform
+    from timm.models.vision_transformer import _create_vision_transformer
 except ImportError:
     pass
 
@@ -314,6 +310,11 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
                 map_location="cpu",
                 file_name=name
             )[key]
+
+            if mode == "ibot":
+                state_dict = {k: v for k, v in state_dict.items()
+                                if not k.startswith("head.")}
+
             encoder.load_state_dict(state_dict, strict=True)
 
         extract_mode = "small" if "vits" in model.lower() else "base"
@@ -369,7 +370,6 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
 
         if "vit" in model:
             check_import("timm", f"mode={mode} with vit in load_representor")
-            from timm.models.vision_transformer import _create_vision_transformer
             if "vitS" in model:
                 # MOCO ViTs uses 12 heads instead of the standard 6
                 size = "small"
