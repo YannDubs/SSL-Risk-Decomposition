@@ -1,0 +1,4 @@
+name: msn_vitb16_ep600
+kwargs:
+  mode: msn
+  model: msn_vitb16_ep600

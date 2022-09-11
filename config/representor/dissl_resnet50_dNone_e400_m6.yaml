@@ -1,0 +1,4 @@
+name: dissl_resnet50_dNone_e400_m2
+kwargs:
+  mode: dissl
+  model: dissl_resnet50_dNone_e400_m2

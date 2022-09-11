@@ -1,0 +1,4 @@
+name: simclr_resnet50_dNone_e100_m2_headTNoneSNone
+kwargs:
+  mode: riskdec
+  model: simclr_resnet50_dNone_e100_m2_headTNoneSNone

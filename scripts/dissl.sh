@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-experiment="issl"
-notes="**Goal**: evaluate all the models from the issl paper."
+experiment="dissl"
+notes="**Goal**: evaluate all the models we pretrained."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -14,10 +14,12 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=
+representor=dissl_resnet50_d8192_e100_m2,dissl_resnet50_d8192_e400_m6,dissl_resnet50_d8192_e800_m8,dissl_resnet50_dNone_e100_m2,dissl_resnet50_d8192_e400_m6,dissl_resnet50_dNone_e400_m2
 seed=123
 predictor=torch_linear
 "
+
+# need to run seed=124,125
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

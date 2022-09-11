@@ -1,7 +1,7 @@
 defaults:
   - base_supervised
 
-name: sup_vitL16_beit
+name: sup_vitB16_beit
 kwargs:
   mode: beit
   model: microsoft/beit-base-patch16-224

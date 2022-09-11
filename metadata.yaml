@@ -1,0 +1,1320 @@
+barlow_rn50:
+  model: barlow_twins
+  arch: resnet50
+  dim: 2048
+  epochs: 1000
+  batch_size: 2048
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 71.8
+  projection_arch: mlp
+  projection_nparameters: 151e6
+  notes: null
+  month: 3
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+barlow_rn50_ep300:
+  model: barlow_twins
+  arch: resnet50
+  dim: 2048
+  epochs: 300
+  batch_size: 2048
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 70.8
+  projection_arch: mlp
+  projection_param: 151e6
+  notes: null
+  month: 3
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+beit_vitb16:
+  model: beit
+  arch: vitb16
+  dim: ???
+  epochs: ???
+  batch_size: ???
+  pretraining_data: ImageNet-1K
+  finetuning_data: ImageNet-1K
+  projection_arch: ???
+  projection_nparameters: ???
+  where: huggingface
+  acc: ???
+  notes: ??? #which layer of VIT selects
+  month: 6
+  year: 2021
+  n_parameters: ???
+  views: null
+
+beit_vitb16_in22k:
+  model: beit
+  arch: vitb16
+  dim: ???
+  epochs: ???
+  batch_size: ???
+  pretraining_data: ImageNet-1K
+  finetuning_data: ImageNet-22K
+  projection_arch: ???
+  projection_nparameters: ???
+  where: huggingface
+  acc: ???
+  notes: ??? #which layer of VIT selects
+  month: 6
+  year: 2021
+  n_parameters: ???
+  views: null
+
+beit_vitb16_in22k_ft22k:
+  model: beit
+  arch: vitb16
+  dim: ???
+  epochs: ???
+  batch_size: ???
+  pretraining_data: ImageNet-22K
+  finetuning_data: ImageNet-22K
+  projection_arch: ???
+  projection_nparameters: ???
+  where: huggingface
+  acc: ???
+  notes: ??? #which layer of VIT selects
+  month: 6
+  year: 2021
+  n_parameters: ???
+  views: null
+
+clip_rn101:
+  model: clip
+  arch: resnet101
+  dim: ???
+  epochs: ???
+  batch_size: ???
+  pretraining_data: CLIP
+  finetuning_data: null
+  where: openai
+  acc: ???
+  projection_arch: linear
+  projection_param: ???
+  notes: null
+  month: 1
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+clip_rn50:
+  model: clip
+  arch: resnet50
+  dim: ???
+  epochs: ???
+  batch_size: ???
+  pretraining_data: CLIP
+  finetuning_data: null
+  where: openai
+  acc: ???
+  projection_arch: linear
+  projection_param: ???
+  notes: null
+  month: 1
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+clip_rn50x16:
+  model: clip
+  arch: resnet50w16
+  dim: ???
+  epochs: ???
+  batch_size: ???
+  pretraining_data: CLIP
+  finetuning_data: null
+  where: openai
+  acc: ???
+  projection_arch: linear
+  projection_param: ???
+  notes: null
+  month: 1
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+clip_rn50x4:
+  model: clip
+  arch: resnet50w4
+  dim: ???
+  epochs: ???
+  batch_size: ???
+  pretraining_data: CLIP
+  finetuning_data: null
+  where: openai
+  acc: ???
+  projection_arch: linear
+  projection_param: ???
+  notes: null
+  month: 1
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+clip_rn50x64:
+  model: clip
+  arch: resnet50w64
+  dim: ???
+  epochs: ???
+  batch_size: ???
+  pretraining_data: CLIP
+  finetuning_data: null
+  where: openai
+  acc: ???
+  projection_arch: linear
+  projection_param: ???
+  notes: null
+  month: 1
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+clip_vitb16:
+  model: clip
+  arch: vitb16
+  dim: ???
+  epochs: ???
+  batch_size: ???
+  pretraining_data: CLIP
+  finetuning_data: null
+  where: openai
+  acc: ???
+  projection_arch: linear
+  projection_param: ???
+  notes: null
+  month: 1
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+clip_vitb32:
+  model: clip
+  arch: vitb32
+  dim: ???
+  epochs: ???
+  batch_size: ???
+  pretraining_data: CLIP
+  finetuning_data: null
+  where: openai
+  acc: ???
+  projection_arch: linear
+  projection_param: ???
+  notes: null
+  month: 1
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+clip_vitl14:
+  model: clip
+  arch: vitl14
+  dim: ???
+  epochs: ???
+  batch_size: ???
+  pretraining_data: CLIP
+  finetuning_data: null
+  where: openai
+  acc: ???
+  projection_arch: linear
+  projection_param: ???
+  notes: null
+  month: 1
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+clusterfit_rn50:
+  model: clusterfit
+  arch: resnet50
+  dim: 2048
+  epochs: 105
+  batch_size: 256
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: VISSL
+  acc: 53.6
+  projection_arch: linear
+  projection_param: 33e6
+  notes: null
+  month: 12
+  year: 2019
+  n_parameters: ???
+  views: 2x224
+
+dc2_rn50_ep400_2x224:
+  model: deepcluster_v2
+  arch: resnet50
+  dim: 2048
+  epochs: 400
+  batch_size: 512
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: VISSL
+  acc: 70.0
+  projection_arch: mlp
+  projection_param: 8.4e6
+  notes: null
+  month: 6
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+dc2_rn50_ep400_2x224+4x96:
+  model: deepcluster_v2
+  arch: resnet50
+  dim: 2048
+  epochs: 400
+  batch_size: 512
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: VISSL
+  acc: 75.2
+  projection_arch: mlp
+  projection_param: 8.4e6
+  notes: null
+  month: 6
+  year: 2020
+  n_parameters: ???
+  views: 2x224+6x96
+  
+dino_rn50:
+  model: dino
+  arch: resnet50
+  dim: 2048
+  epochs: 800
+  batch_size: 4080
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: dino
+  acc: 75.3
+  projection_arch: mlp
+  projection_param: 24e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224+6x96
+
+dino_vitb16:
+  model: dino
+  arch: vitb16
+  dim: ???
+  epochs: 400
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: dino
+  acc: 78.2
+  projection_arch: mlp
+  projection_param: 26e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224+10x96
+
+dino_vitb16_extracts:
+  model: dino
+  arch: vitb16
+  dim: ??? # will be different
+  epochs: 400
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: dino
+  acc: ???
+  projection_arch: mlp
+  projection_param: 26e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224+10x96
+
+dino_vitb16_last:
+  model: dino
+  arch: vitb16
+  dim: ??? # will be different
+  epochs: 400
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: dino
+  acc: ???
+  projection_arch: mlp
+  projection_param: 26e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224+10x96
+
+dino_vitb8:
+  model: dino
+  arch: vitb8
+  dim: ??? # will be different
+  epochs: 300
+  batch_size: 1056
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: dino
+  acc: 80.1
+  projection_arch: mlp
+  projection_param: 26e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224+10x96
+
+dino_vitb8_last:
+  model: dino
+  arch: vitb8
+  dim: ??? # will be different
+  epochs: 300
+  batch_size: 1056
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: dino
+  acc: ???
+  projection_arch: mlp
+  projection_param: 26e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224+10x96
+
+dino_vits16:
+  model: dino
+  arch: vits16
+  dim: ??? # will be different
+  epochs: 800
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: dino
+  acc: 77.0
+  projection_arch: mlp
+  projection_param: 26e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224+10x96
+
+dino_vits16_extractb:
+  model: dino
+  arch: vits16
+  dim: ??? # will be different
+  epochs: 800
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: dino
+  acc: ???
+  projection_arch: mlp
+  projection_param: 26e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224+10x96
+
+dino_vits16_last:
+  model: dino
+  arch: vits16
+  dim: ??? # will be different
+  epochs: 800
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: dino
+  acc: ???
+  projection_arch: mlp
+  projection_param: 26e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224+10x96
+
+dissl_resnet50_d4096_e100_m2:
+  model: dissl
+  arch: resnet50
+  dim: 4096
+  epochs: 100
+  batch_size: 2056
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: riskdec
+  acc: ???
+  projection_arch: mlp
+  projection_param: 17e6
+  notes: null
+  month: 6
+  year: 2022
+  n_parameters: ???
+  views: 2x224
+
+dissl_resnet50_dnone_e100_m2_auglarge:
+  model: dissl
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 2056
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: riskdec
+  acc: ???
+  projection_arch: mlp
+  projection_param: 16e6
+  notes: increases strength of augmentation
+  month: 6
+  year: 2022
+  n_parameters: ???
+  views: 2x224
+
+dissl_resnet50_dnone_e100_m2_augsmall:
+  model: dissl
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 2056
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: riskdec
+  acc: ???
+  projection_arch: mlp
+  projection_param: 16e6
+  notes: decreases strength of augmentation
+  month: 6
+  year: 2022
+  n_parameters: ???
+  views: 2x224
+
+dissl_resnet50_dnone_e100_m2_headtlinslin:
+  model: dissl
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 2056
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: riskdec
+  acc: ???
+  projection_arch: linear
+  projection_param: 9e6
+  notes: uses linear projection head for teacher and student
+  month: 6
+  year: 2022
+  n_parameters: ???
+  views: 2x224
+
+dissl_resnet50_dnone_e100_m2_headtmlpsmlp:
+  model: dissl
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 2056
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: riskdec
+  acc: ???
+  projection_arch: linear
+  projection_param: 16e6
+  notes: uses mlp projection head for student
+  month: 6
+  year: 2022
+  n_parameters: ???
+  views: 2x224
+
+ibot_vitb16:
+  model: ibot
+  arch: vitb16
+  dim: ???
+  epochs: 400
+  batch_size: 1032
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: ibot
+  acc: 79.5
+  projection_arch: ???
+  projection_nparameters: ???
+  notes: prediction shape is block
+  month: 11
+  year: 2021
+  n_parameters: ???
+  views: ???
+
+ibot_vits16:
+  model: ibot
+  arch: vits16
+  dim: ???
+  epochs: 400
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: ibot
+  acc: 77.9
+  projection_arch: ???
+  projection_nparameters: ???
+  notes: prediction shape is block
+  month: 11
+  year: 2021
+  n_parameters: ???
+  views: ???
+
+jigsaw_rn50:
+  model: jigsaw
+  arch: resnet50
+  dim: 2048
+  epochs: 90
+  batch_size: 256
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: fair_self_supervision_benchmark
+  acc: 46.58
+  projection_arch: mlp
+  projection_nparameters: 20e6
+  notes: null
+  month: 3
+  year: 2016
+  n_parameters: ???
+  views: ???
+
+jigsaw_rn50_in22k:
+  model: jigsaw
+  arch: resnet50
+  dim: 2048
+  epochs: 90
+  batch_size: 256
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: fair_self_supervision_benchmark
+  acc: 53.09
+  projection_arch: mlp
+  projection_nparameters: 20e6
+  notes: null
+  month: 3
+  year: 2016
+  n_parameters: ???
+  views: ???
+
+mae_vitb16_ft1k:
+  model: mae
+  arch: vitb16
+  dim: ???
+  epochs: 800
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: ImageNet-1K
+  where: mae
+  acc: 83.6
+  projection_arch: ???
+  projection_nparameters: ???
+  notes: null
+  month: 11
+  year: 2021
+  n_parameters: ???
+  views: null
+
+mae_vitl16:
+  model: mae
+  arch: vitl16
+  dim: ???
+  epochs: 800
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: ImageNet-1K
+  where: mae
+  acc: 73.5
+  projection_arch: ???
+  projection_nparameters: ???
+  notes: null
+  month: 11
+  year: 2021
+  n_parameters: ???
+  views: null
+
+mocov3_rn50_ep100:
+  model: moco_v3
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: moco_v3
+  acc: 68.9
+  projection_arch: mlp
+  projection_nparameters: 12e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+mocov3_rn50_ep1000:
+  model: moco_v3
+  arch: resnet50
+  dim: 2048
+  epochs: 1000
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: moco_v3
+  acc: 74.6
+  projection_arch: mlp
+  projection_nparameters: 12e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+mocov3_rn50_ep300:
+  model: moco_v3
+  arch: resnet50
+  dim: 2048
+  epochs: 300
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: moco_v3
+  acc: 72.8
+  projection_arch: mlp
+  projection_nparameters: 12e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+mocov3_vitb_ep300:
+  model: moco_v3
+  arch: vitb16
+  dim: ???
+  epochs: 300
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: moco_v3
+  acc: 76.7
+  projection_arch: mlp
+  projection_nparameters: 23e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+mocov3_vits_ep300:
+  model: moco_v3
+  arch: vits16
+  dim: ???
+  epochs: 300
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: moco_v3
+  acc: 73.2
+  projection_arch: mlp
+  projection_nparameters: 23e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: ???
+  views: 2x224
+
+mugs_vitb16_ep400:
+  model: mugs
+  arch: vitb16
+  dim: ???
+  epochs: 400
+  batch_size: 1008
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: mugs
+  acc: 80.6
+  projection_arch: mlp
+  projection_nparameters: 10e6
+  notes: null
+  month: 11
+  year: 2021
+  n_parameters: ???
+  views: 2x224+96*10
+
+mugs_vitl16_ep250:
+  model: mugs
+  arch: vitl16
+  dim: ???
+  epochs: 250
+  batch_size: 640
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: mugs
+  acc: 82.1
+  projection_arch: mlp
+  projection_nparameters: 10e6
+  notes: null
+  month: 3
+  year: 2022
+  n_parameters: ???
+  views: 2x224+96*10
+
+mugs_vits16_ep100:
+  model: mugs
+  arch: vits16
+  dim: ???
+  epochs: 100
+  batch_size: 512
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: mugs
+  acc: 76.4
+  projection_arch: mlp
+  projection_nparameters: 10e6
+  notes: null
+  month: 3
+  year: 2022
+  n_parameters: ???
+  views: 2x224+96*10
+
+mugs_vits16_ep300:
+  model: mugs
+  arch: vits16
+  dim: ???
+  epochs: 300
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: mugs
+  acc: 78.2
+  projection_arch: mlp
+  projection_nparameters: 10e6
+  notes: null
+  month: 3
+  year: 2022
+  n_parameters: ???
+  views: 2x224+96*10
+
+mugs_vits16_ep800:
+  model: mugs
+  arch: vits16
+  dim: ???
+  epochs: 800
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: mugs
+  acc: 78.9
+  projection_arch: mlp
+  projection_nparameters: 10e6
+  notes: null
+  month: 3
+  year: 2022
+  n_parameters: ???
+  views: 2x224+96*10
+
+npid_rn50:
+  model: npid
+  arch: resnet50
+  dim: 2048
+  epochs: 200
+  batch_size: 256
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 52.7
+  projection_arch: linear
+  projection_nparameters: 0.3e6
+  notes: null
+  month: 5
+  year: 2018
+  n_parameters: ???
+  views: 2x224
+
+npidpp_rn50:
+  model: "npid++"
+  arch: resnet50
+  dim: 2048
+  epochs: 800
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 56.7
+  projection_arch: linear
+  projection_nparameters: 0.3e6
+  notes: null
+  month: 12
+  year: 2019
+  n_parameters: ???
+  views: 2x224
+
+pirl_rn50:
+    model: pirl
+    arch: resnet50
+    dim: 2048
+    epochs: 800
+    batch_size: 1024
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    where: vissl
+    acc: 64.3
+    projection_arch: linear
+    projection_nparameters: 0.4e6
+    notes: null
+    month: 12
+    year: 2019
+    n_parameters: ???
+    views: 2x224
+
+pirl_rn50_ep200:
+  model: pirl
+  arch: resnet50
+  dim: 2048
+  epochs: 200
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 62.9
+  projection_arch: linear
+  projection_nparameters: 0.4e6
+  notes: null
+  month: 12
+  year: 2019
+  n_parameters: ???
+  views: 2x224
+
+pirl_rn50_ep200_headmlp:
+    model: pirl
+    arch: resnet50
+    dim: 2048
+    epochs: 200
+    batch_size: 1024
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    where: vissl
+    acc: 65.8
+    projection_arch: mlp
+    projection_nparameters: 5e6
+    notes: null
+    month: 12
+    year: 2019
+    n_parameters: ???
+    views: 2x224
+
+pirl_rn50_headmlp:
+  model: pirl
+  arch: resnet50
+  dim: 2048
+  epochs: 800
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 69.9
+  projection_arch: mlp
+  projection_nparameters: 5e6
+  notes: null
+  month: 12
+  year: 2019
+  n_parameters: ???
+  views: 2x224
+
+rotnet_rn50_in1k:
+  model: rotnet
+  arch: resnet50
+  dim: 2048
+  epochs: 105
+  batch_size: 256
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 48.2
+  projection_arch: linear
+  projection_nparameters: 0.1e6
+  notes: null
+  month: 3
+  year: 2018
+  n_parameters: ???
+  views: ???
+
+rotnet_rn50_in22k:
+  model: rotnet
+  arch: resnet50
+  dim: 2048
+  epochs: 105
+  batch_size: 256
+  pretraining_data: ImageNet-22K
+  finetuning_data: null
+  where: vissl
+  acc: 54.9
+  projection_arch: linear
+  projection_nparameters: 0.1e6
+  notes: null
+  month: 3
+  year: 2018
+  n_parameters: ???
+  views: ???
+
+simclr_resnet50_dnone_e100_m2:
+  model: simclr
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 2056
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: riskdec
+  acc: ???
+  projection_arch: mlp
+  projection_param: 9e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_resnet50_dnone_e100_m2_data010:
+  model: simclr
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 2056
+  pretraining_data: 10% ImageNet-1K
+  finetuning_data: null
+  where: riskdec
+  acc: ???
+  projection_arch: mlp
+  projection_param: 9e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_resnet50_dnone_e100_m2_data030:
+  model: simclr
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 2056
+  pretraining_data: 30% ImageNet-1K
+  finetuning_data: null
+  where: riskdec
+  acc: ???
+  projection_arch: mlp
+  projection_param: 9e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_resnet50_dnone_e100_m2_headtlinslin:
+  model: simclr
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 2056
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: riskdec
+  acc: ???
+  projection_arch: lin
+  projection_param: 0.3e6
+  notes: both teacher and student have linear projection heads
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_resnet50_dnone_e100_m2_headtmlpslin:
+  model: simclr
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 2056
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: riskdec
+  acc: ???
+  projection_arch: mlp
+  projection_param: 9e6
+  notes: student has linear head
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_resnet50_dnone_e100_m2_headtmlpsmlp:
+  model: simclr
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 2056
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: riskdec
+  acc: ???
+  projection_arch: mlp
+  projection_param: 9e6
+  notes: both teacher and student have mlp projection heads
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_resnet50_dnone_e100_m2_headtnonesnone:
+  model: simclr
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 2056
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: riskdec
+  acc: ???
+  projection_arch: identity
+  projection_param: 0
+  notes: no projection heads
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_rn101:
+  model: simclr
+  arch: resnet101
+  dim: 2048
+  epochs: 1000
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 71.6
+  projection_arch: mlp
+  projection_nparameters: 4e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_rn101_ep100:
+  model: simclr
+  arch: resnet101
+  dim: 2048
+  epochs: 100
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 62.3
+  projection_arch: mlp
+  projection_nparameters: 4e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_rn50:
+  model: simclr
+  arch: resnet50
+  dim: 2048
+  epochs: 1000
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 73.8
+  projection_arch: mlp
+  projection_nparameters: 4e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_rn50_bs4096_ep100:
+  model: simclr
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 64.4
+  projection_arch: mlp
+  projection_nparameters: 4e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_rn50_bs512_ep100:
+  model: simclr
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 512
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: simclr-pytorch
+  acc: 60.1
+  projection_arch: mlp
+  projection_nparameters: 4e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_rn50_ep200:
+  model: simclr
+  arch: resnet50
+  dim: 2048
+  epochs: 200
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 66.6
+  projection_arch: mlp
+  projection_nparameters: 4e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_rn50_ep400:
+  model: simclr
+  arch: resnet50
+  dim: 2048
+  epochs: 400
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 67.7
+  projection_arch: mlp
+  projection_nparameters: 4e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_rn50_ep800:
+  model: simclr
+  arch: resnet50
+  dim: 2048
+  epochs: 800
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 69.8
+  projection_arch: mlp
+  projection_nparameters: 4e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_rn50w2:
+  model: simclr
+  arch: resnet50w2
+  dim: 4096
+  epochs: 1000
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 73.8
+  projection_arch: mlp
+  projection_nparameters: 17e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_rn50w2_ep100:
+  model: simclr
+  arch: resnet50w2
+  dim: 4096
+  epochs: 100
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 69.8
+  projection_arch: mlp
+  projection_nparameters: 17e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+simclr_rn50w4:
+  model: simclr
+  arch: resnet50w2
+  dim: 8192
+  epochs: 1000
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 71.6
+  projection_arch: mlp
+  projection_nparameters: 68e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+swav_rn50:
+  model: simclr
+  arch: resnet50w2
+  dim: 8192
+  epochs: 1000
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 71.6
+  projection_arch: mlp
+  projection_nparameters: 68e6
+  notes: null
+  month: 2
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
+swav_rn50_ep100:
+swav_rn50_ep200:
+swav_rn50_ep200_bs256:
+swav_rn50_ep400:
+swav_rn50_ep400_2x224:
+swav_rn50_ep400_bs256:

@@ -1,0 +1,4 @@
+name: dissl_resnet50_d8192_e800_m8
+kwargs:
+  mode: dissl
+  model: dissl_resnet50_d8192_e800_m8

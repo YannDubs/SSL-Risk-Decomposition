@@ -14,11 +14,16 @@ timeout=$time
 
 
 kwargs_multi="
-representor=sup_vitS16_dino,sup_vitB16_dino,sup_vitB16_dino_extractS,sup_vitS16_dino_extractB,sup_vitB16,sup_vitS16
+representor=sup_vitS16_dino,sup_vitB16_dino,sup_vitB16_dino_extractS,sup_vitS16_dino_extractB,sup_vitB16,sup_vitS16,sup_vitH14,sup_vitL16
 predictor=torch_linear_dino,torch_linear
 seed=123,124,125
 "
 
+kwargs_multi="
+representor=sup_vitH14,sup_vitL16,sup_vitB16_beit
+predictor=torch_linear_dino,torch_linear
+seed=123,124,125
+"
 
 
 
@@ -33,6 +38,5 @@ if [ "$is_plot_only" = false ] ; then
   done
 fi
 
-wait
 
 # ADD plotting behavior

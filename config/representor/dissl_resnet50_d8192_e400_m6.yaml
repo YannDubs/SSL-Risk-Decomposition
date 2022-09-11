@@ -1,0 +1,4 @@
+name: dissl_resnet50_d8192_e400_m6
+kwargs:
+  mode: dissl
+  model: dissl_resnet50_d8192_e400_m6

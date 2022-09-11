@@ -69,7 +69,6 @@ def main(cfg):
     # those components have the same training setup so don't retrain
     components_same_train = {"train_train": ["train_test"],
                              "train-cmplmnt-ntest_train-sbst-ntest": ["train-cmplmnt-ntest_test"],
-                             #"train-sbst-0.01_train-cmplmnt-0.01": ["train-sbst-0.01_test"]
                              }
 
     if cfg.is_run_in_dist:
@@ -79,7 +78,6 @@ def main(cfg):
             components = ["train_train", "train-cmplmnt-ntest_train-sbst-ntest"]
         else:
             components = ["train_train", "train-cmplmnt-ntest_train-sbst-ntest",
-                          #"train-sbst-0.01_train-cmplmnt-0.01", "train-sbst-0.01_train-sbst-0.01"
                           "union_test"]  # for other ~equivalent decomposition.
 
         for component in components:

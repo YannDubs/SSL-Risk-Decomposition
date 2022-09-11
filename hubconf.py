@@ -70,3 +70,6 @@ def simclr_resnet50_dNone_e100_m2_headTMlpSMlp(pretrained=True, **kwargs):
 def simclr_resnet50_dNone_e100_m2_headTNoneSNone(pretrained=True, **kwargs):
     return _issl(objective="simclr", base="resnet50", dim=None, sffx="_e100_m2_headTNoneSNone", pretrained=pretrained, **kwargs)
 
+def simclr_resnet50_d8192_e100_m2(pretrained=True, **kwargs):
+    return _issl(objective="simclr", base="resnet50", dim=8192, sffx="_e100_m2", pretrained=pretrained, **kwargs)
+

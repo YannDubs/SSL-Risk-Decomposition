@@ -16,11 +16,11 @@ timeout=$time
 
 # beit_vitL16,beit_vitB16_in22k_ft22k,beit_vitB16_in22k,beit_vitB16
 kwargs_multi="
-representor=mugs_vits16_ep800,mugs_vits16_ep300,mugs_vits16_ep100,mugs_vitL16_ep250,mugs_vitb16_ep400,mocov3_vitS_ep300,mocov3_vitB_ep300,mae_vitL16,mae_vitH14,mae_vitB16_ft1k,ibot_vitS16,ibot_vitB16
+representor=mugs_vits16_ep800,mugs_vits16_ep300,mugs_vits16_ep100,mugs_vitL16_ep250,mugs_vitb16_ep400,mocov3_vitS_ep300,mocov3_vitB_ep300,mae_vitL16,mae_vitH14,mae_vitB16_ft1k,ibot_vitS16,ibot_vitB16,beit_vitL16,beit_vitB16_in22k_ft22k,beit_vitB16_in22k,beit_vitB16,msn_vits16_ep800,msn_vitb16_ep600,msn_vitl16_ep600
 seed=123
-predictor=torch_linear_dino
+predictor=torch_linear
 "
-
+# run 124,125
 #predictor=torch_linear_dino
 
 if [ "$is_plot_only" = false ] ; then

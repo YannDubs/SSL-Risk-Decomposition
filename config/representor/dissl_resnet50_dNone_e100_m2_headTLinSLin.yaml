@@ -1,0 +1,4 @@
+name: dissl_resnet50_dNone_e100_m2_headTLinSLin
+kwargs:
+  mode: riskdec
+  model: dissl_resnet50_dNone_e100_m2_headTLinSLin

@@ -1,0 +1,4 @@
+name: dissl_resnet50_d4096_e100_m2
+kwargs:
+  mode: riskdec
+  model: dissl_resnet50_d4096_e100_m2

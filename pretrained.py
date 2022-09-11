@@ -76,7 +76,6 @@ VISSL_PREPROCESSOR = transforms.Compose([
     ])
 
 
-
 VIT_PREPROCESSOR = transforms.Compose([
         transforms.Resize(248, interpolation=3),
         transforms.CenterCrop(224),
@@ -90,6 +89,7 @@ SIMSIAM_PREPROCESSOR = VISSL_PREPROCESSOR
 MAE_PREPROCESSOR = VISSL_PREPROCESSOR
 IBOT_PREPROCESSOR = DINO_PREPROCESSOR
 MUGS_PREPROCESSOR = DINO_PREPROCESSOR  # not clear what they use in their paper
+MSN_PREPROCESSOR = VISSL_PREPROCESSOR
 
 SWAV_MODELS = {"resnet50": "https://dl.fbaipublicfiles.com/deepcluster/swav_800ep_pretrain.pth.tar",
                "resnet50_ep100": "https://dl.fbaipublicfiles.com/deepcluster/swav_100ep_pretrain.pth.tar",
@@ -154,7 +154,8 @@ VISSL_MODELS = {"barlow_rn50": "https://dl.fbaipublicfiles.com/vissl/model_zoo/b
                 }
 
 IBOT_MODELS = {"vits16": "https://lf3-nlp-opensource.bytetos.com/obj/nlp-opensource/archive/2022/ibot/vits_16/checkpoint_teacher.pth",
-               "vitb16": "https://lf3-nlp-opensource.bytetos.com/obj/nlp-opensource/archive/2022/ibot/vitb_16/checkpoint_teacher.pth"}
+               "vitb16": "https://lf3-nlp-opensource.bytetos.com/obj/nlp-opensource/archive/2022/ibot/vitb_16/checkpoint_teacher.pth",
+               "vitb16_in22k": "https://lf3-nlp-opensource.bytetos.com/obj/nlp-opensource/archive/2022/ibot/vitb_16_pt22k/checkpoint_student.pth"}
 
 MUGS_MODELS = {"mugs_vits16_ep100": "https://drive.google.com/u/0/uc?id=1V2TyArzr7qY93UFglPBHRfYVyAMEfsHR&export=download&confirm=t&uuid=45b83a34-48c5-4791-965f-5bfdb03cb0c9",
                "mugs_vits16_ep300": "https://drive.google.com/u/0/uc?id=1ZAPQ0HiDZO5Uk7jVqF46H6VbGxunZkuf&export=download&confirm=t&uuid=8915c73e-1531-497f-aa8d-7d0aa53ba77d",
@@ -162,6 +163,14 @@ MUGS_MODELS = {"mugs_vits16_ep100": "https://drive.google.com/u/0/uc?id=1V2TyArz
                "mugs_vitb16_ep400": "https://drive.google.com/u/0/uc?id=13NUziwToBXBmS7n7V_1Z5N6EG_7bcncW&export=download&confirm=t&uuid=86bc09fe-1494-4d92-b34e-6581aa5f5ca5",
                "mugs_vitl16_ep250": "https://drive.google.com/uc?export=download&id=1K76a-YnFYcmDXUZ_UlYVYFrWOt2a6733&confirm=t&uuid=4cfaa659-24a0-4694-bd88-aba03643fa86",
                }
+
+MSN_MODELS = {"msn_vits16_ep800": "https://dl.fbaipublicfiles.com/msn/vits16_800ep.pth.tar",
+               "msn_vitb16_ep600": "https://dl.fbaipublicfiles.com/msn/vitb16_600ep.pth.tar",
+               "msn_vitl16_ep600": "https://dl.fbaipublicfiles.com/msn/vitl16_600ep.pth.tar",
+                "msn_vitb4_ep300": "https://dl.fbaipublicfiles.com/msn/vitb4_300ep.pth.tar",
+                "msn_vitl7_ep200": "https://dl.fbaipublicfiles.com/msn/vitl7_200ep.pth.tar",
+               }
+
 
 # manually downloaded from https://github.com/AndrewAtanov/simclr-pytorch
 SIMCLR_PYTORCH = {"simclr_rn50_bs512_ep100": CURR_DIR / "pretrained_models/resnet50_imagenet_bs512_epochs100.pth.tar"}
@@ -177,6 +186,12 @@ def available_models(mode: Optional[list[str]]=None) -> dict[str, list[str]]:
     if mode is None or "dino" in mode:
         with rm_module("utils"):
             available["dino"] = list(torch.hub.list("facebookresearch/dino:main"))
+
+    if mode is None or "dissl" in mode:
+        available["dissl"] = list(torch.hub.list("YannDubs/Invariant-Self-Supervised-Learning:main"))
+
+    if mode is None or "riskdec" in mode:
+        available["riskdec"] = list(torch.hub.list("YannDubs/SSL-Risk-Decomposition:main"))
 
     if mode is None or "swav" in mode:
         available["swav"] = list(SWAV_MODELS.keys())
@@ -203,6 +218,9 @@ def available_models(mode: Optional[list[str]]=None) -> dict[str, list[str]]:
 
     if mode is None or "mugs" in mode:
         available["mugs"] = list(MUGS_MODELS.keys())
+
+    if mode is None or "msn" in mode:
+        available["msn"] = list(MSN_MODELS.keys())
 
     if mode is None or "ibot" in mode:
         available["ibot"] = list(IBOT_MODELS.keys())
@@ -252,17 +270,7 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
 
         preprocess = DINO_PREPROCESSOR
 
-
-    # for k in list(state_dict.keys()):
-    #     # retain only base_encoder up to before the embedding layer
-    #     if k.startswith('module.base_encoder') and not k.startswith('module.base_encoder.fc'):
-    #         # remove prefix
-    #         state_dict[k[len("module.base_encoder."):]] = state_dict[k]
-    #     # delete renamed or unused k
-    #     del state_dict[k]
-    # state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
-
-    elif mode in ["ibot", "mugs", "mae"]:
+    elif mode in ["ibot", "mugs", "mae", "msn"]:
 
         check_import("timm", f"mode={mode}  in load_representor")
 
@@ -278,6 +286,10 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
             MODELS = MAE_MODELS
             preprocess = MAE_PREPROCESSOR
             key = "model"
+        elif mode == "msn":
+            MODELS = MSN_MODELS
+            preprocess = MSN_PREPROCESSOR
+            key = "target_encoder"
         else:
             raise ValueError(f"Unknown mode={mode}.")
 
@@ -314,6 +326,10 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
             if mode == "ibot":
                 state_dict = {k: v for k, v in state_dict.items()
                                 if not k.startswith("head.")}
+
+            elif mode == "msn":
+                state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()
+                              if "fc." not in k}
 
             encoder.load_state_dict(state_dict, strict=True)
 
@@ -422,6 +438,15 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
         model = transformers.BeitModel.from_pretrained(f"{model}")
         encoder = HuggingSelector(model, "pooler_output")
 
+
+    elif mode == "dissl":
+        encoder = torch.hub.load("YannDubs/Invariant-Self-Supervised-Learning:main", model)
+        preprocess = torch.hub.load("YannDubs/Invariant-Self-Supervised-Learning:main", "preprocessor")
+
+    elif mode == "riskdec":
+        encoder = torch.hub.load("YannDubs/SSL-Risk-Decomposition:main", model)
+        preprocess = torch.hub.load("YannDubs/SSL-Risk-Decomposition:main", "preprocessor")
+
     elif mode == "vissl":
         preprocess = VISSL_PREPROCESSOR
 
@@ -445,6 +470,7 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
             encoder.fc = torch.nn.Identity()
 
         else:
+            # TODO remove dependencies on VISSL
             from vissl.config import AttrDict
             from vissl.models.trunks.resnext import ResNeXt
             # annoying but VISSL doesn't have defaults in the code (only hydra)

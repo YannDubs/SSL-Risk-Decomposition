@@ -1,0 +1,4 @@
+name: msn_vits16_ep800
+kwargs:
+  mode: msn
+  model: msn_vits16_ep800
