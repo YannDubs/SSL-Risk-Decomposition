@@ -7,6 +7,6 @@ from pretrained import available_models, load_representor
 
 BASE_DIR = Path(__file__).absolute().parents[0]
 
-def get_metadata():
+def metadata():
     with open(BASE_DIR/'metadata.yaml') as f:
         return yaml.safe_load(f)

@@ -13,8 +13,11 @@ barlow_rn50:
   notes: null
   month: 3
   year: 2021
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 barlow_rn50_ep300:
   model: barlow_twins
@@ -31,206 +34,263 @@ barlow_rn50_ep300:
   notes: null
   month: 3
   year: 2021
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 beit_vitb16:
   model: beit
   arch: vitb16
-  dim: ???
-  epochs: ???
-  batch_size: ???
+  dim: 768
+  epochs: 800
+  batch_size: 2048
   pretraining_data: ImageNet-1K
   finetuning_data: ImageNet-1K
-  projection_arch: ???
-  projection_nparameters: ???
+  projection_arch: null
+  projection_nparameters: null
   where: huggingface
-  acc: ???
-  notes: ??? #which layer of VIT selects
+  acc: 56.7
+  notes: Uses average pooling layer to get representation
   month: 6
   year: 2021
-  n_parameters: ???
+  n_parameters: 85761984
   views: null
+  ssl_mode: generative
+  is_aug_invariant: false
+  img_size: 224
 
 beit_vitb16_in22k:
   model: beit
   arch: vitb16
-  dim: ???
-  epochs: ???
-  batch_size: ???
+  dim: 768
+  epochs: 800
+  batch_size: 2048
   pretraining_data: ImageNet-1K
   finetuning_data: ImageNet-22K
-  projection_arch: ???
-  projection_nparameters: ???
+  projection_arch: null
+  projection_nparameters: null
   where: huggingface
-  acc: ???
-  notes: ??? #which layer of VIT selects
+  acc: null
+  notes: Uses average pooling layer to get representation
   month: 6
   year: 2021
-  n_parameters: ???
+  n_parameters: 85761984
   views: null
+  ssl_mode: generative
+  is_aug_invariant: false
+  img_size: 224
 
 beit_vitb16_in22k_ft22k:
   model: beit
   arch: vitb16
-  dim: ???
-  epochs: ???
-  batch_size: ???
+  dim: 768
+  epochs: 800
+  batch_size: 2048
   pretraining_data: ImageNet-22K
   finetuning_data: ImageNet-22K
-  projection_arch: ???
-  projection_nparameters: ???
+  projection_arch: null
+  projection_nparameters: null
   where: huggingface
-  acc: ???
-  notes: ??? #which layer of VIT selects
+  acc: null
+  notes: Uses average pooling layer to get representation
   month: 6
   year: 2021
-  n_parameters: ???
+  n_parameters: 85761984
   views: null
+  ssl_mode: generative
+  is_aug_invariant: false
+  img_size: 224
 
-clip_rn101:
-  model: clip
-  arch: resnet101
-  dim: ???
-  epochs: ???
-  batch_size: ???
-  pretraining_data: CLIP
+beit_vitl16:
+  model: beit
+  arch: vitl16
+  dim: 1024
+  epochs: 800
+  batch_size: 2048
+  pretraining_data: ImageNet-22K
   finetuning_data: null
-  where: openai
-  acc: ???
-  projection_arch: linear
-  projection_param: ???
-  notes: null
-  month: 1
+  projection_arch: null
+  projection_nparameters: null
+  where: huggingface
+  acc: 73.5
+  notes: Uses average pooling layer to get representation
+  month: 6
   year: 2021
-  n_parameters: ???
-  views: 2x224
+  n_parameters: 304e6
+  views: null
+  ssl_mode: generative
+  is_aug_invariant: false
+  img_size: 224
 
 clip_rn50:
   model: clip
   arch: resnet50
-  dim: ???
-  epochs: ???
-  batch_size: ???
+  dim: 2048
+  epochs: 32
+  batch_size: 32768
   pretraining_data: CLIP
   finetuning_data: null
   where: openai
-  acc: ???
+  acc: 73.3
   projection_arch: linear
-  projection_param: ???
-  notes: null
+  projection_param: 1e6
+  notes: not clear whether we should be using the representation after or before the linear projection. I used before. They also modified a little the resnet (attention pooling, antialiasing, avg pool instead of max, 3 stem convolutions.)
   month: 1
   year: 2021
-  n_parameters: ???
+  n_parameters: 40415072
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 clip_rn50x16:
   model: clip
   arch: resnet50w16
-  dim: ???
-  epochs: ???
-  batch_size: ???
+  dim: 3072
+  epochs: 32
+  batch_size: 32768
   pretraining_data: CLIP
   finetuning_data: null
   where: openai
-  acc: ???
+  acc: 81.5
   projection_arch: linear
-  projection_param: ???
-  notes: null
+  projection_param: 2e6
+  notes: not clear whether we should be using the representation after or before the linear projection. I used before. They also modified a little the resnet (attention pooling, antialiasing, avg pool instead of max, 3 stem convolutions.)
   month: 1
   year: 2021
-  n_parameters: ???
-  views: 2x224
+  n_parameters: 174409104
+  views: 2x384
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 384
 
 clip_rn50x4:
   model: clip
   arch: resnet50w4
-  dim: ???
-  epochs: ???
-  batch_size: ???
+  dim: 2560
+  epochs: 32
+  batch_size: 32768
   pretraining_data: CLIP
   finetuning_data: null
   where: openai
-  acc: ???
+  acc:  78.2
   projection_arch: linear
-  projection_param: ???
-  notes: null
+  projection_param: 2e6
+  notes: not clear whether we should be using the representation after or before the linear projection. I used before. They also modified a little the resnet (attention pooling, antialiasing, avg pool instead of max, 3 stem convolutions.)
   month: 1
   year: 2021
-  n_parameters: ???
-  views: 2x224
+  n_parameters: 92054200
+  views: 2x288
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 288
 
 clip_rn50x64:
   model: clip
   arch: resnet50w64
-  dim: ???
-  epochs: ???
-  batch_size: ???
+  dim: 4096
+  epochs: 32
+  batch_size: 32768
   pretraining_data: CLIP
   finetuning_data: null
   where: openai
-  acc: ???
+  acc: 83.6
   projection_arch: linear
-  projection_param: ???
-  notes: null
+  projection_param: 4e6
+  notes: not clear whether we should be using the representation after or before the linear projection. I used before. They also modified a little the resnet (attention pooling, antialiasing, avg pool instead of max, 3 stem convolutions.)
   month: 1
   year: 2021
-  n_parameters: ???
+  n_parameters: 432966336
+  views: 2x448
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 448
+
+clip_rn101:
+  model: clip
+  arch: resnet101
+  dim: 2048
+  epochs: 32
+  batch_size: 32768
+  pretraining_data: CLIP
+  finetuning_data: null
+  where: openai
+  acc: 75.7
+  projection_arch: linear
+  projection_param: 1e6
+  notes: not clear whether we should be using the representation after or before the linear projection. I used before. They also modified a little the resnet (attention pooling, antialiasing, avg pool instead of max, 3 stem convolutions.)
+  month: 1
+  year: 2021
+  n_parameters: 59407200
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 448
 
 clip_vitb16:
   model: clip
   arch: vitb16
-  dim: ???
-  epochs: ???
-  batch_size: ???
+  dim: 768
+  epochs: 32
+  batch_size: 32768
   pretraining_data: CLIP
   finetuning_data: null
   where: openai
-  acc: ???
+  acc: 80.2
   projection_arch: linear
-  projection_param: ???
+  projection_param: 0.4e6
   notes: null
   month: 1
   year: 2021
-  n_parameters: ???
+  n_parameters: 85799424
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 clip_vitb32:
   model: clip
   arch: vitb32
-  dim: ???
-  epochs: ???
-  batch_size: ???
+  dim: 768
+  epochs: 32
+  batch_size: 32768
   pretraining_data: CLIP
   finetuning_data: null
   where: openai
-  acc: ???
+  acc: 76.1
   projection_arch: linear
-  projection_param: ???
+  projection_param: 0.4e6
   notes: null
   month: 1
   year: 2021
-  n_parameters: ???
+  n_parameters: 87456000
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 clip_vitl14:
   model: clip
   arch: vitl14
-  dim: ???
-  epochs: ???
-  batch_size: ???
+  dim: 1024
+  epochs: 32
+  batch_size: 32768
   pretraining_data: CLIP
   finetuning_data: null
   where: openai
-  acc: ???
+  acc: 83.9
   projection_arch: linear
-  projection_param: ???
+  projection_param: 1e6
   notes: null
   month: 1
   year: 2021
-  n_parameters: ???
+  n_parameters: 303179776
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 clusterfit_rn50:
   model: clusterfit
@@ -240,15 +300,18 @@ clusterfit_rn50:
   batch_size: 256
   pretraining_data: ImageNet-1K
   finetuning_data: null
-  where: VISSL
+  where: vissl
   acc: 53.6
   projection_arch: linear
   projection_param: 33e6
   notes: null
   month: 12
   year: 2019
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dc2_rn50_ep400_2x224:
   model: deepcluster_v2
@@ -258,15 +321,18 @@ dc2_rn50_ep400_2x224:
   batch_size: 512
   pretraining_data: ImageNet-1K
   finetuning_data: null
-  where: VISSL
+  where: vissl
   acc: 70.0
   projection_arch: mlp
   projection_param: 8.4e6
   notes: null
   month: 6
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dc2_rn50_ep400_2x224+4x96:
   model: deepcluster_v2
@@ -276,15 +342,18 @@ dc2_rn50_ep400_2x224+4x96:
   batch_size: 512
   pretraining_data: ImageNet-1K
   finetuning_data: null
-  where: VISSL
+  where: vissl
   acc: 75.2
   projection_arch: mlp
   projection_param: 8.4e6
   notes: null
   month: 6
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224+6x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
   
 dino_rn50:
   model: dino
@@ -301,13 +370,16 @@ dino_rn50:
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224+6x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dino_vitb16:
   model: dino
   arch: vitb16
-  dim: ???
+  dim: 1536
   epochs: 400
   batch_size: 1024
   pretraining_data: ImageNet-1K
@@ -319,49 +391,58 @@ dino_vitb16:
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 85798656
   views: 2x224+10x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dino_vitb16_extracts:
   model: dino
   arch: vitb16
-  dim: ??? # will be different
+  dim: 3072
   epochs: 400
   batch_size: 1024
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: dino
-  acc: ???
+  acc: null
   projection_arch: mlp
   projection_param: 26e6
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 85798656
   views: 2x224+10x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dino_vitb16_last:
   model: dino
   arch: vitb16
-  dim: ??? # will be different
+  dim: 768
   epochs: 400
   batch_size: 1024
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: dino
-  acc: ???
+  acc: null
   projection_arch: mlp
   projection_param: 26e6
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 85798656
   views: 2x224+10x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dino_vitb8:
   model: dino
   arch: vitb8
-  dim: ??? # will be different
+  dim: 1536
   epochs: 300
   batch_size: 1056
   pretraining_data: ImageNet-1K
@@ -373,31 +454,37 @@ dino_vitb8:
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 85807872
   views: 2x224+10x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dino_vitb8_last:
   model: dino
   arch: vitb8
-  dim: ??? # will be different
+  dim: 768
   epochs: 300
   batch_size: 1056
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: dino
-  acc: ???
+  acc: null
   projection_arch: mlp
   projection_param: 26e6
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 85807872
   views: 2x224+10x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dino_vits16:
   model: dino
   arch: vits16
-  dim: ??? # will be different
+  dim: 1536
   epochs: 800
   batch_size: 1024
   pretraining_data: ImageNet-1K
@@ -409,44 +496,53 @@ dino_vits16:
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 21665664
   views: 2x224+10x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dino_vits16_extractb:
   model: dino
   arch: vits16
-  dim: ??? # will be different
+  dim: 768
   epochs: 800
   batch_size: 1024
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: dino
-  acc: ???
+  acc: null
   projection_arch: mlp
   projection_param: 26e6
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 21665664
   views: 2x224+10x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dino_vits16_last:
   model: dino
   arch: vits16
-  dim: ??? # will be different
+  dim: 384
   epochs: 800
   batch_size: 1024
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: dino
-  acc: ???
+  acc: null
   projection_arch: mlp
   projection_param: 26e6
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 21665664
   views: 2x224+10x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dissl_resnet50_d4096_e100_m2:
   model: dissl
@@ -465,6 +561,9 @@ dissl_resnet50_d4096_e100_m2:
   year: 2022
   n_parameters: ???
   views: 2x224
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dissl_resnet50_dnone_e100_m2_auglarge:
   model: dissl
@@ -483,6 +582,9 @@ dissl_resnet50_dnone_e100_m2_auglarge:
   year: 2022
   n_parameters: ???
   views: 2x224
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dissl_resnet50_dnone_e100_m2_augsmall:
   model: dissl
@@ -501,6 +603,9 @@ dissl_resnet50_dnone_e100_m2_augsmall:
   year: 2022
   n_parameters: ???
   views: 2x224
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dissl_resnet50_dnone_e100_m2_headtlinslin:
   model: dissl
@@ -519,6 +624,9 @@ dissl_resnet50_dnone_e100_m2_headtlinslin:
   year: 2022
   n_parameters: ???
   views: 2x224
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dissl_resnet50_dnone_e100_m2_headtmlpsmlp:
   model: dissl
@@ -537,6 +645,9 @@ dissl_resnet50_dnone_e100_m2_headtmlpsmlp:
   year: 2022
   n_parameters: ???
   views: 2x224
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 ibot_vitb16:
   model: ibot

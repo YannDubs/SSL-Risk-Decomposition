@@ -173,19 +173,19 @@ MSN_MODELS = {"msn_vits16_ep800": "https://dl.fbaipublicfiles.com/msn/vits16_800
                 "msn_vitl7_ep200": "https://dl.fbaipublicfiles.com/msn/vitl7_200ep.pth.tar",
                }
 
-RISKDEC_MODELS = {"dissl_resnet50_dNone_e100_m2_augLarge": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_dNone_e100_m2_augLarge.pth",
-                  "dissl_resnet50_dNone_e100_m2_augSmall": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_dNone_e100_m2_augSmall.pth",
-                  "dissl_resnet50_dNone_e100_m2_headTLinSLin": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_dNone_e100_m2_headTLinSLin.pth",
-                  "dissl_resnet50_dNone_e100_m2_headTMlpSMlp": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_dNone_e100_m2_headTMlpSMlp.pth",
-                  "dissl_resnet50_d4096_e100_m2": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_d4096_e100_m2.pth",
-                    "simclr_resnet50_dNone_e100_m2": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2.pth",
-                    "simclr_resnet50_dNone_e100_m2_data010": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_data010.pth",
-                    "simclr_resnet50_dNone_e100_m2_data030": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_data030.pth",
-                    "simclr_resnet50_dNone_e100_m2_headTLinSLin": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTLinSLin.pth",
-                  "simclr_resnet50_dNone_e100_m2_headTMlpSLin": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTMlpSLin.pth",
-                "simclr_resnet50_dNone_e100_m2_headTMlpSMlp": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTMlpSMlp.pth",
-                "simclr_resnet50_dNone_e100_m2_headTNoneSNone": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTNoneSNone.pth",
-                "simclr_resnet50_d8192_e100_m2": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_d8192_e100_m2.pth",
+RISKDEC_MODELS = {"dissl_resnet50_dNone_e100_m2_augLarge": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_dNone_e100_m2_augLarge.torch",
+                  "dissl_resnet50_dNone_e100_m2_augSmall": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_dNone_e100_m2_augSmall.torch",
+                  "dissl_resnet50_dNone_e100_m2_headTLinSLin": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_dNone_e100_m2_headTLinSLin.torch",
+                  "dissl_resnet50_dNone_e100_m2_headTMlpSMlp": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_dNone_e100_m2_headTMlpSMlp.torch",
+                  "dissl_resnet50_d4096_e100_m2": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_d4096_e100_m2.torch",
+                    "simclr_resnet50_dNone_e100_m2": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2.torch",
+                    "simclr_resnet50_dNone_e100_m2_data010": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_data010.torch",
+                    "simclr_resnet50_dNone_e100_m2_data030": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_data030.torch",
+                    "simclr_resnet50_dNone_e100_m2_headTLinSLin": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTLinSLin.torch",
+                  "simclr_resnet50_dNone_e100_m2_headTMlpSLin": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTMlpSLin.torch",
+                "simclr_resnet50_dNone_e100_m2_headTMlpSMlp": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTMlpSMlp.torch",
+                "simclr_resnet50_dNone_e100_m2_headTNoneSNone": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTNoneSNone.torch",
+                "simclr_resnet50_d8192_e100_m2": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_d8192_e100_m2.torch",
                   }
 
 
@@ -258,8 +258,7 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
     """Return the encoder and the preprocessor."""
     if mode == "clip":
         check_import("clip", "mode=clip in load_representor")
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        encoder, preprocess = clip.load(model, device, jit=False)  # might have to try False
+        encoder, preprocess = clip.load(model, "cpu", jit=False)  # might have to try False
         encoder = encoder.visual.float()  # only keep the image model
 
         if hasattr(encoder, "proj"):  # ViT
