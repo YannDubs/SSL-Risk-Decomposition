@@ -1,0 +1,4 @@
+name: simclr_resnet50_d8192_e100_m2
+kwargs:
+  mode: riskdec
+  model: simclr_resnet50_d8192_e100_m2

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import os
 import types
 from pathlib import Path
@@ -90,6 +91,7 @@ MAE_PREPROCESSOR = VISSL_PREPROCESSOR
 IBOT_PREPROCESSOR = DINO_PREPROCESSOR
 MUGS_PREPROCESSOR = DINO_PREPROCESSOR  # not clear what they use in their paper
 MSN_PREPROCESSOR = VISSL_PREPROCESSOR
+RISKDEC_PREPROCESSOR = VISSL_PREPROCESSOR
 
 SWAV_MODELS = {"resnet50": "https://dl.fbaipublicfiles.com/deepcluster/swav_800ep_pretrain.pth.tar",
                "resnet50_ep100": "https://dl.fbaipublicfiles.com/deepcluster/swav_100ep_pretrain.pth.tar",
@@ -171,6 +173,21 @@ MSN_MODELS = {"msn_vits16_ep800": "https://dl.fbaipublicfiles.com/msn/vits16_800
                 "msn_vitl7_ep200": "https://dl.fbaipublicfiles.com/msn/vitl7_200ep.pth.tar",
                }
 
+RISKDEC_MODELS = {"dissl_resnet50_dNone_e100_m2_augLarge": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_dNone_e100_m2_augLarge.pth",
+                  "dissl_resnet50_dNone_e100_m2_augSmall": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_dNone_e100_m2_augSmall.pth",
+                  "dissl_resnet50_dNone_e100_m2_headTLinSLin": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_dNone_e100_m2_headTLinSLin.pth",
+                  "dissl_resnet50_dNone_e100_m2_headTMlpSMlp": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_dNone_e100_m2_headTMlpSMlp.pth",
+                  "dissl_resnet50_d4096_e100_m2": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/dissl_resnet50_d4096_e100_m2.pth",
+                    "simclr_resnet50_dNone_e100_m2": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2.pth",
+                    "simclr_resnet50_dNone_e100_m2_data010": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_data010.pth",
+                    "simclr_resnet50_dNone_e100_m2_data030": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_data030.pth",
+                    "simclr_resnet50_dNone_e100_m2_headTLinSLin": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTLinSLin.pth",
+                  "simclr_resnet50_dNone_e100_m2_headTMlpSLin": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTMlpSLin.pth",
+                "simclr_resnet50_dNone_e100_m2_headTMlpSMlp": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTMlpSMlp.pth",
+                "simclr_resnet50_dNone_e100_m2_headTNoneSNone": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTNoneSNone.pth",
+                "simclr_resnet50_d8192_e100_m2": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_d8192_e100_m2.pth",
+                  }
+
 
 # manually downloaded from https://github.com/AndrewAtanov/simclr-pytorch
 SIMCLR_PYTORCH = {"simclr_rn50_bs512_ep100": CURR_DIR / "pretrained_models/resnet50_imagenet_bs512_epochs100.pth.tar"}
@@ -191,7 +208,7 @@ def available_models(mode: Optional[list[str]]=None) -> dict[str, list[str]]:
         available["dissl"] = list(torch.hub.list("YannDubs/Invariant-Self-Supervised-Learning:main"))
 
     if mode is None or "riskdec" in mode:
-        available["riskdec"] = list(torch.hub.list("YannDubs/SSL-Risk-Decomposition:main"))
+        available["riskdec"] = list(RISKDEC_MODELS.keys())
 
     if mode is None or "swav" in mode:
         available["swav"] = list(SWAV_MODELS.keys())
@@ -444,8 +461,20 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
         preprocess = torch.hub.load("YannDubs/Invariant-Self-Supervised-Learning:main", "preprocessor")
 
     elif mode == "riskdec":
-        encoder = torch.hub.load("YannDubs/SSL-Risk-Decomposition:main", model)
-        preprocess = torch.hub.load("YannDubs/SSL-Risk-Decomposition:main", "preprocessor")
+        preprocess = RISKDEC_PREPROCESSOR
+        encoder = tmodels.resnet.resnet50(pretrained=False, num_classes=0)
+        # TODO use metadata
+        dim = ast.literal_eval(model.split("_d")[1].split("_")[0]) # take dim from name
+        if dim is not None:
+            from utils.hub import update_dim_resnet_ as _update_dim_resnet_
+            _update_dim_resnet_(encoder, z_dim=dim, bottleneck_channel=512, is_residual=True)
+        encoder.fc = torch.nn.Identity()
+        ckpt_path = RISKDEC_MODELS[model]
+        state_dict = torch.hub.load_state_dict_from_url(url=ckpt_path, map_location="cpu")
+        # torchvision models do not have a resizer
+        state_dict = {k.replace("resizer", "avgpool.0", 1) if k.startswith("resizer") else k: v
+                      for k, v in state_dict.items()}
+        encoder.load_state_dict(state_dict, strict=True)
 
     elif mode == "vissl":
         preprocess = VISSL_PREPROCESSOR
