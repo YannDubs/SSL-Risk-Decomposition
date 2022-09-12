@@ -40,7 +40,7 @@ barlow_rn50_ep300:
   is_aug_invariant: true
   img_size: 224
 
-beit_vitb16:
+beit_vitB16:
   model: beit
   arch: vitb16
   dim: 768
@@ -61,7 +61,7 @@ beit_vitb16:
   is_aug_invariant: false
   img_size: 224
 
-beit_vitb16_in22k:
+beit_vitB16_in22k:
   model: beit
   arch: vitb16
   dim: 768
@@ -82,7 +82,7 @@ beit_vitb16_in22k:
   is_aug_invariant: false
   img_size: 224
 
-beit_vitb16_in22k_ft22k:
+beit_vitB16_in22k_ft22k:
   model: beit
   arch: vitb16
   dim: 768
@@ -103,7 +103,7 @@ beit_vitb16_in22k_ft22k:
   is_aug_invariant: false
   img_size: 224
 
-beit_vitl16:
+beit_vitL16:
   model: beit
   arch: vitl16
   dim: 1024
@@ -229,7 +229,7 @@ clip_rn101:
   is_aug_invariant: true
   img_size: 448
 
-clip_vitb16:
+clip_vitB16:
   model: clip
   arch: vitb16
   dim: 768
@@ -250,7 +250,7 @@ clip_vitb16:
   is_aug_invariant: true
   img_size: 224
 
-clip_vitb32:
+clip_vitB32:
   model: clip
   arch: vitb32
   dim: 768
@@ -271,7 +271,7 @@ clip_vitb32:
   is_aug_invariant: true
   img_size: 224
 
-clip_vitl14:
+clip_vitL14:
   model: clip
   arch: vitl14
   dim: 1024
@@ -376,7 +376,7 @@ dino_rn50:
   is_aug_invariant: true
   img_size: 224
 
-dino_vitb16:
+dino_vitB16:
   model: dino
   arch: vitb16
   dim: 1536
@@ -397,7 +397,7 @@ dino_vitb16:
   is_aug_invariant: true
   img_size: 224
 
-dino_vitb16_extracts:
+dino_vitbB6_extractS:
   model: dino
   arch: vitb16
   dim: 3072
@@ -418,7 +418,7 @@ dino_vitb16_extracts:
   is_aug_invariant: true
   img_size: 224
 
-dino_vitb16_last:
+dino_vitB16_last:
   model: dino
   arch: vitb16
   dim: 768
@@ -439,7 +439,7 @@ dino_vitb16_last:
   is_aug_invariant: true
   img_size: 224
 
-dino_vitb8:
+dino_vitB8:
   model: dino
   arch: vitb8
   dim: 1536
@@ -460,7 +460,7 @@ dino_vitb8:
   is_aug_invariant: true
   img_size: 224
 
-dino_vitb8_last:
+dino_vitB8_last:
   model: dino
   arch: vitb8
   dim: 768
@@ -481,7 +481,7 @@ dino_vitb8_last:
   is_aug_invariant: true
   img_size: 224
 
-dino_vits16:
+dino_vitS16:
   model: dino
   arch: vits16
   dim: 1536
@@ -502,7 +502,7 @@ dino_vits16:
   is_aug_invariant: true
   img_size: 224
 
-dino_vits16_extractb:
+dino_vitS16_extractB:
   model: dino
   arch: vits16
   dim: 768
@@ -523,7 +523,7 @@ dino_vits16_extractb:
   is_aug_invariant: true
   img_size: 224
 
-dino_vits16_last:
+dino_vitS16_last:
   model: dino
   arch: vits16
   dim: 384
@@ -553,19 +553,19 @@ dissl_resnet50_d4096_e100_m2:
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
-  acc: ???
+  acc: null
   projection_arch: mlp
   projection_param: 17e6
   notes: null
   month: 6
   year: 2022
-  n_parameters: ???
+  n_parameters: 29023296
   views: 2x224
   ssl_mode: clustering
   is_aug_invariant: true
   img_size: 224
 
-dissl_resnet50_dnone_e100_m2_auglarge:
+dissl_resnet50_dNone_e100_m2_augLarge:
   model: dissl
   arch: resnet50
   dim: 2048
@@ -574,19 +574,19 @@ dissl_resnet50_dnone_e100_m2_auglarge:
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
-  acc: ???
+  acc: null
   projection_arch: mlp
   projection_param: 16e6
   notes: increases strength of augmentation
   month: 6
   year: 2022
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
   ssl_mode: clustering
   is_aug_invariant: true
   img_size: 224
 
-dissl_resnet50_dnone_e100_m2_augsmall:
+dissl_resnet50_dNone_e100_m2_augSmall:
   model: dissl
   arch: resnet50
   dim: 2048
@@ -595,19 +595,19 @@ dissl_resnet50_dnone_e100_m2_augsmall:
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
-  acc: ???
+  acc: null
   projection_arch: mlp
   projection_param: 16e6
   notes: decreases strength of augmentation
   month: 6
   year: 2022
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
   ssl_mode: clustering
   is_aug_invariant: true
   img_size: 224
 
-dissl_resnet50_dnone_e100_m2_headtlinslin:
+dissl_resnet50_dNone_e100_m2_headTLinSLin:
   model: dissl
   arch: resnet50
   dim: 2048
@@ -616,19 +616,19 @@ dissl_resnet50_dnone_e100_m2_headtlinslin:
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
-  acc: ???
+  acc: null
   projection_arch: linear
   projection_param: 9e6
   notes: uses linear projection head for teacher and student
   month: 6
   year: 2022
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
   ssl_mode: clustering
   is_aug_invariant: true
   img_size: 224
 
-dissl_resnet50_dnone_e100_m2_headtmlpsmlp:
+dissl_resnet50_dNone_e100_m2_headTMlpSMlp:
   model: dissl
   arch: resnet50
   dim: 2048
@@ -637,53 +637,59 @@ dissl_resnet50_dnone_e100_m2_headtmlpsmlp:
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
-  acc: ???
+  acc: null
   projection_arch: linear
   projection_param: 16e6
   notes: uses mlp projection head for student
   month: 6
   year: 2022
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
   ssl_mode: clustering
   is_aug_invariant: true
   img_size: 224
 
-ibot_vitb16:
+ibot_vitB16:
   model: ibot
   arch: vitb16
-  dim: ???
+  dim: 1536
   epochs: 400
   batch_size: 1032
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: ibot
   acc: 79.5
-  projection_arch: ???
-  projection_nparameters: ???
+  projection_arch: mlp
+  projection_nparameters: 10e6
   notes: prediction shape is block
   month: 11
   year: 2021
-  n_parameters: ???
-  views: ???
+  n_parameters: 85798656
+  views: 2x224+10x96
+  ssl_mode: clustering #actually it's clustering of patches => not really clustering
+  is_aug_invariant: true
+  img_size: 224
 
-ibot_vits16:
+ibot_vitS16:
   model: ibot
   arch: vits16
-  dim: ???
+  dim: 1536
   epochs: 400
   batch_size: 1024
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: ibot
   acc: 77.9
-  projection_arch: ???
-  projection_nparameters: ???
+  projection_arch: mlp
+  projection_nparameters: 10e6
   notes: prediction shape is block
   month: 11
   year: 2021
-  n_parameters: ???
-  views: ???
+  n_parameters: 21665664
+  views: 2x224+10x96
+  ssl_mode: clustering #actually it's clustering of patches => not really clustering
+  is_aug_invariant: true
+  img_size: 224
 
 jigsaw_rn50:
   model: jigsaw
@@ -700,8 +706,11 @@ jigsaw_rn50:
   notes: null
   month: 3
   year: 2016
-  n_parameters: ???
-  views: ???
+  n_parameters: 23508032
+  views: 224
+  ssl_mode: denoising
+  is_aug_invariant: false
+  img_size: 224
 
 jigsaw_rn50_in22k:
   model: jigsaw
@@ -710,7 +719,7 @@ jigsaw_rn50_in22k:
   epochs: 90
   batch_size: 256
   pretraining_data: ImageNet-1K
-  finetuning_data: null
+  finetuning_data: ImageNet-22K
   where: fair_self_supervision_benchmark
   acc: 53.09
   projection_arch: mlp
@@ -718,44 +727,53 @@ jigsaw_rn50_in22k:
   notes: null
   month: 3
   year: 2016
-  n_parameters: ???
-  views: ???
+  n_parameters: 23508032
+  views: 224
+  ssl_mode: denoising
+  is_aug_invariant: false
+  img_size: 224
 
-mae_vitb16_ft1k:
+mae_vitb16:
   model: mae
   arch: vitb16
-  dim: ???
+  dim: 1536
   epochs: 800
   batch_size: 4096
   pretraining_data: ImageNet-1K
   finetuning_data: ImageNet-1K
   where: mae
-  acc: 83.6
-  projection_arch: ???
-  projection_nparameters: ???
+  acc: 68.0
+  projection_arch: null
+  projection_nparameters: null
   notes: null
   month: 11
   year: 2021
-  n_parameters: ???
+  n_parameters: 85798656
   views: null
+  ssl_mode: generative
+  is_aug_invariant: false
+  img_size: 224
 
 mae_vitl16:
   model: mae
   arch: vitl16
-  dim: ???
+  dim: 2048
   epochs: 800
   batch_size: 4096
   pretraining_data: ImageNet-1K
   finetuning_data: ImageNet-1K
   where: mae
   acc: 73.5
-  projection_arch: ???
-  projection_nparameters: ???
+  projection_arch: null
+  projection_nparameters: null
   notes: null
   month: 11
   year: 2021
-  n_parameters: ???
+  n_parameters: 303301632
   views: null
+  ssl_mode: generative
+  is_aug_invariant: false
+  img_size: 224
 
 mocov3_rn50_ep100:
   model: moco_v3
@@ -772,8 +790,11 @@ mocov3_rn50_ep100:
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 mocov3_rn50_ep1000:
   model: moco_v3
@@ -790,8 +811,11 @@ mocov3_rn50_ep1000:
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 mocov3_rn50_ep300:
   model: moco_v3
@@ -808,13 +832,16 @@ mocov3_rn50_ep300:
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 mocov3_vitb_ep300:
   model: moco_v3
   arch: vitb16
-  dim: ???
+  dim: 768
   epochs: 300
   batch_size: 4096
   pretraining_data: ImageNet-1K
@@ -826,13 +853,16 @@ mocov3_vitb_ep300:
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 85798656
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 mocov3_vits_ep300:
   model: moco_v3
   arch: vits16
-  dim: ???
+  dim: 384
   epochs: 300
   batch_size: 4096
   pretraining_data: ImageNet-1K
@@ -844,13 +874,79 @@ mocov3_vits_ep300:
   notes: null
   month: 4
   year: 2021
-  n_parameters: ???
+  n_parameters: 21665664
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
+
+msn_vitb16_ep600:
+  model: msn
+  arch: vitb16
+  dim: 1536
+  epochs: 600
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: msn
+  acc: null
+  projection_arch: mlp
+  projection_nparameters: 9e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: 85798656
+  views: 2x224+10*96
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
+
+msn_vitl16_ep600:
+  model: msn
+  arch: vitl16
+  dim: 2048
+  epochs: 600
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: msn
+  acc: null
+  projection_arch: mlp
+  projection_nparameters: 9e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: 303301632
+  views: 2x224+10*96
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
+
+msn_vits16_ep800:
+  model: msn
+  arch: vits16
+  dim: 1536
+  epochs: 800
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: msn
+  acc: null
+  projection_arch: mlp
+  projection_nparameters: 9e6
+  notes: null
+  month: 4
+  year: 2021
+  n_parameters: 21665664
+  views: 2x224+10*96
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 mugs_vitb16_ep400:
   model: mugs
   arch: vitb16
-  dim: ???
+  dim: 1536
   epochs: 400
   batch_size: 1008
   pretraining_data: ImageNet-1K
@@ -860,15 +956,18 @@ mugs_vitb16_ep400:
   projection_arch: mlp
   projection_nparameters: 10e6
   notes: null
-  month: 11
-  year: 2021
-  n_parameters: ???
+  month: 3
+  year: 2022
+  n_parameters: 85798656
   views: 2x224+96*10
+  ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+  is_aug_invariant: true
+  img_size: 224
 
 mugs_vitl16_ep250:
   model: mugs
   arch: vitl16
-  dim: ???
+  dim: 2048
   epochs: 250
   batch_size: 640
   pretraining_data: ImageNet-1K
@@ -880,13 +979,16 @@ mugs_vitl16_ep250:
   notes: null
   month: 3
   year: 2022
-  n_parameters: ???
+  n_parameters: 303301632
   views: 2x224+96*10
+  ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+  is_aug_invariant: true
+  img_size: 224
 
 mugs_vits16_ep100:
   model: mugs
   arch: vits16
-  dim: ???
+  dim: 1536
   epochs: 100
   batch_size: 512
   pretraining_data: ImageNet-1K
@@ -898,13 +1000,16 @@ mugs_vits16_ep100:
   notes: null
   month: 3
   year: 2022
-  n_parameters: ???
+  n_parameters: 21665664
   views: 2x224+96*10
+  ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+  is_aug_invariant: true
+  img_size: 224
 
 mugs_vits16_ep300:
   model: mugs
   arch: vits16
-  dim: ???
+  dim: 1536
   epochs: 300
   batch_size: 1024
   pretraining_data: ImageNet-1K
@@ -916,13 +1021,16 @@ mugs_vits16_ep300:
   notes: null
   month: 3
   year: 2022
-  n_parameters: ???
+  n_parameters: 21665664
   views: 2x224+96*10
+  ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+  is_aug_invariant: true
+  img_size: 224
 
 mugs_vits16_ep800:
   model: mugs
   arch: vits16
-  dim: ???
+  dim: 1536
   epochs: 800
   batch_size: 1024
   pretraining_data: ImageNet-1K
@@ -934,8 +1042,11 @@ mugs_vits16_ep800:
   notes: null
   month: 3
   year: 2022
-  n_parameters: ???
+  n_parameters: 21665664
   views: 2x224+96*10
+  ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+  is_aug_invariant: true
+  img_size: 224
 
 npid_rn50:
   model: npid
@@ -952,8 +1063,11 @@ npid_rn50:
   notes: null
   month: 5
   year: 2018
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 npidpp_rn50:
   model: "npid++"
@@ -970,26 +1084,32 @@ npidpp_rn50:
   notes: null
   month: 12
   year: 2019
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 pirl_rn50:
-    model: pirl
-    arch: resnet50
-    dim: 2048
-    epochs: 800
-    batch_size: 1024
-    pretraining_data: ImageNet-1K
-    finetuning_data: null
-    where: vissl
-    acc: 64.3
-    projection_arch: linear
-    projection_nparameters: 0.4e6
-    notes: null
-    month: 12
-    year: 2019
-    n_parameters: ???
-    views: 2x224
+  model: pirl
+  arch: resnet50
+  dim: 2048
+  epochs: 800
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 64.3
+  projection_arch: linear
+  projection_nparameters: 0.4e6
+  notes: null
+  month: 12
+  year: 2019
+  n_parameters: 23508032
+  views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 pirl_rn50_ep200:
   model: pirl
@@ -1006,26 +1126,35 @@ pirl_rn50_ep200:
   notes: null
   month: 12
   year: 2019
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 pirl_rn50_ep200_headmlp:
-    model: pirl
-    arch: resnet50
-    dim: 2048
-    epochs: 200
-    batch_size: 1024
-    pretraining_data: ImageNet-1K
-    finetuning_data: null
-    where: vissl
-    acc: 65.8
-    projection_arch: mlp
-    projection_nparameters: 5e6
-    notes: null
-    month: 12
-    year: 2019
-    n_parameters: ???
-    views: 2x224
+  model: pirl
+  arch: resnet50
+  dim: 2048
+  epochs: 200
+  batch_size: 1024
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: vissl
+  acc: 65.8
+  projection_arch: mlp
+  projection_nparameters: 5e6
+  notes: null
+  month: 12
+  year: 2019
+  n_parameters: 23508032
+  views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 pirl_rn50_headmlp:
   model: pirl
@@ -1042,8 +1171,11 @@ pirl_rn50_headmlp:
   notes: null
   month: 12
   year: 2019
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 rotnet_rn50_in1k:
   model: rotnet
@@ -1060,8 +1192,11 @@ rotnet_rn50_in1k:
   notes: null
   month: 3
   year: 2018
-  n_parameters: ???
-  views: ???
+  n_parameters: 23508032
+  views: 224
+  ssl_mode: denoising
+  is_aug_invariant: false
+  img_size: 224
 
 rotnet_rn50_in22k:
   model: rotnet
@@ -1078,10 +1213,13 @@ rotnet_rn50_in22k:
   notes: null
   month: 3
   year: 2018
-  n_parameters: ???
-  views: ???
+  n_parameters: 23508032
+  views: 224
+  ssl_mode: denoising
+  is_aug_invariant: false
+  img_size: 224
 
-simclr_resnet50_dnone_e100_m2:
+simclr_resnet50_dNone_e100_m2:
   model: simclr
   arch: resnet50
   dim: 2048
@@ -1096,10 +1234,13 @@ simclr_resnet50_dnone_e100_m2:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
-simclr_resnet50_dnone_e100_m2_data010:
+simclr_resnet50_dNone_e100_m2_data010:
   model: simclr
   arch: resnet50
   dim: 2048
@@ -1114,10 +1255,13 @@ simclr_resnet50_dnone_e100_m2_data010:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
-simclr_resnet50_dnone_e100_m2_data030:
+simclr_resnet50_dNone_e100_m2_data030:
   model: simclr
   arch: resnet50
   dim: 2048
@@ -1132,10 +1276,13 @@ simclr_resnet50_dnone_e100_m2_data030:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
-simclr_resnet50_dnone_e100_m2_headtlinslin:
+simclr_resnet50_dNone_e100_m2_headTLinSLin:
   model: simclr
   arch: resnet50
   dim: 2048
@@ -1150,10 +1297,13 @@ simclr_resnet50_dnone_e100_m2_headtlinslin:
   notes: both teacher and student have linear projection heads
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
-simclr_resnet50_dnone_e100_m2_headtmlpslin:
+simclr_resnet50_dNone_e100_m2_headTMlpSLin:
   model: simclr
   arch: resnet50
   dim: 2048
@@ -1168,10 +1318,13 @@ simclr_resnet50_dnone_e100_m2_headtmlpslin:
   notes: student has linear head
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
-simclr_resnet50_dnone_e100_m2_headtmlpsmlp:
+simclr_resnet50_dNone_e100_m2_headTMlpSMlp:
   model: simclr
   arch: resnet50
   dim: 2048
@@ -1186,10 +1339,13 @@ simclr_resnet50_dnone_e100_m2_headtmlpsmlp:
   notes: both teacher and student have mlp projection heads
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
-simclr_resnet50_dnone_e100_m2_headtnonesnone:
+simclr_resnet50_dNone_e100_m2_headTNoneSNone:
   model: simclr
   arch: resnet50
   dim: 2048
@@ -1204,8 +1360,11 @@ simclr_resnet50_dnone_e100_m2_headtnonesnone:
   notes: no projection heads
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 simclr_rn101:
   model: simclr
@@ -1222,8 +1381,11 @@ simclr_rn101:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 42500160
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 simclr_rn101_ep100:
   model: simclr
@@ -1240,8 +1402,11 @@ simclr_rn101_ep100:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 42500160
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 simclr_rn50:
   model: simclr
@@ -1258,8 +1423,11 @@ simclr_rn50:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 simclr_rn50_bs4096_ep100:
   model: simclr
@@ -1276,8 +1444,11 @@ simclr_rn50_bs4096_ep100:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 simclr_rn50_bs512_ep100:
   model: simclr
@@ -1294,8 +1465,11 @@ simclr_rn50_bs512_ep100:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 simclr_rn50_ep200:
   model: simclr
@@ -1312,8 +1486,11 @@ simclr_rn50_ep200:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 simclr_rn50_ep400:
   model: simclr
@@ -1330,8 +1507,11 @@ simclr_rn50_ep400:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 simclr_rn50_ep800:
   model: simclr
@@ -1348,8 +1528,11 @@ simclr_rn50_ep800:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 simclr_rn50w2:
   model: simclr
@@ -1366,8 +1549,11 @@ simclr_rn50w2:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 93907072
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 simclr_rn50w2_ep100:
   model: simclr
@@ -1384,12 +1570,15 @@ simclr_rn50w2_ep100:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 93907072
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 simclr_rn50w4:
   model: simclr
-  arch: resnet50w2
+  arch: resnet50w4
   dim: 8192
   epochs: 1000
   batch_size: 4096
@@ -1402,26 +1591,32 @@ simclr_rn50w4:
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
+  n_parameters: 375378176
   views: 2x224
+  ssl_mode: contrastive
+  is_aug_invariant: true
+  img_size: 224
 
 swav_rn50:
-  model: simclr
-  arch: resnet50w2
-  dim: 8192
-  epochs: 1000
+  model: swav
+  arch: resnet50
+  dim: 2048
+  epochs: 800
   batch_size: 4096
   pretraining_data: ImageNet-1K
   finetuning_data: null
-  where: vissl
-  acc: 71.6
+  where: swav
+  acc: 75.3
   projection_arch: mlp
-  projection_nparameters: 68e6
+  projection_nparameters: 5e6
   notes: null
   month: 2
   year: 2020
-  n_parameters: ???
-  views: 2x224
+  n_parameters: 23508032
+  views: 2x224+6x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 swav_rn50_ep100:
   model: swav
@@ -1438,9 +1633,11 @@ swav_rn50_ep100:
   notes: null
   month: 6
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224+6x96
-
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 swav_rn50_ep200:
   model: swav
@@ -1457,8 +1654,11 @@ swav_rn50_ep200:
   notes: null
   month: 6
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224+6x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 swav_rn50_ep200_bs256:
   model: swav
@@ -1475,8 +1675,11 @@ swav_rn50_ep200_bs256:
   notes: null
   month: 6
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224+6x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 swav_rn50_ep400:
   model: swav
@@ -1493,8 +1696,11 @@ swav_rn50_ep400:
   notes: null
   month: 6
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224+6x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 swav_rn50_ep400_2x224:
   model: swav
@@ -1511,8 +1717,11 @@ swav_rn50_ep400_2x224:
   notes: null
   month: 6
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 swav_rn50_ep400_bs256:
   model: swav
@@ -1529,5 +1738,8 @@ swav_rn50_ep400_bs256:
   notes: null
   month: 6
   year: 2020
-  n_parameters: ???
+  n_parameters: 23508032
   views: 2x224+6x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224

@@ -230,8 +230,6 @@ def available_models(mode: Optional[list[str]]=None) -> dict[str, list[str]]:
     if mode is None or "mae" in mode:
         available["mae"] = list(MAE_MODELS.keys())
 
-    if mode is None or "mae" in mode:
-        available["mae"] = list(MAE_MODELS.keys())
 
     if mode is None or "mugs" in mode:
         available["mugs"] = list(MUGS_MODELS.keys())
@@ -355,7 +353,10 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
     elif mode == "simclr-pytorch":
         encoder = tmodels.resnet.resnet50(pretrained=False, num_classes=0)
         encoder.fc = torch.nn.Identity()
-        state_dict = torch.load(SIMCLR_PYTORCH[model], map_location="cpu")['state_dict']
+        try:
+            state_dict = torch.load(SIMCLR_PYTORCH[model], map_location="cpu")['state_dict']
+        except FileNotFoundError:
+            raise ValueError("You need to manually download the model from https://github.com/AndrewAtanov/simclr-pytorch .")
         state_dict = {k.replace("convnet.", ""): v for k, v in state_dict.items()
                       if "convnet." in k and "fc." not in k}
         encoder.load_state_dict(state_dict)

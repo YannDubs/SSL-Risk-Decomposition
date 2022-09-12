@@ -1,4 +1,0 @@
-name: mocov2_rn50
-kwargs:
-  mode: vissl
-  model: mocov2_rn50
