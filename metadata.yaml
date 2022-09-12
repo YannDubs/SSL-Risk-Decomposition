@@ -1313,8 +1313,110 @@ swav_rn50:
   views: 2x224
 
 swav_rn50_ep100:
+  model: swav
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: swav
+  acc: 72.1
+  projection_arch: mlp
+  projection_nparameters: 5e6
+  notes: null
+  month: 6
+  year: 2020
+  n_parameters: ???
+  views: 2x224+6x96
+
+
 swav_rn50_ep200:
+  model: swav
+  arch: resnet50
+  dim: 2048
+  epochs: 200
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: swav
+  acc: 73.9
+  projection_arch: mlp
+  projection_nparameters: 5e6
+  notes: null
+  month: 6
+  year: 2020
+  n_parameters: ???
+  views: 2x224+6x96
+
 swav_rn50_ep200_bs256:
+  model: swav
+  arch: resnet50
+  dim: 2048
+  epochs: 200
+  batch_size: 256
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: swav
+  acc: 72.7
+  projection_arch: mlp
+  projection_nparameters: 5e6
+  notes: null
+  month: 6
+  year: 2020
+  n_parameters: ???
+  views: 2x224+6x96
+
 swav_rn50_ep400:
+  model: swav
+  arch: resnet50
+  dim: 2048
+  epochs: 400
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: swav
+  acc: 74.6
+  projection_arch: mlp
+  projection_nparameters: 5e6
+  notes: null
+  month: 6
+  year: 2020
+  n_parameters: ???
+  views: 2x224+6x96
+
 swav_rn50_ep400_2x224:
+  model: swav
+  arch: resnet50
+  dim: 2048
+  epochs: 400
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: swav
+  acc: 70.1
+  projection_arch: mlp
+  projection_nparameters: 5e6
+  notes: null
+  month: 6
+  year: 2020
+  n_parameters: ???
+  views: 2x224
+
 swav_rn50_ep400_bs256:
+  model: swav
+  arch: resnet50
+  dim: 2048
+  epochs: 400
+  batch_size: 256
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: swav
+  acc: 74.3
+  projection_arch: mlp
+  projection_nparameters: 5e6
+  notes: null
+  month: 6
+  year: 2020
+  n_parameters: ???
+  views: 2x224+6x96
