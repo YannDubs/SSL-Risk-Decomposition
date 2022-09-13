@@ -399,7 +399,7 @@ dino_vitB16:
 
 dino_vitB16_extractS:
   model: dino
-  arch: vitb16
+  arch: vitb16_extracts
   dim: 3072
   epochs: 400
   batch_size: 1024
@@ -420,7 +420,7 @@ dino_vitB16_extractS:
 
 dino_vitB16_last:
   model: dino
-  arch: vitb16
+  arch: vitb16_last
   dim: 768
   epochs: 400
   batch_size: 1024
@@ -462,7 +462,7 @@ dino_vitB8:
 
 dino_vitB8_last:
   model: dino
-  arch: vitb8
+  arch: vitb8_last
   dim: 768
   epochs: 300
   batch_size: 1056
@@ -504,7 +504,7 @@ dino_vitS16:
 
 dino_vitS16_extractB:
   model: dino
-  arch: vits16
+  arch: vits16_extractb
   dim: 768
   epochs: 800
   batch_size: 1024
@@ -514,7 +514,7 @@ dino_vitS16_extractB:
   acc: null
   projection_arch: mlp
   projection_param: 26e6
-  notes: uses extractB to extract the representation
+  notes: null
   month: 4
   year: 2021
   n_parameters: 21665664
@@ -525,7 +525,7 @@ dino_vitS16_extractB:
 
 dino_vitS16_last:
   model: dino
-  arch: vits16
+  arch: vits16_last
   dim: 384
   epochs: 800
   batch_size: 1024
@@ -1979,7 +1979,7 @@ sup_vitB8:
 
 sup_vitB8_dino:
   model: supervised
-  arch: vitb8
+  arch: vitb8_extractb
   dim: 1536
   epochs: ??? # couldn't find information on timm
   batch_size: ??? # couldn't find information on timm (likely 4096)
@@ -1989,7 +1989,7 @@ sup_vitB8_dino:
   acc: null
   projection_arch: null
   projection_nparameters: null
-  notes: uses extractB to extract the representation
+  notes: null
   month: 10
   year: 2020
   n_parameters: 85807872
@@ -2021,7 +2021,7 @@ sup_vitB16:
 
 sup_vitB16_dino:
   model: supervised
-  arch: vitb16
+  arch: vitb16_extractb
   dim: 1536
   epochs: ??? # couldn't find information on timm
   batch_size: ??? # couldn't find information on timm (likely 4096)
@@ -2031,7 +2031,7 @@ sup_vitB16_dino:
   acc: null
   projection_arch: null
   projection_nparameters: null
-  notes: ueses extractB for extracting the representation
+  notes: null
   month: 10
   year: 2020
   n_parameters: 85798656
@@ -2042,7 +2042,7 @@ sup_vitB16_dino:
 
 sup_vitB16_dino_extractS:
   model: supervised
-  arch: vitb16
+  arch: vitb16_extracts
   dim: 3072
   epochs: ??? # couldn't find information on timm
   batch_size: ??? # couldn't find information on timm (likely 4096)
@@ -2147,7 +2147,7 @@ sup_vitS16:
 
 sup_vitS16_dino:
   model: supervised
-  arch: vits16
+  arch: vits16_extracts
   dim: 1536
   epochs: ??? # couldn't find information on timm
   batch_size: ??? # couldn't find information on timm (likely 4096)
@@ -2168,7 +2168,7 @@ sup_vitS16_dino:
 
 sup_vitS16_dino_extractB:
   model: supervised
-  arch: vits16
+  arch: vits16_extractb
   dim: 768
   epochs: ??? # couldn't find information on timm
   batch_size: ??? # couldn't find information on timm (likely 4096)
