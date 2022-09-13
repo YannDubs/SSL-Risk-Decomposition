@@ -397,7 +397,7 @@ dino_vitB16:
   is_aug_invariant: true
   img_size: 224
 
-dino_vitbB16_extractS:
+dino_vitB16_extractS:
   model: dino
   arch: vitb16
   dim: 3072
