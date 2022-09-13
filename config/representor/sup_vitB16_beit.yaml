@@ -1,9 +1,0 @@
-defaults:
-  - base_supervised
-
-name: sup_vitB16_beit
-kwargs:
-  mode: beit
-  model: microsoft/beit-base-patch16-224
-
-# use the model that was finetuned on Imagenet 1k as the supervised one (but still retrain the head)

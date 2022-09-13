@@ -20,7 +20,7 @@ seed=123,124,125
 "
 
 kwargs_multi="
-representor=sup_vitH14,sup_vitL16,sup_vitB16_beit
+representor=sup_vitH14,sup_vitL16,sup_vitB16
 predictor=torch_linear_dino,torch_linear
 seed=123,124,125
 "

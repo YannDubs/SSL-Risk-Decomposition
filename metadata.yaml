@@ -514,7 +514,7 @@ dino_vitS16_extractB:
   acc: null
   projection_arch: mlp
   projection_param: 26e6
-  notes: null
+  notes: uses extractB to extract the representation
   month: 4
   year: 2021
   n_parameters: 21665664
@@ -1889,4 +1889,300 @@ swav_rn50_ep400_bs256:
   views: 2x224+6x96
   ssl_mode: clustering
   is_aug_invariant: true
+  img_size: 224
+
+# Supervised models
+# NEED TO RERUN EVALUATION OF RESNET WITH V2
+sup_rn50:
+  model: supervised
+  arch: resnet50
+  dim: 2048
+  epochs: 90
+  batch_size: 256
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: torchvision
+  acc: 80.858
+  projection_arch: null
+  projection_nparameters: null
+  notes: weights are from ResNet50_Weights.IMAGENET1K_V2
+  month: 12
+  year: 2015
+  n_parameters: 23508032
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
+  img_size: 224
+
+sup_rn50w2:
+  model: supervised
+  arch: resnet50w2
+  dim: 2048
+  epochs: 90
+  batch_size: 256
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: torchvision
+  acc: 81.602
+  projection_arch: null
+  projection_nparameters: null
+  notes: this is not exactly correct, we are using wide_resnet50_2 (Wide_ResNet101_2_Weights.IMAGENET1K_V2) instead of resnet50w2 because I couldn't find parameters for the latter
+  month: 12
+  year: 2015
+  n_parameters: 66834240
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
+  img_size: 224
+
+sup_rn101:
+  model: supervised
+  arch: resnet101
+  dim: 2048
+  epochs: 90
+  batch_size: 256
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: torchvision
+  acc: 81.886
+  projection_arch: null
+  projection_nparameters: null
+  notes: weights from ResNet101_Weights.IMAGENET1K_V2
+  month: 12
+  year: 2015
+  n_parameters: 42500160
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
+  img_size: 224
+
+sup_vitB8:
+  model: supervised
+  arch: vitb8
+  dim: 768
+  epochs: ??? # couldn't find information on timm
+  batch_size: ??? # couldn't find information on timm (likely 4096)
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: timm
+  acc: 85.790
+  projection_arch: null
+  projection_nparameters: null
+  notes: null
+  month: 10
+  year: 2020
+  n_parameters: 85807872
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
+  img_size: 224
+
+sup_vitB8_dino:
+  model: supervised
+  arch: vitb8
+  dim: 1536
+  epochs: ??? # couldn't find information on timm
+  batch_size: ??? # couldn't find information on timm (likely 4096)
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: timm
+  acc: null
+  projection_arch: null
+  projection_nparameters: null
+  notes: uses extractB to extract the representation
+  month: 10
+  year: 2020
+  n_parameters: 85807872
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
+  img_size: 224
+
+sup_vitB16:
+  model: supervised
+  arch: vitb16
+  dim: 768
+  epochs: ??? # couldn't find information on timm
+  batch_size: ??? # couldn't find information on timm (likely 4096)
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: timm
+  acc: 84.530
+  projection_arch: null
+  projection_nparameters: null
+  notes: null
+  month: 10
+  year: 2020
+  n_parameters: 85798656
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
+  img_size: 224
+
+sup_vitB16_dino:
+  model: supervised
+  arch: vitb16
+  dim: 1536
+  epochs: ??? # couldn't find information on timm
+  batch_size: ??? # couldn't find information on timm (likely 4096)
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: timm
+  acc: null
+  projection_arch: null
+  projection_nparameters: null
+  notes: ueses extractB for extracting the representation
+  month: 10
+  year: 2020
+  n_parameters: 85798656
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
+  img_size: 224
+
+sup_vitB16_dino_extractS:
+  model: supervised
+  arch: vitb16
+  dim: 3072
+  epochs: ??? # couldn't find information on timm
+  batch_size: ??? # couldn't find information on timm (likely 4096)
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: timm
+  acc: null
+  projection_arch: null
+  projection_nparameters: null
+  notes: ueses extractS for extracting the representation
+  month: 10
+  year: 2020
+  n_parameters: 85798656
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
+  img_size: 224
+
+sup_vitB32:
+  model: supervised
+  arch: vitb32
+  dim: 768
+  epochs: ??? # couldn't find information on timm
+  batch_size: ??? # couldn't find information on timm (likely 4096)
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: timm
+  acc: 80.724
+  projection_arch: null
+  projection_nparameters: null
+  notes: null
+  month: 10
+  year: 2020
+  n_parameters: 87455232
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
+  img_size: 224
+
+sup_vitH14:
+  model: supervised
+  arch: vith14
+  dim: 1280
+  epochs: ??? # couldn't find information on timm
+  batch_size: ??? # couldn't find information on timm (likely 4096)
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: timm
+  acc: null
+  projection_arch: null
+  projection_nparameters: null
+  notes: null
+  month: 10
+  year: 2020
+  n_parameters: 630764800
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
+  img_size: 224
+
+sup_vitL16:
+  model: supervised
+  arch: vitl16
+  dim: 1024
+  epochs: ??? # couldn't find information on timm
+  batch_size: ??? # couldn't find information on timm (likely 4096)
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: timm
+  acc: 85.844
+  projection_arch: null
+  projection_nparameters: null
+  notes: null
+  month: 10
+  year: 2020
+  n_parameters: 303301632
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
+  img_size: 224
+
+sup_vitS16:
+  model: supervised
+  arch: vits16
+  dim: 384
+  epochs: ??? # couldn't find information on timm
+  batch_size: ??? # couldn't find information on timm (likely 4096)
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: timm
+  acc: 81.396
+  projection_arch: null
+  projection_nparameters: null
+  notes: null
+  month: 10
+  year: 2020
+  n_parameters: 21665664
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
+  img_size: 224
+
+sup_vitS16_dino:
+  model: supervised
+  arch: vits16
+  dim: 1536
+  epochs: ??? # couldn't find information on timm
+  batch_size: ??? # couldn't find information on timm (likely 4096)
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: timm
+  acc: 81.396
+  projection_arch: null
+  projection_nparameters: null
+  notes: null
+  month: 10
+  year: 2020
+  n_parameters: 21665664
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
+  img_size: 224
+
+sup_vitS16_dino_extractB:
+  model: supervised
+  arch: vits16
+  dim: 768
+  epochs: ??? # couldn't find information on timm
+  batch_size: ??? # couldn't find information on timm (likely 4096)
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: timm
+  acc: null
+  projection_arch: null
+  projection_nparameters: null
+  notes: null
+  month: 10
+  year: 2020
+  n_parameters: 21665664
+  views: 224
+  ssl_mode: null
+  is_aug_invariant: True
   img_size: 224
