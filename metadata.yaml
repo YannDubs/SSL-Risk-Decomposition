@@ -420,7 +420,7 @@ dino_vitB16_extractS:
 
 dino_vitB16_last:
   model: dino
-  arch: vitb16_last
+  arch: vitb16
   dim: 768
   epochs: 400
   batch_size: 1024
@@ -462,7 +462,7 @@ dino_vitB8:
 
 dino_vitB8_last:
   model: dino
-  arch: vitb8_last
+  arch: vitb8
   dim: 768
   epochs: 300
   batch_size: 1056
@@ -525,7 +525,7 @@ dino_vitS16_extractB:
 
 dino_vitS16_last:
   model: dino
-  arch: vits16_last
+  arch: vits16
   dim: 384
   epochs: 800
   batch_size: 1024
