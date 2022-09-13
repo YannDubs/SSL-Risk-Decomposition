@@ -1018,7 +1018,7 @@ mocov3_vits_ep300:
   acc: 73.2
   projection_arch: mlp
   projection_nparameters: 23e6
-  notes: null
+  notes: moco uses 12 heads instead of the standard 6
   month: 4
   year: 2021
   n_parameters: 21665664
