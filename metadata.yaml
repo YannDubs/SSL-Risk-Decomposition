@@ -889,13 +889,34 @@ mae_vitl16:
   pretraining_data: ImageNet-1K
   finetuning_data: ImageNet-1K
   where: mae
-  acc: 73.5
+  acc: 75.8
   projection_arch: null
   projection_nparameters: null
   notes: null
   month: 11
   year: 2021
   n_parameters: 303301632
+  views: null
+  ssl_mode: generative
+  is_aug_invariant: false
+  img_size: 224
+
+mae_vith14:
+  model: mae
+  arch: vith14
+  dim: 2560
+  epochs: 800
+  batch_size: 4096
+  pretraining_data: ImageNet-1K
+  finetuning_data: ImageNet-1K
+  where: mae
+  acc: 76.6
+  projection_arch: null
+  projection_nparameters: null
+  notes: null
+  month: 11
+  year: 2021
+  n_parameters: 630764800
   views: null
   ssl_mode: generative
   is_aug_invariant: false
