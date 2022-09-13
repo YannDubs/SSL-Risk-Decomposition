@@ -549,7 +549,7 @@ dissl_resnet50_d4096_e100_m2:
   arch: resnet50
   dim: 4096
   epochs: 100
-  batch_size: 2056
+  batch_size: 2560
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
@@ -565,12 +565,96 @@ dissl_resnet50_d4096_e100_m2:
   is_aug_invariant: true
   img_size: 224
 
+dissl_resnet50_d8192_e100_m2:
+  model: dissl
+  arch: resnet50
+  dim: 8192
+  epochs: 100
+  batch_size: 2560
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: Invariant-Self-Supervised-Learning
+  acc: 68.9
+  projection_arch: mlp
+  projection_param: 17e6
+  notes: null
+  month: 6
+  year: 2022
+  n_parameters: 31128640
+  views: 2x224
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
+
+dissl_resnet50_d8192_e400_m6:
+  model: dissl
+  arch: resnet50
+  dim: 8192
+  epochs: 400
+  batch_size: 2560
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: Invariant-Self-Supervised-Learning
+  acc: 74.0
+  projection_arch: mlp
+  projection_param: 17e6
+  notes: null
+  month: 6
+  year: 2022
+  n_parameters: 31128640
+  views: 2x160+4x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
+
+  dissl_resnet50_d8192_e400_m8:
+    model: dissl
+    arch: resnet50
+    dim: 8192
+    epochs: 800
+    batch_size: 2560
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    where: Invariant-Self-Supervised-Learning
+    acc: 73.9
+    projection_arch: mlp
+    projection_param: 17e6
+    notes: null
+    month: 6
+    year: 2022
+    n_parameters: 31128640
+    views: 2x224+6x96
+    ssl_mode: clustering
+    is_aug_invariant: true
+    img_size: 224
+
+dissl_resnet50_dNone_e100_m2:
+  model: dissl
+  arch: resnet50
+  dim: 2048
+  epochs: 100
+  batch_size: 2560
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: Invariant-Self-Supervised-Learning
+  acc: 66.9
+  projection_arch: mlp
+  projection_param: 17e6
+  notes: null
+  month: 6
+  year: 2022
+  n_parameters: 23508032
+  views: 2x224
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
+
 dissl_resnet50_dNone_e100_m2_augLarge:
   model: dissl
   arch: resnet50
   dim: 2048
   epochs: 100
-  batch_size: 2056
+  batch_size: 2560
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
@@ -591,7 +675,7 @@ dissl_resnet50_dNone_e100_m2_augSmall:
   arch: resnet50
   dim: 2048
   epochs: 100
-  batch_size: 2056
+  batch_size: 2560
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
@@ -612,7 +696,7 @@ dissl_resnet50_dNone_e100_m2_headTLinSLin:
   arch: resnet50
   dim: 2048
   epochs: 100
-  batch_size: 2056
+  batch_size: 2560
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
@@ -633,7 +717,7 @@ dissl_resnet50_dNone_e100_m2_headTMlpSMlp:
   arch: resnet50
   dim: 2048
   epochs: 100
-  batch_size: 2056
+  batch_size: 2560
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
@@ -645,6 +729,48 @@ dissl_resnet50_dNone_e100_m2_headTMlpSMlp:
   year: 2022
   n_parameters: 23508032
   views: 2x224
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
+
+dissl_resnet50_dNone_e400_m2:
+  model: dissl
+  arch: resnet50
+  dim: 2048
+  epochs: 400
+  batch_size: 2560
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: Invariant-Self-Supervised-Learning
+  acc: 71.1
+  projection_arch: mlp
+  projection_param: 17e6
+  notes: null
+  month: 6
+  year: 2022
+  n_parameters: 23508032
+  views: 2x224
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
+
+dissl_resnet50_dNone_e400_m6:
+  model: dissl
+  arch: resnet50
+  dim: 2048
+  epochs: 400
+  batch_size: 2560
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: Invariant-Self-Supervised-Learning
+  acc: 73.0
+  projection_arch: mlp
+  projection_param: 17e6
+  notes: null
+  month: 6
+  year: 2022
+  n_parameters: 23508032
+  views: 2x160+4x96
   ssl_mode: clustering
   is_aug_invariant: true
   img_size: 224
@@ -1224,7 +1350,7 @@ simclr_resnet50_dNone_e100_m2:
   arch: resnet50
   dim: 2048
   epochs: 100
-  batch_size: 2056
+  batch_size: 2560
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
@@ -1245,7 +1371,7 @@ simclr_resnet50_dNone_e100_m2_data010:
   arch: resnet50
   dim: 2048
   epochs: 100
-  batch_size: 2056
+  batch_size: 2560
   pretraining_data: 10% ImageNet-1K
   finetuning_data: null
   where: riskdec
@@ -1266,7 +1392,7 @@ simclr_resnet50_dNone_e100_m2_data030:
   arch: resnet50
   dim: 2048
   epochs: 100
-  batch_size: 2056
+  batch_size: 2560
   pretraining_data: 30% ImageNet-1K
   finetuning_data: null
   where: riskdec
@@ -1287,7 +1413,7 @@ simclr_resnet50_dNone_e100_m2_headTLinSLin:
   arch: resnet50
   dim: 2048
   epochs: 100
-  batch_size: 2056
+  batch_size: 2560
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
@@ -1308,7 +1434,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSLin:
   arch: resnet50
   dim: 2048
   epochs: 100
-  batch_size: 2056
+  batch_size: 2560
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
@@ -1329,7 +1455,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSMlp:
   arch: resnet50
   dim: 2048
   epochs: 100
-  batch_size: 2056
+  batch_size: 2560
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
@@ -1350,7 +1476,7 @@ simclr_resnet50_dNone_e100_m2_headTNoneSNone:
   arch: resnet50
   dim: 2048
   epochs: 100
-  batch_size: 2056
+  batch_size: 2560
   pretraining_data: ImageNet-1K
   finetuning_data: null
   where: riskdec
