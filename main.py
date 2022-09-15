@@ -95,9 +95,6 @@ def main(cfg):
             results["pred_gen_switched"] = results["union_test"] - results["train_train"]
             results["enc_gen_switched"] = results["train-cmplmnt-ntest_test"] - results["union_test"]
 
-            # results["pred_gen_001"] = results["train-sbst-0.01_train-cmplmnt-0.01"] - results["train_train"]
-            # results["enc_gen_001"] = results["train-sbst-0.01_test"] - results["train-sbst-0.01_train-cmplmnt-0.01"]
-
         save_results(cfg, results, "all")
 
     if cfg.is_run_out_dist:

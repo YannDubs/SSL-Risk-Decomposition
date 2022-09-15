@@ -607,26 +607,26 @@ dissl_resnet50_d8192_e400_m6:
   is_aug_invariant: true
   img_size: 224
 
-  dissl_resnet50_d8192_e400_m8:
-    model: dissl
-    arch: resnet50
-    dim: 8192
-    epochs: 800
-    batch_size: 2560
-    pretraining_data: ImageNet-1K
-    finetuning_data: null
-    where: Invariant-Self-Supervised-Learning
-    acc: 73.9
-    projection_arch: mlp
-    projection_param: 17e6
-    notes: null
-    month: 6
-    year: 2022
-    n_parameters: 31128640
-    views: 2x224+6x96
-    ssl_mode: clustering
-    is_aug_invariant: true
-    img_size: 224
+dissl_resnet50_d8192_e400_m8:
+  model: dissl
+  arch: resnet50
+  dim: 8192
+  epochs: 800
+  batch_size: 2560
+  pretraining_data: ImageNet-1K
+  finetuning_data: null
+  where: Invariant-Self-Supervised-Learning
+  acc: 73.9
+  projection_arch: mlp
+  projection_param: 17e6
+  notes: null
+  month: 6
+  year: 2022
+  n_parameters: 31128640
+  views: 2x224+6x96
+  ssl_mode: clustering
+  is_aug_invariant: true
+  img_size: 224
 
 dissl_resnet50_dNone_e100_m2:
   model: dissl
