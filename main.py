@@ -30,7 +30,7 @@ from utils.data import get_Datamodule
 from utils.helpers import (LightningWrapper, SklearnTrainer, check_import, get_torch_trainer, log_dict, namespace2dict,
                            omegaconf2namespace,
                            NamespaceMap, remove_rf)
-import hubconf_new
+import hubconf
 from utils.predictor import Predictor
 
 try:
@@ -60,7 +60,7 @@ def main(cfg):
 
     ############## REPRESENT DATA ##############
     logger.info(f"Representing data with {cfg.representor}")
-    representor, preprocess = hubconf_new.__dict__[cfg.representor]()
+    representor, preprocess = hubconf.__dict__[cfg.representor]()
     representor = LightningWrapper(representor)
     datamodule = instantiate_datamodule_(cfg, representor, preprocess)
 
