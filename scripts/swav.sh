@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-experiment="multicrop"
-notes="**Goal**: compare effect of multicrop."
+experiment="swav"
+notes="**Goal**: evaluate all the swav models."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -13,17 +13,19 @@ experiment=$experiment
 timeout=$time
 "
 
-# every arguments that you are sweeping over
 kwargs_multi="
-representor=dc2_rn50_ep400_2x224+4x96,dc2_rn50_ep400_2x224,swav_rn50_ep400_2x224
+representor=swav_rn50,swav_rn50_ep100,swav_rn50_ep200,swav_rn50_ep200_bs256,swav_rn50_ep400,swav_rn50_ep400_2x224,swav_rn50_ep400_bs256,dc2_rn50_ep400_2x224,dc2_rn50_ep400_2x160_4x96,dc2_rn50_ep800_2x224_6x96,selav2_rn50_ep400_2x224,selav2_rn50_ep400_2x160_4x96
 seed=123
+predictor=torch_linear
 "
 
+# to run
 kwargs_multi="
-representor=dc2_rn50_ep800_2x224+4x96,dc2_rn50_ep400_2x160+4x96,dc2_rn50_ep400_2x224
+representor=swav_rn50w4,swav_rn50w5
 seed=123
+predictor=torch_linear
+data.kwargs.num_workers=0
 "
-
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
@@ -36,4 +38,3 @@ if [ "$is_plot_only" = false ] ; then
   done
 fi
 
-wait

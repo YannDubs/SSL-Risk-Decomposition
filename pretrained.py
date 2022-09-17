@@ -1,20 +1,24 @@
 from __future__ import annotations
 
 import ast
-import os
 import types
 from pathlib import Path
 from typing import Callable, Optional, Union
 import logging
+import math
 
 import torch
 from torch import nn
+from torch.nn import functional as F
 
-from utils.helpers import ImgPil2LabTensor, check_import, replace_module_prefix, rm_module, download_url
+from utils.helpers import (ImgPil2LabTensor, check_import, download_url_tmp, replace_module_prefix, rm_module,
+                           download_url)
 from torchvision import transforms
 import torchvision
 import pytorch_lightning as pl
 import torchvision.models as tmodels
+from utils.byol_converter import convert_byol
+import utils.resnet_byol as _resnet_byol
 
 from torch.hub import load_state_dict_from_url
 
@@ -29,7 +33,7 @@ except ImportError:
     pass
 
 try:
-    import transformers
+    import dill
 except ImportError:
     pass
 
@@ -50,15 +54,6 @@ DINO_PREPROCESSOR = transforms.Compose([
         transforms.CenterCrop(224),
         transforms.ToTensor(),
         transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-    ])
-
-SIMCLR_PYTORCH_PREPROCESSOR = transforms.Compose([
-        # slightly different than how trained where they use proportion of 0.875
-        # but you already resized it to 256
-        transforms.Resize(256, interpolation=3),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        # DO NOT NORMALIZE
     ])
 
 SWAV_PREPROCESSOR = transforms.Compose([
@@ -85,13 +80,17 @@ VIT_PREPROCESSOR = transforms.Compose([
     ])
 
 TORCHVISION_PREPROCESSOR = VISSL_PREPROCESSOR
-MOCO_PREPROCESSOR = VISSL_PREPROCESSOR
+MOCOV3_PREPROCESSOR = VISSL_PREPROCESSOR
 SIMSIAM_PREPROCESSOR = VISSL_PREPROCESSOR
 MAE_PREPROCESSOR = VISSL_PREPROCESSOR
 IBOT_PREPROCESSOR = DINO_PREPROCESSOR
 MUGS_PREPROCESSOR = DINO_PREPROCESSOR  # not clear what they use in their paper
 MSN_PREPROCESSOR = VISSL_PREPROCESSOR
 RISKDEC_PREPROCESSOR = VISSL_PREPROCESSOR
+BEIT_PREPROCESSOR_IN22 = VIT_PREPROCESSOR
+BEIT_PREPROCESSOR_IN1 = DINO_PREPROCESSOR
+BYOL_PREPROCESSOR = VISSL_PREPROCESSOR
+CLD_PREPROCESSOR = VISSL_PREPROCESSOR
 
 SWAV_MODELS = {"resnet50": "https://dl.fbaipublicfiles.com/deepcluster/swav_800ep_pretrain.pth.tar",
                "resnet50_ep100": "https://dl.fbaipublicfiles.com/deepcluster/swav_100ep_pretrain.pth.tar",
@@ -109,7 +108,7 @@ SIMSIAM_MODELS = {"simsiam_rn50_bs512_ep100": "https://dl.fbaipublicfiles.com/si
                   "simsiam_rn50_bs256_ep100": "https://dl.fbaipublicfiles.com/simsiam/models/100ep-256bs/pretrain/checkpoint_0099.pth.tar"
                   }
 
-MOCO_MODELS = {"mocov3_rn50_ep100": "https://dl.fbaipublicfiles.com/moco-v3/r-50-100ep/r-50-100ep.pth.tar",
+MOCOV3_MODELS = {"mocov3_rn50_ep100": "https://dl.fbaipublicfiles.com/moco-v3/r-50-100ep/r-50-100ep.pth.tar",
                 "mocov3_rn50_ep300": "https://dl.fbaipublicfiles.com/moco-v3/r-50-300ep/r-50-300ep.pth.tar",
                 "mocov3_rn50_ep1000": "https://dl.fbaipublicfiles.com/moco-v3/r-50-1000ep/r-50-1000ep.pth.tar",
                 "mocov3_vitS_ep300": "https://dl.fbaipublicfiles.com/moco-v3/vit-s-300ep/vit-s-300ep.pth.tar",
@@ -151,8 +150,9 @@ VISSL_MODELS = {"barlow_rn50": "https://dl.fbaipublicfiles.com/vissl/model_zoo/b
                 "pirl_rn50_ep200": "https://dl.fbaipublicfiles.com/vissl/model_zoo/pirl_jigsaw_4node_200ep_pirl_jigsaw_4node_resnet_22_07_20.ffd17b75/model_final_checkpoint_phase199.torch",
                 "pirl_rn50_headMLP": "https://dl.fbaipublicfiles.com/vissl/model_zoo/pirl/r50_800ep_mlphead_gblur/model_final_checkpoint_phase799.torch",
                 "pirl_rn50_ep200_headMLP": "https://dl.fbaipublicfiles.com/vissl/model_zoo/pirl/r50_200ep_mlp_gblur/model_final_checkpoint_phase199.torch",
-                "dc2_rn50_ep400_2x224": "https://dl.fbaipublicfiles.com/deepcluster/swav_400ep_2x224_pretrain.pth.tar",
-                "dc2_rn50_ep400_2x224+4x96": "https://dl.fbaipublicfiles.com/deepcluster/deepclusterv2_400ep_pretrain.pth.tar",
+                "dc2_rn50_ep400_2x224": "https://dl.fbaipublicfiles.com/vissl/model_zoo/deepclusterv2_400ep_2x224_pretrain.pth.tar",
+                "dc2_rn50_ep400_2x160+4x96": "https://dl.fbaipublicfiles.com/vissl/model_zoo/deepclusterv2_400ep_pretrain.pth.tar",
+                "dc2_rn50_ep800_2x224+4x96": "https://dl.fbaipublicfiles.com/vissl/model_zoo/deepclusterv2_800ep_pretrain.pth.tar",
                 }
 
 IBOT_MODELS = {"vits16": "https://lf3-nlp-opensource.bytetos.com/obj/nlp-opensource/archive/2022/ibot/vits_16/checkpoint_teacher.pth",
@@ -188,9 +188,59 @@ RISKDEC_MODELS = {"dissl_resnet50_dNone_e100_m2_augLarge": "https://github.com/Y
                 "simclr_resnet50_d8192_e100_m2": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_d8192_e100_m2.torch",
                   }
 
+BYOL_MODELS = {
+    "pretrain_res200x2": "https://storage.googleapis.com/deepmind-byol/checkpoints/pretrain_res200x2.pkl",
+    "pretrain_res50x1": "https://drive.google.com/uc?export=download&id=1nwaOpgmjpiOxJez7gUKQmYEiQIJe5Yss",
+    "res50x1_batchsize_2048": "https://storage.googleapis.com/deepmind-byol/checkpoints/ablations/res50x1_batchsize_2048.pkl",
+    "res50x1_batchsize_1024": "https://storage.googleapis.com/deepmind-byol/checkpoints/ablations/res50x1_batchsize_1024.pkl",
+    "res50x1_batchsize_512": "https://storage.googleapis.com/deepmind-byol/checkpoints/ablations/res50x1_batchsize_512.pkl",
+    "res50x1_batchsize_256": "https://storage.googleapis.com/deepmind-byol/checkpoints/ablations/res50x1_batchsize_256.pkl",
+    "res50x1_batchsize_128": "https://storage.googleapis.com/deepmind-byol/checkpoints/ablations/res50x1_batchsize_128.pkl",
+    "res50x1_batchsize_64": "https://storage.googleapis.com/deepmind-byol/checkpoints/ablations/res50x1_batchsize_64.pkl",
+    "res50x1_no_grayscale": "https://storage.googleapis.com/deepmind-byol/checkpoints/ablations/res50x1_no_grayscale.pkl",
+    "res50x1_no_color": "https://storage.googleapis.com/deepmind-byol/checkpoints/ablations/res50x1_no_color.pkl",
+    "res50x1_crop_and_blur_only": "https://storage.googleapis.com/deepmind-byol/checkpoints/ablations/res50x1_crop_and_blur_only.pkl",
+    "res50x1_crop_only": "https://storage.googleapis.com/deepmind-byol/checkpoints/ablations/res50x1_crop_only.pkl",
+    "res50x1_crop_and_color_only": "https://storage.googleapis.com/deepmind-byol/checkpoints/ablations/res50x1_crop_and_color_only.pkl",
+}
 
-# manually downloaded from https://github.com/AndrewAtanov/simclr-pytorch
-SIMCLR_PYTORCH = {"simclr_rn50_bs512_ep100": CURR_DIR / "pretrained_models/resnet50_imagenet_bs512_epochs100.pth.tar"}
+# TO EVALUATE
+BEIT_MODELS = {"vitB16_in22k_ft22k": "https://conversationhub.blob.core.windows.net/beit-share-public/beit/beit_base_patch16_224_pt22k_ft22k.pth",
+               "vitB16_in22k": "https://conversationhub.blob.core.windows.net/beit-share-public/beit/beit_base_patch16_224_pt22k.pth"
+               }
+
+
+
+BEITV2_MODELS = {"vitL16_in1k": "https://conversationhub.blob.core.windows.net/beit-share-public/beitv2/beitv2_large_patch16_224_pt1k.pth",
+                 "vitB16_in1k_ft22k": "https://conversationhub.blob.core.windows.net/beit-share-public/beitv2/beitv2_base_patch16_224_pt1k_ft21k.pth",
+                 "vitB16_in1k": "https://conversationhub.blob.core.windows.net/beit-share-public/beitv2/beitv2_base_patch16_224_pt1k.pth",
+                 }
+
+
+INFOMIN_MODELS = {
+    "InfoMin_200ep": "https://www.dropbox.com/sh/87d24jqsl6ra7t2/AACgeWc3nQ4P4zUh48KWqhxBa/InfoMin_200.pth?dl=1",
+    "InfoMin_800ep": "https://www.dropbox.com/sh/87d24jqsl6ra7t2/AAAzMTynP3Qc8mIE4XWkgILUa/InfoMin_800.pth?dl=1",
+    "InstDis": "https://www.dropbox.com/sh/87d24jqsl6ra7t2/AACcsSIt1_Njv7GsmsuzZ6Sta/InsDis.pth?dl=1",
+    "MoCo": "https://www.dropbox.com/sh/87d24jqsl6ra7t2/AAB53yJAYuCrOFluygBsVKOOa/MoCo.pth?dl=1",
+    "MoCov2": "https://www.dropbox.com/sh/87d24jqsl6ra7t2/AABaYuKiiZFYowa31yKeGGOQa/MoCov2.pth?dl=0",
+}
+
+MOCO_MODELS = {
+    "mocov1_ep200" : "https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v1_200ep/moco_v1_200ep_pretrain.pth.tar",
+    "mocov2_ep200" : "https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_200ep/moco_v2_200ep_pretrain.pth.tar",
+    "mocov2_ep800" : "https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_800ep/moco_v2_800ep_pretrain.pth.tar",
+}
+
+SPECCL_MODELS = {
+    "speccl_bs384_ep100" : "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/speccl_bs384_ep100.pth"
+}
+
+CLD_MODELS = {
+    "mocov2_normmlp_ep200" : "https://drive.google.com/uc?export=download&id=1Jc2_rJiFZF1PzNB7UPyzhzpIv_NfUuls&confirm=t&uuid=53f91ad8-5322-47e4-942e-d734a1c116e8",
+    "infomin_normmlp_ep200" : "https://drive.google.com/u/0/uc?id=18hs7B4eQQK03p-dRhvJsVkw34Lm5Sg_x&export=download&confirm=t&uuid=1db9f198-2652-4d4b-8fbc-3724751d1347"
+}
+
+
 
 def available_models(mode: Optional[list[str]]=None) -> dict[str, list[str]]:
     """Return all available model names for given modes. If mode is None, return all."""
@@ -216,20 +266,21 @@ def available_models(mode: Optional[list[str]]=None) -> dict[str, list[str]]:
     if mode is None or "simsiam" in mode:
         available["simsiam"] = list(SIMSIAM_MODELS.keys())
 
-    if mode is None or "moco" in mode:
-        available["moco"] = list(MOCO_MODELS.keys())
+    if mode is None or "mocov3" in mode:
+        available["mocov3"] = list(MOCOV3_MODELS.keys())
 
     if mode is None or "vissl" in mode:
         # more models available at `https://github.com/facebookresearch/swav` e.g. different epochs and batch-size
         available["vissl"] = list(VISSL_MODELS.keys())
 
     if mode is None or "beit" in mode:
-        # see https://huggingface.co/models
-        available["beit"] = "check https://huggingface.co/models?sort=downloads&search=beit"
+        available["beit"] = list(BEIT_MODELS.keys())
+
+    if mode is None or "beitv2" in mode:
+        available["beitv2"] = list(BEITV2_MODELS.keys())
 
     if mode is None or "mae" in mode:
         available["mae"] = list(MAE_MODELS.keys())
-
 
     if mode is None or "mugs" in mode:
         available["mugs"] = list(MUGS_MODELS.keys())
@@ -240,15 +291,30 @@ def available_models(mode: Optional[list[str]]=None) -> dict[str, list[str]]:
     if mode is None or "ibot" in mode:
         available["ibot"] = list(IBOT_MODELS.keys())
 
+    if mode is None or "vicreg" in mode:
+        available["vicreg"] = list(torch.hub.list('facebookresearch/vicreg:main'))
+
+    if mode is None or "speccl" in mode:
+        available["speccl"] = list(SPECCL_MODELS.keys())
+
+    if mode is None or "moco" in mode:
+        available["moco"] = list(MOCO_MODELS.keys())
+
+    if mode is None or "cld" in mode:
+        available["cld"] = list(CLD_MODELS.keys())
+
+    if mode is None or "infomin" in mode:
+        available["infomin"] = list(INFOMIN_MODELS.keys())
+
+    if mode is None or "byol" in mode:
+        available["byol"] = list(BYOL_MODELS.keys())
+
     if mode is None or "torchvision" in mode:
         available["torchvision"] = torchvision.models.__dict__.keys()
 
     if mode is None or "timm" in mode:
         available["timm"] = timm.list_models(pretrained=True)
         # there are a lot you can search using wild cards like  `timm.list_models('vit_*', pretrained=True)`
-
-    if mode is None or "simclr-pytorch" in mode:
-        available["simclr-pytorch"] = "manual download needed from https://github.com/AndrewAtanov/simclr-pytorch"
 
     return available
 
@@ -272,6 +338,37 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
             identity.weight.data.copy_(torch.eye(N))
             encoder.attnpool.c_proj = identity
 
+    elif mode == "byol":
+        check_import("dill", f"mode=byol in load_representor")
+        ckpt_path = CURR_DIR / "pretrained_models" / f"{name}.pth"
+        architecture = "resnet50"  # TODO should use metadata to get architecture
+
+        if not ckpt_path.exists():
+            is_already_converted = ".pkl" not in BYOL_MODELS[model]
+
+            if is_already_converted:
+                state_dict = load_state_dict_from_url(
+                    url=BYOL_MODELS[model],
+                    map_location="cpu",
+                    file_name=name
+                )
+            else:
+                with download_url_tmp(BYOL_MODELS[model]) as tmp:
+                    with open(tmp, 'rb') as f:
+                        ckpt = dill.load(f)
+                        state_dict = convert_byol(ckpt, architecture=architecture)
+                    torch.save(state_dict, ckpt_path)
+                    logger.info(f"Saved model at {ckpt_path}")
+        else:
+            state_dict = torch.load(ckpt_path)
+
+        encoder = _resnet_byol.__dict__[architecture]()
+        encoder.load_state_dict(state_dict, strict=True)
+        encoder.fc = torch.nn.Identity()
+
+        preprocess = BYOL_PREPROCESSOR
+
+
     elif mode in ["dino", "dino_last", "dino_extractS", "dino_extractB"]:
         with rm_module("utils"):
             # dirty but if not there's collision of modules
@@ -292,18 +389,28 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
             MODELS = IBOT_MODELS
             preprocess = IBOT_PREPROCESSOR
             key = "state_dict"
+            # ibot uses the same as dino
+            if "extractS" in model:
+                extract_mode = "small"
+            elif "extractB" in model:
+                extract_mode = "base"
+            else:
+                extract_mode = "final"
         elif mode == "mugs":
             MODELS = MUGS_MODELS
             preprocess = MUGS_PREPROCESSOR
             key = "state_dict"
+            extract_mode = "final"  # !unclear because code is not released yet for evaluation
         elif mode == "mae":
             MODELS = MAE_MODELS
             preprocess = MAE_PREPROCESSOR
             key = "model"
+            extract_mode = "final"
         elif mode == "msn":
             MODELS = MSN_MODELS
             preprocess = MSN_PREPROCESSOR
             key = "target_encoder"
+            extract_mode = "final"
         else:
             raise ValueError(f"Unknown mode={mode}.")
 
@@ -323,7 +430,7 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
         if "drive" in MODELS[model]:
             ckpt_path = CURR_DIR / "pretrained_models"/f"{model}.pth"
             if not ckpt_path.exists():
-                download_url(MODELS[model], CURR_DIR / "pretrained_models", filename=f"{model}.pth")
+                download_url(MODELS[model], ckpt_path)
             state_dict = torch.load(ckpt_path)[key]
             msg = encoder.load_state_dict(state_dict, strict=False)  # will have relation blocks for MUGS => use strict false
             assert len(msg.missing_keys) == 0
@@ -347,20 +454,7 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
 
             encoder.load_state_dict(state_dict, strict=True)
 
-        extract_mode = "small" if "vits" in model.lower() else "base"
         encoder = VITDinoWrapper(encoder, extract_mode=extract_mode, repo="timm")
-
-    elif mode == "simclr-pytorch":
-        encoder = tmodels.resnet.resnet50(pretrained=False, num_classes=0)
-        encoder.fc = torch.nn.Identity()
-        try:
-            state_dict = torch.load(SIMCLR_PYTORCH[model], map_location="cpu")['state_dict']
-        except FileNotFoundError:
-            raise ValueError("You need to manually download the model from https://github.com/AndrewAtanov/simclr-pytorch .")
-        state_dict = {k.replace("convnet.", ""): v for k, v in state_dict.items()
-                      if "convnet." in k and "fc." not in k}
-        encoder.load_state_dict(state_dict)
-        preprocess = SIMCLR_PYTORCH_PREPROCESSOR
 
     elif mode == "swav":
         arch = model.split("_")[0]
@@ -398,8 +492,7 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
 
     elif mode in ["moco","simsiam"]:
 
-
-        models = MOCO_MODELS if mode == "moco" else SIMSIAM_MODELS
+        models = MOCOV3_MODELS if mode == "moco" else SIMSIAM_MODELS
 
         if "vit" in model:
             check_import("timm", f"mode={mode} with vit in load_representor")
@@ -436,7 +529,7 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
         state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
         setattr(encoder, linear_keyword, torch.nn.Identity())
         encoder.load_state_dict(state_dict, strict=True)
-        preprocess = MOCO_PREPROCESSOR if mode == "moco" else SIMSIAM_PREPROCESSOR
+        preprocess = MOCOV3_PREPROCESSOR if mode == "moco" else SIMSIAM_PREPROCESSOR
 
     elif mode in ["timm", "sup_dino_extractS", "sup_dino_extractB"]:
         check_import("timm", "mode=timm/sup_dino in load_representor")
@@ -455,6 +548,12 @@ def load_representor(name : str, mode: str, model: str) -> Union[Callable, Calla
         model = transformers.BeitModel.from_pretrained(f"{model}")
         encoder = HuggingSelector(model, "pooler_output")
 
+    elif mode == "beit_v2":
+        check_import("transformers", "mode=beit in load_representor")
+        extractor = transformers.BeitFeatureExtractor.from_pretrained(f"{model}")
+        preprocess = lambda img: extractor(img, return_tensors="pt")['pixel_values'][0]
+        model = transformers.BeitModel.from_pretrained(f"{model}")
+        encoder = HuggingSelector(model, "pooler_output")
 
     elif mode == "dissl":
         encoder = torch.hub.load("YannDubs/Invariant-Self-Supervised-Learning:main", model)
@@ -575,17 +674,21 @@ class VITDinoWrapper(nn.Module):
     repo : {"dino", "timm"}
         What implementation the model uses.
     """
-    def __init__(self, encoder : nn.Module, extract_mode: str, repo : str):
+    def __init__(self, encoder : nn.Module, extract_mode: str, repo : str, is_interp_pos_encoding : bool = False):
         super().__init__()
         self.encoder = encoder
         self.repo = repo
         self.set_repo(self.repo)
+        self.is_interp_pos_encoding = is_interp_pos_encoding
 
         if extract_mode == "base":
             self.n_last_blocks = 1
             self.avgpool_patchtokens = True
         elif extract_mode == "small":
             self.n_last_blocks = 4
+            self.avgpool_patchtokens = False
+        elif extract_mode == "last":
+            self.n_last_blocks = 1
             self.avgpool_patchtokens = False
         else:
             raise ValueError(f"Unknown extract_mode={extract_mode}")
@@ -602,21 +705,40 @@ class VITDinoWrapper(nn.Module):
         intermediate_output = self.encoder.get_intermediate_layers(x, self.n_last_blocks)
         output = torch.cat([x[:, 0] for x in intermediate_output], dim=-1)
         if self.avgpool_patchtokens:
-            output = torch.cat((output.unsqueeze(-1), torch.mean(intermediate_output[-1][:, 1:], dim=1).unsqueeze(-1)), dim=-1)
+            output = torch.cat((output.unsqueeze(-1),
+                                torch.mean(intermediate_output[-1][:, 1:], dim=1).unsqueeze(-1)), dim=-1)
             output = output.reshape(output.shape[0], -1)
 
         return output
 
+    def interpolate_pos_encoding(self, x, pos_embed):
+        """Interpolated the position encoding to the input size. Should not be needed if using the same input size as trained on."""
+        npatch = x.shape[1] - 1
+        N = pos_embed.shape[1] - 1
+        if npatch == N:
+            return pos_embed
+        class_emb = pos_embed[:, 0]
+        pos_embed = pos_embed[:, 1:]
+        dim = x.shape[-1]
+        pos_embed = F.interpolate(
+            pos_embed.reshape(1, int(math.sqrt(N)), int(math.sqrt(N)), dim).permute(0, 3, 1, 2),
+            scale_factor=math.sqrt(npatch / N),
+            mode='bicubic',
+        )
+        pos_embed = pos_embed.permute(0, 2, 3, 1).view(1, -1, dim)
+        return torch.cat((class_emb.unsqueeze(0), pos_embed), dim=1)
 
 def get_intermediate_layers(self, x, n=1):
     """Replicates https://github.com/facebookresearch/dino/blob/3247a0cacb4c0642270469e06facf96e895f56de
-    /vision_transformer.py#L225 for TIMM ViT models."""
+    /vision_transformer.py#L225 for TIMM ViT models.
+    """
 
     ### prepare_tokens ###
     x = self.patch_embed(x)
     cls_token = self.cls_token.expand(x.shape[0], -1, -1)
     x = torch.cat((cls_token, x), dim=1)
-    x = self.pos_drop(x + self.pos_embed)
+    pos_embed = self.interpolate_pos_encoding(x, self.pos_embed)
+    x = self.pos_drop(x + pos_embed)
     ######################
 
     output = []
@@ -643,14 +765,3 @@ class LightningWrapper(pl.LightningModule):
     def predict_step(self, batch, batch_idx):
         x, y = batch
         return self(x).cpu(), y.cpu()
-
-class HuggingSelector(nn.Module):
-    """Wrapper around hugging face model to select correct output while enable `.cuda()` etc."""
-    def __init__(self, model : nn.Module, select : str):
-        super().__init__()
-        self.model = model
-        self.select = select
-
-    def forward(self, x : torch.Tensor):
-        #, output_hidden_states = True
-        return self.model(x)[self.select]

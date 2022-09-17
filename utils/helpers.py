@@ -16,7 +16,7 @@ from torch import nn
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional, Union
 import sys
-from joblib import Parallel, dump, load
+from joblib import dump, load
 from sklearn.metrics import log_loss, accuracy_score
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import LearningRateMonitor
@@ -25,7 +25,7 @@ from torchvision.transforms import functional as F_trnsf
 from torchvision.transforms import InterpolationMode
 
 from argparse import Namespace
-from omegaconf import Container, OmegaConf
+from omegaconf import OmegaConf
 from torch.nn.utils.rnn import PackedSequence
 from torch.utils.data import DataLoader
 from collections.abc import MutableMapping
@@ -460,17 +460,38 @@ class DownloadProgressBar(tqdm):
         self.update(b * bsize - self.n)
 
 # Modified from https://stackoverflow.com/questions/15644964/python-progress-bar-and-downloads
-def download_url(url, save_dir, filename=None):
-    """Download a url to `save_dir`."""
-    if filename is None:
-        filename = url.split("/")[-1]
-    save_dir = Path(save_dir)
-    save_dir.mkdir(parents=True, exist_ok=True)
+def download_url(url, save_path):
+    """Download a url to `save_path`."""
+    if save_path is not None:
+        save_path = Path(save_path)
+        save_path.mkdir(parents=True, exist_ok=True)
 
     with DownloadProgressBar(
         unit="B", unit_scale=True, miniters=1, desc=url.split("/")[-1]
     ) as t:
 
-        urllib.request.urlretrieve(
-            url, filename=save_dir / filename, reporthook=t.update_to
+        f, _ = urllib.request.urlretrieve(
+            url, filename=save_path, reporthook=t.update_to
         )
+
+    return f
+
+@contextlib.contextmanager
+def download_url_tmp(url):
+    try:
+        yield download_url(url, None)
+    finally:
+        urllib.request.urlcleanup()
+
+class LightningWrapper(pl.LightningModule):
+    def __init__(self, encoder):
+        super().__init__()
+        self.encoder = encoder
+
+    def forward(self, x: torch.Tensor):
+        out = self.encoder(x)
+        return out
+
+    def predict_step(self, batch, batch_idx):
+        x, y = batch
+        return self(x).cpu(), y.cpu()

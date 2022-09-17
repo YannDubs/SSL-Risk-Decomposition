@@ -1,4 +1,0 @@
-name: swav_rn50_ep200_bs256
-kwargs:
-  mode: swav
-  model: resnet50_ep200_bs256

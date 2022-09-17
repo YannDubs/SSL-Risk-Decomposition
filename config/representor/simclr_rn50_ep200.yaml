@@ -1,4 +1,0 @@
-name: simclr_rn50_ep200
-kwargs:
-  mode: vissl
-  model: simclr_rn50_ep200

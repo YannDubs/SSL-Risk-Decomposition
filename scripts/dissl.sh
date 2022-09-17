@@ -19,6 +19,14 @@ seed=123
 predictor=torch_linear
 "
 
+kwargs_multi="
+representor=dissl_resnet50_dNone_e400_m6
+seed=123
+predictor=torch_linear
+"
+
+
+
 # need to run seed=124,125
 
 if [ "$is_plot_only" = false ] ; then

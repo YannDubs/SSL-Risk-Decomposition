@@ -1,4 +1,0 @@
-name: simclr_rn50
-kwargs:
-  mode: vissl
-  model: simclr_rn50

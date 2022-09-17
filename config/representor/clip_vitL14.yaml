@@ -1,4 +1,0 @@
-name: clip_vitL14
-kwargs:
-  mode: clip
-  model: ViT-L/14

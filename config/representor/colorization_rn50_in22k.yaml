@@ -1,4 +1,0 @@
-name: colorization_rn50_in22k
-kwargs:
-  mode: vissl
-  model: colorization_rn50_in22k

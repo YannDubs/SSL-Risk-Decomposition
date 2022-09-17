@@ -1,7 +1,0 @@
-defaults:
-  - base_supervised
-
-name: sup_vitL16
-kwargs:
-  mode: timm
-  model: vit_large_patch16_224

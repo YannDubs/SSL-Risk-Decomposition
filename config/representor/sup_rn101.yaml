@@ -1,7 +1,0 @@
-defaults:
-  - base_supervised
-
-name: sup_rn101
-kwargs:
-  mode: torchvision
-  model: resnet101

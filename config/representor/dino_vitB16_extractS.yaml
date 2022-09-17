@@ -1,4 +1,0 @@
-name: dino_vitB16_extractS
-kwargs:
-  mode: dino_extractS
-  model: dino_vitb16

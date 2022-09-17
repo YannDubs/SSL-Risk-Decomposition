@@ -27,10 +27,10 @@ from omegaconf import Container
 
 from utils.cluster import nlp_cluster
 from utils.data import get_Datamodule
-from utils.helpers import (SklearnTrainer, check_import, get_torch_trainer, log_dict, namespace2dict,
+from utils.helpers import (LightningWrapper, SklearnTrainer, check_import, get_torch_trainer, log_dict, namespace2dict,
                            omegaconf2namespace,
                            NamespaceMap, remove_rf)
-from pretrained import load_representor
+import hubconf_new
 from utils.predictor import Predictor
 
 try:
@@ -59,8 +59,9 @@ def main(cfg):
     begin(cfg)
 
     ############## REPRESENT DATA ##############
-    logger.info("Stage : Representor")
-    representor, preprocess = load_representor(cfg.representor.name, **cfg.representor.kwargs)
+    logger.info(f"Representing data with {cfg.representor}")
+    representor, preprocess = hubconf_new.__dict__[cfg.representor]()
+    representor = LightningWrapper(representor)
     datamodule = instantiate_datamodule_(cfg, representor, preprocess)
 
     ############## DOWNSTREAM PREDICTOR ##############
@@ -137,7 +138,7 @@ def instantiate_datamodule_(cfg: Container, representor : Callable, preprocess: 
     data_kwargs = omegaconf2namespace(cfg.data.kwargs)
     data_kwargs.dataset_kwargs.transform = preprocess
     Datamodule = get_Datamodule(cfg.data.name)
-    datamodule = Datamodule(representor=representor, representor_name=cfg.representor.name, **data_kwargs, **kwargs)
+    datamodule = Datamodule(representor=representor, representor_name=cfg.representor, **data_kwargs, **kwargs)
     return datamodule
 
 def run_component_(component : str, datamodule : pl.LightningDataModule, cfg : Container, results : dict,

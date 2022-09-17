@@ -1,4 +1,0 @@
-name: barlow_rn50_ep300
-kwargs:
-  mode: vissl
-  model: barlow_rn50_ep300

@@ -1,4 +1,0 @@
-name: dc2_rn50_ep400_2x224
-kwargs:
-  mode: vissl
-  model: dc2_rn50_ep400_2x224

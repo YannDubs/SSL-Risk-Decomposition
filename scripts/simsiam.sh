@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-experiment="multicrop"
-notes="**Goal**: compare effect of multicrop."
+experiment="simsiam"
+notes="**Goal**: evaluate all the simsiam models."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -13,15 +13,10 @@ experiment=$experiment
 timeout=$time
 "
 
-# every arguments that you are sweeping over
 kwargs_multi="
-representor=dc2_rn50_ep400_2x224+4x96,dc2_rn50_ep400_2x224,swav_rn50_ep400_2x224
+representor=simsiam_rn50_bs512_ep100,simsiam_rn50_bs256_ep100
 seed=123
-"
-
-kwargs_multi="
-representor=dc2_rn50_ep800_2x224+4x96,dc2_rn50_ep400_2x160+4x96,dc2_rn50_ep400_2x224
-seed=123
+predictor=torch_linear
 "
 
 
@@ -36,4 +31,3 @@ if [ "$is_plot_only" = false ] ; then
   done
 fi
 
-wait

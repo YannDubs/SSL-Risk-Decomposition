@@ -1,4 +1,0 @@
-name: mae_vitB16
-kwargs:
-  mode: mae
-  model: mae_vitB16

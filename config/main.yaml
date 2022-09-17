@@ -7,7 +7,6 @@ defaults:
   - server: none
   - data: imagenet
   - predictor: torch_linear
-  - representor: swav_rn50
 
 ########## GENERAL ##########
 n_runs: 1
@@ -19,7 +18,7 @@ component: ???
 seed: 123
 timeout: 1440 # 24 hours
 time: ${hydra:job.num}_${now:%Y-%m-%d_%H-%M-%S} # add job num because time is not when job runs
-long_name: exp_${experiment}/data_${data.name}/ssl_${representor.name}/pred_${predictor.name}/seed_${seed}
+long_name: exp_${experiment}/data_${data.name}/ssl_${representor}/pred_${predictor.name}/seed_${seed}
 long_name_component: ${long_name}/comp_${component}
 is_nlp_cluster: False # should the working directory be used as main
 
@@ -56,11 +55,7 @@ data:
       seed: ${seed}
       transform: null
 
-representor:
-  name: ???
-  kwargs:
-    mode: ???
-    model: ???
+representor: ???
 
 shatterability:
   n_bin_tasks: 10000

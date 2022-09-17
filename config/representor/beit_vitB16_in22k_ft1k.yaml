@@ -1,4 +1,0 @@
-name: beit_vitB16_in22k_ft22k
-kwargs:
-  mode: beit
-  model: microsoft/beit-base-patch16-224

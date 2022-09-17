@@ -1,0 +1,3391 @@
+##### ISSL #####
+dissl_resnet50_d8192_e800_m8:
+  ssl:
+    objective: dissl
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 5120
+    n_classes: 16384
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 31128640
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 8192
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+6x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 73.9
+  meta:
+    where: https://github.com/YannDubs/Invariant-Self-Supervised-Learning
+    notes: null
+    month: 6
+    year: 2022
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+dissl_resnet50_d8192_e400_m6:
+  ssl:
+    objective: dissl
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 5120
+    n_classes: 16384
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 31128640
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 8192
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x160+4x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 74.0
+  meta:
+    where: https://github.com/YannDubs/Invariant-Self-Supervised-Learning
+    notes: null
+    month: 6
+    year: 2022
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+dissl_resnet50_dNone_e400_m6:
+  ssl:
+    objective: dissl
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 5120
+    n_classes: 16384
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x160+4x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 73.0
+  meta:
+    where: https://github.com/YannDubs/Invariant-Self-Supervised-Learning
+    notes: null
+    month: 6
+    year: 2022
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+dissl_resnet50_dNone_e400_m2:
+  ssl:
+    objective: dissl
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 5120
+    n_classes: 16384
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 31128640
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 71.1
+  meta:
+    where: https://github.com/YannDubs/Invariant-Self-Supervised-Learning
+    notes: null
+    month: 6
+    year: 2022
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+dissl_resnet50_d8192_e100_m2:
+  ssl:
+    objective: dissl
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 5120
+    n_classes: 16384
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 31128640
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 8192
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 68.9
+  meta:
+    where: https://github.com/YannDubs/Invariant-Self-Supervised-Learning
+    notes: null
+    month: 6
+    year: 2022
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+dissl_resnet50_dNone_e100_m2:
+  ssl:
+    objective: dissl
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 5120
+    n_classes: 16384
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 66.9
+  meta:
+    where: https://github.com/YannDubs/Invariant-Self-Supervised-Learning
+    notes: null
+    month: 6
+    year: 2022
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+### SimSiam ###
+simsiam_rn50_bs256_ep100:
+  ssl:
+    objective: simsiam
+    ssl_mode: distillation
+    version: v1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 9e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 256
+    optimizer: lars # larc
+    learning_rate: 0.05
+    weight_decay: 1e-4
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 68.3
+  meta:
+    where: https://github.com/facebookresearch/simsiam
+    notes: null
+    month: 10
+    year: 2020
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: ???
+    time_hours: ???
+
+simsiam_rn50_bs512_ep100:
+  ssl:
+    objective: simsiam
+    ssl_mode: distillation
+    version: v1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 9e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 512
+    optimizer: lars # larc
+    learning_rate: 0.05
+    weight_decay: 1e-4
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 68.1
+  meta:
+    where: https://github.com/facebookresearch/simsiam
+    notes: null
+    month: 10
+    year: 2020
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: ???
+    time_hours: ???
+
+### SwAV ###
+selav2_rn50_ep400_2x160+4x96:
+  ssl:
+    objective: sela
+    ssl_mode: clustering
+    version: v2
+    # assuming the following information is same  as swav and dc2
+    n_negatives: 8192
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 4096
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x160+4x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 71.8
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 6
+    year: 2020
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: V100
+    time_hours: ???
+
+selav2_rn50_ep400_2x224:
+  ssl:
+    objective: sela
+    ssl_mode: clustering
+    version: v2
+    # assuming the following information is same  as swav and dc2
+    n_negatives: 8192
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 4096
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 67.2
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 6
+    year: 2020
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: V100
+    time_hours: ???
+
+dc2_rn50_ep800_2x224_6x96:
+  ssl:
+    objective: deepcluster
+    ssl_mode: clustering
+    version: v2
+    n_negatives: 8192
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 800
+    batch_size: 4096
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+6x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 75.2
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 6
+    year: 2020
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 64
+    pu_type: V100
+    time_hours: ???
+
+dc2_rn50_ep400_2x160_4x96:
+  ssl:
+    objective: deepcluster
+    ssl_mode: clustering
+    version: v2
+    n_negatives: 8192
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 4096
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x260+4x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 74.3
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 6
+    year: 2020
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 64
+    pu_type: V100
+    time_hours: 21.4
+
+dc2_rn50_ep400_2x224:
+  ssl:
+    objective: deepcluster
+    ssl_mode: clustering
+    version: v2
+    n_negatives: 8192
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 4096
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 70.2
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 6
+    year: 2020
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 64
+    pu_type: V100
+    time_hours: ???
+
+swav_rn50w4:
+  ssl:
+    objective: swav
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 7680
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 8192
+    projection_hid_depth: 1
+    architecture: resnet50w4
+    projection_arch: mlp
+    n_parameters: 375378176
+    projection_nparameters: 68e6
+  representation:
+    z_dim: 8192
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.48
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+6x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 77.3
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 2
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 64
+    pu_type: V100
+    time_hours: ???
+
+swav_rn50w2:
+  ssl:
+    objective: swav
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 8192
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 8192
+    projection_hid_depth: 1
+    architecture: resnet50w2
+    projection_arch: mlp
+    n_parameters: 93907072
+    projection_nparameters: 35e6
+  representation:
+    z_dim: 4096
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 4096
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+6x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 77.3
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 2
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 128
+    pu_type: V100
+    time_hours: ???
+
+swav_rn50_ep400_bs256:
+  ssl:
+    objective: swav
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 4352
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 256
+    optimizer: lars # larc
+    learning_rate: 0.6
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+6x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 74.3
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 2
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 4
+    pu_type: V100
+    time_hours: 348
+
+swav_rn50_ep400_2x224:
+  ssl:
+    objective: swav
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 8192
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 4096
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 70.1
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 2
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 64
+    pu_type: V100
+    time_hours: 16.5
+
+swav_rn50_ep400:
+  ssl:
+    objective: swav
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 8192
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 4096
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+6x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 74.6
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 2
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 64
+    pu_type: V100
+    time_hours: 25
+
+swav_rn50_ep200_bs256:
+  ssl:
+    objective: swav
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 4352
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 256
+    optimizer: lars # larc
+    learning_rate: 0.6
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+6x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 72.7
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 2
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 4
+    pu_type: V100
+    time_hours: 348
+
+swav_rn50_ep200:
+  ssl:
+    objective: swav
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 8192
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 4096
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+6x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 73.9
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 2
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 64
+    pu_type: V100
+    time_hours: 12.5
+
+swav_rn50_ep100:
+  ssl:
+    objective: swav
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 8192
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 4096
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+6x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 72.1
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 2
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 64
+    pu_type: V100
+    time_hours: 6.25
+
+swav_rn50:
+  ssl:
+    objective: swav
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 8192
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 800
+    batch_size: 4096
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+6x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 75.3
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 2
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 64
+    pu_type: V100
+    time_hours: 50
+
+### VICREG ###
+vicreg_rn50w2:
+  ssl:
+    objective: deepcluster
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 4096
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 8192
+    projection_hid_width: 8192
+    projection_hid_depth: 2
+    architecture: resnet50w2
+    projection_arch: linear
+    n_parameters: 93907072
+    projection_nparameters: 151e6
+  representation:
+    z_dim: 4096
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 2048
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - flip
+      - gray
+      - solarize
+      - normalize
+  metrics:
+    top1acc_in1k_official: 75.5
+  meta:
+    where: https://github.com/facebookresearch/vicreg
+    notes: null
+    month: 1
+    year: 2022
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 32
+    pu_type: Tesla V100
+    time_hours: ???
+
+vicreg_rn50:
+  ssl:
+    objective: deepcluster
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 4096
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 8192
+    projection_hid_width: 8192
+    projection_hid_depth: 2
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 151e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 2048
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - flip
+      - gray
+      - solarize
+      - normalize
+  metrics:
+    top1acc_in1k_official: 73.2
+  meta:
+    where: https://github.com/facebookresearch/vicreg
+    notes: null
+    month: 1
+    year: 2022
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 32
+    pu_type: Tesla V100
+    time_hours: 110 # see table 14 in their paper
+
+
+### VISSL ###
+
+pirl_rn50w2_headMLP:
+  ssl:
+    objective: pirl
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 32000
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50w2
+    projection_arch: linear
+    n_parameters: 93907072
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 4096
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 1024
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 0.0001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - solarize
+      - photometric
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 70.9
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/projects/PIRL/README.md
+    notes: null
+    month: 12
+    year: 2019
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 32
+    pu_type: ???
+    time_hours: ???
+
+pirl_rn50w2:
+  ssl:
+    objective: pirl
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 32000
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50w2
+    projection_arch: linear
+    n_parameters: 93907072
+    projection_nparameters: 0.6e6
+  representation:
+    z_dim: 4096
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 1024
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 0.0001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - solarize
+      - photometric
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 69.3
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/projects/PIRL/README.md
+    notes: null
+    month: 12
+    year: 2019
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 32
+    pu_type: ???
+    time_hours: ???
+
+pirl_rn50_ep200_headMLP:
+  ssl:
+    objective: pirl
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 32000
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 1024
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 0.0001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - solarize
+      - photometric
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 65.8
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/projects/PIRL/README.md
+    notes: null
+    month: 12
+    year: 2019
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 32
+    pu_type: ???
+    time_hours: ???
+
+pirl_rn50_headMLP:
+  ssl:
+    objective: pirl
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 32000
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 800
+    batch_size: 1024
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 0.0001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - solarize
+      - photometric
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 69.9
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/projects/PIRL/README.md
+    notes: null
+    month: 12
+    year: 2019
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 32
+    pu_type: ???
+    time_hours: ???
+
+pirl_rn50_ep200:
+  ssl:
+    objective: pirl
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 32000
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 0.4e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 1024
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 0.0001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - solarize
+      - photometric
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 62.9
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/projects/PIRL/README.md
+    notes: null
+    month: 12
+    year: 2019
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 32
+    pu_type: ???
+    time_hours: ???
+
+pirl_rn50:
+  ssl:
+    objective: pirl
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 32000
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 0.4e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 800
+    batch_size: 1024
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 0.0001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - solarize
+      - photometric
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 64.29
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/projects/PIRL/README.md
+    notes: null
+    month: 12
+    year: 2019
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 32
+    pu_type: ???
+    time_hours: ???
+
+npidpp_rn50w2:
+  ssl:
+    objective: npid
+    ssl_mode: contrastive
+    version: v2 #  npid++ is an improvement of npid
+    n_negatives: 32000
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50w2
+    projection_arch: linear
+    n_parameters: 93907072
+    projection_nparameters: 0.5e6
+  representation:
+    z_dim: 4096
+    z_layer: avgpool
+  optimization:
+    epochs: 800
+    batch_size: 1024
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 0.0001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 62.73
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 12
+    year: 2019
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 32
+    pu_type: ???
+    time_hours: ???
+
+npidpp_rn50:
+  ssl:
+    objective: npid
+    ssl_mode: contrastive
+    version: v2 #  npid++ is an improvement of npid
+    n_negatives: 32000
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 0.3e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 800
+    batch_size: 1024
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 0.0001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 56.68
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 12
+    year: 2019
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 32
+    pu_type: ???
+    time_hours: ???
+
+npid_rn50:
+  ssl:
+    objective: clusterfit
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 4096
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 0.3e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 256
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 0.0001
+    scheduler: multistep
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 52.73
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 5
+    year: 2018
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: ???
+    time_hours: ???
+
+clusterfit_rn50:
+  ssl:
+    objective: clusterfit
+    ssl_mode: clustering
+    version: 1
+    n_negatives: null
+    n_classes: 16000
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: null
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 33e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 105
+    batch_size: 256
+    optimizer: sgd
+    learning_rate: 0.1
+    weight_decay: 0.0001
+    scheduler: multistep
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 53.63
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 12
+    year: 2019
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: ???
+    time_hours: ???
+
+jigsaw_rn50_in1k:
+  ssl:
+    objective: jigsaw
+    ssl_mode: transform
+    version: 1
+    n_negatives: null
+    n_classes: 2000
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: null
+    projection_hid_width: 9000
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 20e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 105
+    batch_size: 256
+    optimizer: sgd
+    learning_rate: 0.1
+    weight_decay: 0.0001
+    scheduler: multistep
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 46.58
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 3
+    year: 2016
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: ???
+    time_hours: ???
+
+jigsaw_rn50_in22k:
+  ssl:
+    objective: jigsaw
+    ssl_mode: transform
+    version: 1
+    n_negatives: null
+    n_classes: 2000
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: null
+    projection_hid_width: 9000
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 20e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 105
+    batch_size: 256
+    optimizer: sgd
+    learning_rate: 0.1
+    weight_decay: 0.0001
+    scheduler: multistep
+  data:
+    pretraining_data: ImageNet-22K
+    finetuning_data: null
+    img_size: 224
+    views: 224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 53.09
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 3
+    year: 2016
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: ???
+    time_hours: ???
+
+simclr_rn101_ep100:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet101
+    projection_arch: mlp
+    n_parameters: 42500160
+    projection_nparameters: 4e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 4096
+    optimizer: lars #larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 62.76
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 64
+    pu_type: ???
+    time_hours: ???
+
+simclr_rn101:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet101
+    projection_arch: mlp
+    n_parameters: 42500160
+    projection_nparameters: 68e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 4096
+    optimizer: lars #larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 71.56
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 64
+    pu_type: ???
+    time_hours: ???
+
+simclr_rn50w4:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 8192
+    projection_hid_depth: 1
+    architecture: resnet50w4
+    projection_arch: mlp
+    n_parameters: 375378176
+    projection_nparameters: 68e6
+  representation:
+    z_dim: 8192
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 4096
+    optimizer: lars #larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 71.61
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 64
+    pu_type: ???
+    time_hours: ???
+
+simclr_rn50w2_ep100:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50w2
+    projection_arch: mlp
+    n_parameters: 93907072
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 4096
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 4096
+    optimizer: lars #larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 69.82
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 64
+    pu_type: ???
+    time_hours: ???
+
+simclr_rn50w2:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50w2
+    projection_arch: mlp
+    n_parameters: 93907072
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 4096
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 4096
+    optimizer: lars #larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 73.84
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 64
+    pu_type: ???
+    time_hours: ???
+
+simclr_rn50_bs4096_ep100:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 4e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 800
+    batch_size: 4096
+    optimizer: lars #larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 64.4
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 64
+    pu_type: ???
+    time_hours: ???
+
+simclr_rn50_ep800:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 4e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 800
+    batch_size: 4096
+    optimizer: lars #larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 69.68
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 64
+    pu_type: ???
+    time_hours: ???
+
+simclr_rn50_ep400:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 4e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 4096
+    optimizer: lars #larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 67.71
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 64
+    pu_type: ???
+    time_hours: ???
+
+simclr_rn50_ep200:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 4e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 4096
+    optimizer: lars #larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 66.61
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 64
+    pu_type: ???
+    time_hours: ???
+
+simclr_rn50:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 4e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 4096
+    optimizer: lars #larc
+    learning_rate: 0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 68.8
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 64
+    pu_type: ???
+    time_hours: ???
+
+rotnet_rn50_in22k:
+  ssl:
+    objective: rotnet
+    ssl_mode: transform # predict the transformation
+    version: 1
+    n_negatives: null
+    n_classes: 4
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: null
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 0.1e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 105
+    batch_size: 256
+    optimizer: sgd
+    learning_rate: 0.1
+    weight_decay: 0.0001
+    scheduler: multistep
+  data:
+    pretraining_data: ImageNet-22K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 54.89
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 3
+    year: 2018
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: ???
+    time_hours: ???
+
+rotnet_rn50_in1k:
+  ssl:
+    objective: rotnet
+    ssl_mode: transform # predict the transformation
+    version: 1
+    n_negatives: null
+    n_classes: 4
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: null
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 0.1e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 105
+    batch_size: 256
+    optimizer: sgd
+    learning_rate: 0.1
+    weight_decay: 0.0001
+    scheduler: multistep
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 48.2
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 3
+    year: 2018
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: ???
+    time_hours: ???
+
+mocov2_rn50_vissl:
+  ssl:
+    objective: moco
+    ssl_mode: contrastive
+    version: 2
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 4e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 256
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 0.0001
+    scheduler: multistep
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - grayscale
+      - blur
+      - normalize
+  metrics:
+    top1acc_in1k_official: 66.4
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 9
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: ???
+    time_hours: ???
+
+barlow_rn50_ep300:
+  ssl:
+    objective: barlow_twins
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 4095
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 8192
+    projection_hid_width: 8192
+    projection_hid_depth: 2
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 151e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 300
+    batch_size: 2048
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1.5e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - grayscale
+      - blur
+      - solarize
+      - normalize
+  metrics:
+    top1acc_in1k_official: 70.75
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 3
+    year: 2021
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 32
+    pu_type: ???
+    time_hours: ???
+
+barlow_rn50:
+  ssl:
+    objective: barlow_twins
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 4095
+    n_classes: null
+    is_stopgrad: false
+    is_ema: flase
+  model:
+    pred_dim: 8192
+    projection_hid_width: 8192
+    projection_hid_depth: 2
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 151e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 2048
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - grayscale
+      - blur
+      - solarize
+      - normalize
+  metrics:
+    top1acc_in1k_official: 71.8
+  meta:
+    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+    notes: null
+    month: 3
+    year: 2021
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 32
+    pu_type: ???
+    time_hours: ???
+
+### BYOL ###
+byol_rn50_bs4096:
+  ssl:
+    objective: byol
+    ssl_mode: distillation
+    version: 1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 12e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 4096
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1.5e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - grayscale
+      - blur
+      - solarize
+      - normalize
+  metrics:
+    top1acc_in1k_official: 74.4
+  meta:
+    where: https://github.com/deepmind/deepmind-research/tree/master/byol
+    notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
+    month: 6
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 512
+    pu_type: Cloud TPU v3
+    time_hours: 8
+
+byol_rn50_bs2048:
+  ssl:
+    objective: byol
+    ssl_mode: distillation
+    version: 1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 12e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 2048
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1.5e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - grayscale
+      - blur
+      - solarize
+      - normalize
+  metrics:
+    top1acc_in1k_official: 72.4
+  meta:
+    where: https://github.com/deepmind/deepmind-research/tree/master/byol
+    notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
+    month: 6
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 512
+    pu_type: Cloud TPU v3
+    time_hours: ???
+
+byol_rn50_bs1024:
+  ssl:
+    objective: byol
+    ssl_mode: distillation
+    version: 1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 12e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 1024
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1.5e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - grayscale
+      - blur
+      - solarize
+      - normalize
+  metrics:
+    top1acc_in1k_official: 72.2
+  meta:
+    where: https://github.com/deepmind/deepmind-research/tree/master/byol
+    notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
+    month: 6
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 512
+    pu_type: Cloud TPU v3
+    time_hours: ???
+
+byol_rn50_bs512:
+  ssl:
+    objective: byol
+    ssl_mode: distillation
+    version: 1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 12e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 512
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1.5e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - grayscale
+      - blur
+      - solarize
+      - normalize
+  metrics:
+    top1acc_in1k_official: 72.2
+  meta:
+    where: https://github.com/deepmind/deepmind-research/tree/master/byol
+    notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
+    month: 6
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 512
+    pu_type: Cloud TPU v3
+    time_hours: ???
+
+byol_rn50_bs256:
+  ssl:
+    objective: byol
+    ssl_mode: distillation
+    version: 1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 12e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 256
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1.5e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - grayscale
+      - blur
+      - solarize
+      - normalize
+  metrics:
+    top1acc_in1k_official: 71.8
+  meta:
+    where: https://github.com/deepmind/deepmind-research/tree/master/byol
+    notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
+    month: 6
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 512
+    pu_type: Cloud TPU v3
+    time_hours: ???
+
+byol_rn50_bs128:
+  ssl:
+    objective: byol
+    ssl_mode: distillation
+    version: 1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 12e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 128
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1.5e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - grayscale
+      - blur
+      - solarize
+      - normalize
+  metrics:
+    top1acc_in1k_official: 69.6
+  meta:
+    where: https://github.com/deepmind/deepmind-research/tree/master/byol
+    notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
+    month: 6
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 512
+    pu_type: Cloud TPU v3
+    time_hours: ???
+
+byol_rn50_bs64:
+  ssl:
+    objective: byol
+    ssl_mode: distillation
+    version: 1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 12e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 64
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1.5e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - grayscale
+      - blur
+      - solarize
+      - normalize
+  metrics:
+    top1acc_in1k_official: 59.7
+  meta:
+    where: https://github.com/deepmind/deepmind-research/tree/master/byol
+    notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
+    month: 6
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 512
+    pu_type: Cloud TPU v3
+    time_hours: ???
+
+byol_rn50_augCropBlur:
+  ssl:
+    objective: byol
+    ssl_mode: distillation
+    version: 1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 12e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 4096
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1.5e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - blur
+      - normalize
+  metrics:
+    top1acc_in1k_official: 61.1
+  meta:
+    where: https://github.com/deepmind/deepmind-research/tree/master/byol
+    notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
+    month: 6
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 512
+    pu_type: Cloud TPU v3
+    time_hours: ???
+
+byol_rn50_augCropBlur:
+  ssl:
+    objective: byol
+    ssl_mode: distillation
+    version: 1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 12e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 4096
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1.5e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - solarize # I'm assuming that solarize is considered as color (couldn't find inofmration)
+      - normalize
+  metrics:
+    top1acc_in1k_official: 70.7
+  meta:
+    where: https://github.com/deepmind/deepmind-research/tree/master/byol
+    notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
+    month: 6
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 512
+    pu_type: Cloud TPU v3
+    time_hours: ???
+
+byol_rn50_augCrop:
+  ssl:
+    objective: byol
+    ssl_mode: distillation
+    version: 1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 12e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 4096
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1.5e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 59.4
+  meta:
+    where: https://github.com/deepmind/deepmind-research/tree/master/byol
+    notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
+    month: 6
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 512
+    pu_type: Cloud TPU v3
+    time_hours: ???
+
+byol_rn50_augNocolor:
+  ssl:
+    objective: byol
+    ssl_mode: distillation
+    version: 1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 12e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 4096
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1.5e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - grayscale
+      - blur
+      - normalize
+  metrics:
+    top1acc_in1k_official: 59.4
+  meta:
+    where: https://github.com/deepmind/deepmind-research/tree/master/byol
+    notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
+    month: 6
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 512
+    pu_type: Cloud TPU v3
+    time_hours: ???
+
+byol_rn50_augNogray:
+  ssl:
+    objective: byol
+    ssl_mode: distillation
+    version: 1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 1
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 12e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 4096
+    optimizer: lars
+    learning_rate: 0.2
+    weight_decay: 1.5e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - solarize
+      - blur
+      - normalize
+  metrics:
+    top1acc_in1k_official: 70.3
+  meta:
+    where: https://github.com/deepmind/deepmind-research/tree/master/byol
+    notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
+    month: 6
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 512
+    pu_type: Cloud TPU v3
+    time_hours: ???
+

@@ -1,4 +1,0 @@
-name: simclr_rn50_bs512_ep100
-kwargs:
-  mode: simclr-pytorch
-  model: simclr_rn50_bs512_ep100 # 100 ep

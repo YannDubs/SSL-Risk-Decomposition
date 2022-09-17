@@ -1,4 +1,0 @@
-name: clusterfit_rn50
-kwargs:
-  mode: vissl
-  model: clusterfit_rn50

@@ -1,4 +1,0 @@
-name: clip_vitB32
-kwargs:
-  mode: clip
-  model: ViT-B/32

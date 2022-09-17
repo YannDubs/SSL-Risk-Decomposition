@@ -1,4 +1,0 @@
-name: dino_rn50
-kwargs:
-  mode: dino
-  model: dino_resnet50

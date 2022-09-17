@@ -1,4 +1,0 @@
-name: jigsaw_rn50_in22k
-kwargs:
-  mode: vissl
-  model: jigsaw_rn50_in22k
