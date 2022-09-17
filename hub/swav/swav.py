@@ -32,15 +32,15 @@ def get_swav_models(name, model, architecture):
 
     elif architecture == "resnet50w2":
         from utils.resnet50w import resnet50w2
-        encoder = resnet50w2(output_dim=0, eval_mode=True)
+        encoder = resnet50w2()
 
     elif architecture == "resnet50w4":
         from utils.resnet50w import resnet50w4
-        encoder = resnet50w4(output_dim=0, eval_mode=True)
+        encoder = resnet50w4()
 
     elif architecture == "resnet50w5":
         from utils.resnet50w import resnet50w5
-        encoder = resnet50w5(output_dim=0, eval_mode=True)
+        encoder = resnet50w5()
 
     else:
         raise ValueError(f"Unknown architecture={architecture}")
