@@ -533,15 +533,47 @@ except ImportError as e:
     logging.warning(f"MOCOV3 models not available because of the following import error: \n {e}")
 
 ### MOCO ###
+# pretrained models are from https://github.com/facebookresearch/moco
+
+try:
+    from hub.moco import get_moco_models as get_moco_models
+
+    def mocov1_rn50_ep200():
+        return get_moco_models("mocov1_rn50_ep200")
+
+    def mocov2_rn50_ep200():
+        return get_moco_models("mocov2_rn50_ep200")
+
+    def mocov2_rn50_ep800():
+        return get_moco_models("mocov2_rn50_ep800")
+
+except ImportError as e:
+    logging.warning(f"MOCO models not available because of the following import error: \n {e}")
+
+### PYCONTRAST ###
+# pretrained models are from https://github.com/HobbitLong/PyContrast
+try:
+    from hub.pycontrast import get_pycontrast_models as get_pycontrast_models
+
+    def infomin_rn50_200ep():
+        return get_pycontrast_models("infomin_rn50_200ep")
+
+    def infomin_rn50_800ep():
+        return get_pycontrast_models("infomin_rn50_800ep")
+
+    def instdist_rn50():
+        return get_pycontrast_models("instdist_rn50")
+
+except ImportError as e:
+    logging.warning(f"Pycontrast models not available because of the following import error: \n {e}")
+
+
+### CLD ###
 
 
 ### BEIT ###
 
 ### BEITV2 ###
-
-### INFOMIN ###
-
-### CLD ###
 
 ### TIMM ###
 

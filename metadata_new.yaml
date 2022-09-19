@@ -1,6 +1,459 @@
 # TODO document each field
 # learning_rate : say that for bs 256
 
+##### MOCO #####
+
+
+##### MOCO #####
+mocov2_rn50_ep800:
+  ssl:
+    objective: moco
+    ssl_mode: contrastive
+    version: v3
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 800
+    batch_size: 256
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 1e-4
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - gray
+      - blur
+      - normalize
+  metrics:
+    top1acc_in1k_official: 71.1
+  meta:
+    where: https://github.com/facebookresearch/moco
+    notes: null
+    month: 3
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 8
+    pu_type: V100
+    time_hours: 212
+
+mocov2_rn50_ep200:
+  ssl:
+    objective: moco
+    ssl_mode: contrastive
+    version: v3
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 256
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 1e-4
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - gray
+      - blur
+      - normalize
+  metrics:
+    top1acc_in1k_official: 67.7
+  meta:
+    where: https://github.com/facebookresearch/moco
+    notes: null
+    month: 3
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 8
+    pu_type: V100
+    time_hours: 53
+
+mocov1_rn50_ep200:
+  ssl:
+    objective: moco
+    ssl_mode: contrastive
+    version: v3
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 128
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 0.3e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 256
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 1e-4
+    scheduler: multistep
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - gray
+      - normalize
+  metrics:
+    top1acc_in1k_official: 60.6
+  meta:
+    where: https://github.com/facebookresearch/moco
+    notes: null
+    month: 11
+    year: 2019
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 8
+    pu_type: V100
+    time_hours: ???
+
+##### MOCOV3 #####
+mocov3_vitB_ep300:
+  ssl:
+    objective: moco
+    ssl_mode: contrastive
+    version: v3
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 5
+    architecture: vitb
+    family: vit
+    patch_size: 16
+    projection_arch: mlp
+    n_parameters: 85798656
+    projection_nparameters: 28e6
+  representation:
+    z_dim: 768
+    z_layer: cls
+  optimization:
+    epochs: 300
+    batch_size: 4096
+    optimizer: adamw
+    learning_rate: 1.5e-4
+    weight_decay: 0.1
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - blur
+      - gray
+      - normalize
+  metrics:
+    top1acc_in1k_official: 76.7
+  meta:
+    where: https://github.com/facebookresearch/moco-v3
+    notes: null
+    month: 4
+    year: 2021
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 64
+    pu_type: Volta
+    time_hours: ???
+
+mocov3_vitS_ep300:
+  ssl:
+    objective: moco
+    ssl_mode: contrastive
+    version: v3
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 5
+    architecture: vits
+    family: vit
+    patch_size: 16
+    projection_arch: mlp
+    n_parameters: 21665664
+    projection_nparameters: 28e6
+  representation:
+    z_dim: 384
+    z_layer: cls
+  optimization:
+    epochs: 300
+    batch_size: 4096
+    optimizer: adamw
+    learning_rate: 1.5e-4
+    weight_decay: 0.1
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - blur
+      - gray
+      - normalize
+  metrics:
+    top1acc_in1k_official: 73.2
+  meta:
+    where: https://github.com/facebookresearch/moco-v3
+    notes: moco uses 12 heads instead of the standard 6
+    month: 4
+    year: 2021
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 64
+    pu_type: Volta
+    time_hours: ???
+
+mocov3_rn50_ep1000:
+  ssl:
+    objective: moco
+    ssl_mode: contrastive
+    version: v3
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 5
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 28e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 4096
+    optimizer: lars
+    learning_rate:  0.6
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - blur
+      - gray
+      - normalize
+  metrics:
+    top1acc_in1k_official: 74.6
+  meta:
+    where: https://github.com/facebookresearch/moco-v3
+    notes: null
+    month: 4
+    year: 2021
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 16
+    pu_type: Volta
+    time_hours: ???
+
+mocov3_rn50_ep300:
+  ssl:
+    objective: moco
+    ssl_mode: contrastive
+    version: v3
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 5
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 28e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 300
+    batch_size: 4096
+    optimizer: lars
+    learning_rate:  0.6
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - blur
+      - gray
+      - normalize
+  metrics:
+    top1acc_in1k_official: 72.8
+  meta:
+    where: https://github.com/facebookresearch/moco-v3
+    notes: null
+    month: 4
+    year: 2021
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 16
+    pu_type: Volta
+    time_hours: ???
+
+mocov3_rn50_ep100:
+  ssl:
+    objective: moco
+    ssl_mode: contrastive
+    version: v3
+    n_negatives: 8192
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 4096
+    projection_hid_depth: 5
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 28e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 4096
+    optimizer: lars
+    learning_rate:  0.6
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - blur
+      - gray
+      - normalize
+  metrics:
+    top1acc_in1k_official: 68.9
+  meta:
+    where: https://github.com/facebookresearch/moco-v3
+    notes: null
+    month: 4
+    year: 2021
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 16
+    pu_type: Volta
+    time_hours: ???
+
+
 ##### MSN #####
 msn_vitl7_ep200:
   ssl:
@@ -5829,8 +6282,8 @@ mocov2_rn50_vissl:
     version: 2
     n_negatives: 65536
     n_classes: null
-    is_stopgrad: false
-    is_ema: false
+    is_stopgrad: true
+    is_ema: true
   model:
     pred_dim: 128
     projection_hid_width: 2048
