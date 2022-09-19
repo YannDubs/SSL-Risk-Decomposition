@@ -1,6 +1,483 @@
 # TODO document each field
 # learning_rate : say that for bs 256
 
+##### MSN #####
+
+##### MAE #####
+mae_vitB16:
+  ssl:
+    objective: bae
+    ssl_mode: generative
+    version: v1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: null
+    projection_hid_width: null # 2048 for proj and 4096 for pred
+    projection_hid_depth: null # 3 for proj and 3 for pred
+    architecture: vitb
+    family: vit
+    patch_size: 16
+    projection_arch: null
+    n_parameters: 85798656
+    projection_nparameters: null
+  representation:
+    z_dim: 784
+    z_layer: cls
+  optimization:
+    epochs: 800
+    batch_size: 4096
+    optimizer: adamw
+    learning_rate:  1.5e-4
+    weight_decay: 0.05
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 224
+    is_aug_invariant: False
+    augmentations:
+      - crop
+      - masking
+      - normalize
+  metrics:
+    top1acc_in1k_official: 68.0
+  meta:
+    where: https://github.com/facebookresearch/mae
+    notes: null
+    month: 11
+    year: 2021
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 24
+    pu_type: A100
+    time_hours: 64
+
+##### MUGS #####
+mugs_vitb16_ep400_extractB:
+  ssl:
+    objective: mugs
+    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048 # 2048 for proj and 4096 for pred
+    projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture: vits
+    family: vit
+    patch_size: 16
+    projection_arch: mlp
+    n_parameters: 85798656
+    projection_nparameters: 73e6
+  representation:
+    z_dim: 1536
+    z_layer: cls+avg
+  optimization:
+    epochs: 400
+    batch_size: 1008
+    optimizer: adamw
+    learning_rate:  0.0008
+    weight_decay: 0.04
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - gray
+      - blur
+      - masking
+      - solarization
+      - autoaugment # for student
+      - erasing
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 78.0
+  meta:
+    where: https://github.com/sail-sg/mugs
+    notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
+    month: 3
+    year: 2022
+    license: Apache License 2.0
+    is_official: true
+  compute:
+    n_pus: 24
+    pu_type: A100
+    time_hours: 64
+
+mugs_vits16_ep800_extractS:
+  ssl:
+    objective: mugs
+    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048 # 2048 for proj and 4096 for pred
+    projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture: vits
+    family: vit
+    patch_size: 16
+    projection_arch: mlp
+    n_parameters: 21665664
+    projection_nparameters: 73e6
+  representation:
+    z_dim: 1536
+    z_layer: 4xcls
+  optimization:
+    epochs: 800
+    batch_size: 1024
+    optimizer: adamw
+    learning_rate:  0.0008
+    weight_decay: 0.04
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - gray
+      - blur
+      - masking
+      - solarization
+      - autoaugment # for student
+      - erasing
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 75.6
+  meta:
+    where: https://github.com/sail-sg/mugs
+    notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
+    month: 3
+    year: 2022
+    license: Apache License 2.0
+    is_official: true
+  compute:
+    n_pus: 16
+    pu_type: A100
+    time_hours: 81
+
+mugs_vitl16_ep250:
+  ssl:
+    objective: mugs
+    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048 # 2048 for proj and 4096 for pred
+    projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture: vitl
+    family: vit
+    patch_size: 16
+    projection_arch: mlp
+    n_parameters: 303301632
+    projection_nparameters: 73e6
+  representation:
+    z_dim: 1024
+    z_layer: cls
+  optimization:
+    epochs: 400
+    batch_size: 640
+    optimizer: adamw
+    learning_rate:  0.0015
+    weight_decay: 0.025
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - gray
+      - blur
+      - masking
+      - solarization
+      - autoaugment # for student
+      - erasing
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/sail-sg/mugs
+    notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
+    month: 3
+    year: 2022
+    license: Apache License 2.0
+    is_official: true
+  compute:
+    n_pus: 40
+    pu_type: A100
+    time_hours: 120
+
+mugs_vitb16_ep400:
+  ssl:
+    objective: mugs
+    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048 # 2048 for proj and 4096 for pred
+    projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture: vitb
+    family: vit
+    patch_size: 16
+    projection_arch: mlp
+    n_parameters: 85798656
+    projection_nparameters: 73e6
+  representation:
+    z_dim: 768
+    z_layer: cls
+  optimization:
+    epochs: 400
+    batch_size: 1008
+    optimizer: adamw
+    learning_rate:  0.0008
+    weight_decay: 0.04
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - gray
+      - blur
+      - masking
+      - solarization
+      - autoaugment # for student
+      - erasing
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/sail-sg/mugs
+    notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
+    month: 3
+    year: 2022
+    license: Apache License 2.0
+    is_official: true
+  compute:
+    n_pus: 24
+    pu_type: A100
+    time_hours: 64
+
+mugs_vits16_ep800:
+  ssl:
+    objective: mugs
+    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048 # 2048 for proj and 4096 for pred
+    projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture: vits
+    family: vit
+    patch_size: 16
+    projection_arch: mlp
+    n_parameters: 21665664
+    projection_nparameters: 73e6
+  representation:
+    z_dim: 384
+    z_layer: cls
+  optimization:
+    epochs: 800
+    batch_size: 1024
+    optimizer: adamw
+    learning_rate:  0.0008
+    weight_decay: 0.04
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - gray
+      - blur
+      - masking
+      - solarization
+      - autoaugment # for student
+      - erasing
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/sail-sg/mugs
+    notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
+    month: 3
+    year: 2022
+    license: Apache License 2.0
+    is_official: true
+  compute:
+    n_pus: 16
+    pu_type: A100
+    time_hours: 81
+
+mugs_vits16_ep300:
+  ssl:
+    objective: mugs
+    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048 # 2048 for proj and 4096 for pred
+    projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture: vits
+    family: vit
+    patch_size: 16
+    projection_arch: mlp
+    n_parameters: 21665664
+    projection_nparameters: 73e6
+  representation:
+    z_dim: 384
+    z_layer: cls
+  optimization:
+    epochs: 300
+    batch_size: 1024
+    optimizer: adamw
+    learning_rate:  0.0008
+    weight_decay: 0.04
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - gray
+      - blur
+      - masking
+      - solarization
+      - autoaugment # for student
+      - erasing
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/sail-sg/mugs
+    notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
+    month: 3
+    year: 2022
+    license: Apache License 2.0
+    is_official: true
+  compute:
+    n_pus: 16
+    pu_type: A100
+    time_hours: 108
+
+mugs_vits16_ep100:
+  ssl:
+    objective: mugs
+    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048 # 2048 for proj and 4096 for pred
+    projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture: vits
+    family: vit
+    patch_size: 16
+    projection_arch: mlp
+    n_parameters: 21665664
+    projection_nparameters: 73e6
+  representation:
+    z_dim: 384
+    z_layer: cls
+  optimization:
+    epochs: 100
+    batch_size: 512
+    optimizer: adamw
+    learning_rate:  0.0008
+    weight_decay: 0.04
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - gray
+      - blur
+      - masking
+      - solarization
+      - autoaugment # for student
+      - erasing
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/sail-sg/mugs
+    notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
+    month: 3
+    year: 2022
+    license: Apache License 2.0
+    is_official: true
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: 27
+
 ##### IBOT #####
 ibot_vitS16_extractS:
   ssl:
@@ -15,7 +492,9 @@ ibot_vitS16_extractS:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vits16
+    architecture: vits
+    family: vit
+    patch_size: 16
     projection_arch: mlp
     n_parameters: 85798656
     projection_nparameters: 13e6
@@ -71,7 +550,9 @@ ibot_vitB16_extractB:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vitb16
+    architecture: vitb
+    family: vit
+    patch_size: 16
     projection_arch: mlp
     n_parameters: 85798656
     projection_nparameters: 13e6
@@ -127,7 +608,9 @@ ibot_vitL16:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vitl16
+    architecture: vitl
+    family: vit
+    patch_size: 16
     projection_arch: mlp
     n_parameters: 303301632
     projection_nparameters: 13e6
@@ -183,9 +666,11 @@ ibot_vitS16:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vits16
+    architecture: vits
+    family: vit
+    patch_size: 16
     projection_arch: mlp
-    n_parameters: 85798656
+    n_parameters: 21665664
     projection_nparameters: 13e6
   representation:
     z_dim: 384
@@ -239,7 +724,9 @@ ibot_vitB16:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vitb16
+    architecture: vitb
+    family: vit
+    patch_size: 16
     projection_arch: mlp
     n_parameters: 85798656
     projection_nparameters: 13e6
@@ -296,7 +783,9 @@ dino_vitB16_extractS:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vitb16
+    architecture: vitb
+    family: vit
+    patch_size: 16
     projection_arch: mlp
     n_parameters: 85798656
     projection_nparameters: 26e6
@@ -351,7 +840,9 @@ dino_vitS16_extractB:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vits16
+    architecture: vits
+    family: vit
+    patch_size: 16
     projection_arch: mlp
     n_parameters: 21665664
     projection_nparameters: 26e6
@@ -406,7 +897,9 @@ dino_vitB8_last:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vitb8
+    architecture: vitb
+    family: vit
+    patch_size: 8
     projection_arch: mlp
     n_parameters: 85807872
     projection_nparameters: 26e6
@@ -461,7 +954,9 @@ dino_vitB16_last:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vitb16
+    architecture: vitb
+    family: vit
+    patch_size: 16
     projection_arch: mlp
     n_parameters: 85798656
     projection_nparameters: 26e6
@@ -516,7 +1011,9 @@ dino_vitS16:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vits16
+    architecture: vits
+    family: vit
+    patch_size: 16
     projection_arch: mlp
     n_parameters: 21665664
     projection_nparameters: 26e6
@@ -571,7 +1068,9 @@ dino_vitB8_last:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vitb8
+    architecture: vitb
+    family: vit
+    patch_size: 8
     projection_arch: mlp
     n_parameters: 85807872
     projection_nparameters: 26e6
@@ -626,7 +1125,9 @@ dino_vitB16_last:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vitb16
+    architecture: vitb
+    family: vit
+    patch_size: 16
     projection_arch: mlp
     n_parameters: 85798656
     projection_nparameters: 26e6
@@ -681,7 +1182,9 @@ dino_vitS8_last:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vits8
+    architecture: vits
+    family: vit
+    patch_size: 8
     projection_arch: mlp
     n_parameters: 21670272
     projection_nparameters: 26e6
@@ -736,7 +1239,9 @@ dino_vitS16_last:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
-    architecture: vits16
+    architecture: vits
+    family: vit
+    patch_size: 16
     projection_arch: mlp
     n_parameters: 21665664
     projection_nparameters: 26e6
@@ -792,6 +1297,8 @@ dino_rn50:
     projection_hid_width: 2048
     projection_hid_depth: 3
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 24e6
@@ -848,7 +1355,9 @@ clip_vitL14_px336:
     pred_dim: 768
     projection_hid_width: null
     projection_hid_depth: null
-    architecture: vitl14
+    architecture: vitl
+    family: vit
+    patch_size: 14
     projection_arch: linear
     n_parameters: 303507456
     projection_nparameters: 1e6
@@ -898,7 +1407,9 @@ clip_vitL14:
     pred_dim: 768
     projection_hid_width: null
     projection_hid_depth: null
-    architecture: vitl14
+    architecture: vitl
+    family: vit
+    patch_size: 14
     projection_arch: linear
     n_parameters: 303179776
     projection_nparameters: 1e6
@@ -948,7 +1459,9 @@ clip_vitB32:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
-    architecture: vitb32
+    architecture: vitb
+    family: vit
+    patch_size: 32
     projection_arch: linear
     n_parameters: 85799424
     projection_nparameters: 0.4e6
@@ -998,7 +1511,9 @@ clip_vitB16:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
-    architecture: vitb16
+    architecture: vitb
+    family: vit
+    patch_size: 16
     projection_arch: linear
     n_parameters: 85799424
     projection_nparameters: 0.4e6
@@ -1048,9 +1563,11 @@ clip_rn101:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
-    architecture: resnet50w64
+    architecture: resnet101
+    family: cnn
+    patch_size: null
     projection_arch: linear
-    n_parameters: 432966336
+    n_parameters: 59407200
     projection_nparameters: 2e6
   representation:
     z_dim: 2048
@@ -1099,6 +1616,8 @@ clip_rn50x64:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50w64
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 432966336
     projection_nparameters: 2e6
@@ -1149,6 +1668,8 @@ clip_rn50x16:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50w16
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 174409104
     projection_nparameters: 2e6
@@ -1199,6 +1720,8 @@ clip_rn50x4:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50w4
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 92054200
     projection_nparameters: 2e6
@@ -1249,6 +1772,8 @@ clip_rn50:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 38317920
     projection_nparameters: 2e6
@@ -1299,7 +1824,9 @@ lossyless_b01:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
-    architecture: vitb32
+    architecture: vitb
+    family: vit
+    patch_size: 32
     projection_arch: linear
     n_parameters: 85799424
     projection_nparameters: 0.4e6
@@ -1349,7 +1876,9 @@ lossyless_b005:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
-    architecture: vitb32
+    architecture: vitb
+    family: vit
+    patch_size: 32
     projection_arch: linear
     n_parameters: 85799424
     projection_nparameters: 0.4e6
@@ -1399,7 +1928,9 @@ lossyless_b001:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
-    architecture: vitb32
+    architecture: vitb
+    family: vit
+    patch_size: 32
     projection_arch: linear
     n_parameters: 85799424
     projection_nparameters: 0.4e6
@@ -1451,6 +1982,8 @@ speccl_bs384_ep100:
     projection_hid_width: 8192
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 31128640
     projection_nparameters: 151e6
@@ -1505,6 +2038,8 @@ simclr_resnet50_d8192_e100_m2:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 31128640
     projection_nparameters: 17e6
@@ -1559,6 +2094,8 @@ simclr_resnet50_dNone_e100_m2_headTNoneSNone:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: null
     n_parameters: 23508032
     projection_nparameters: 0
@@ -1613,6 +2150,8 @@ simclr_resnet50_dNone_e100_m2_headTMlpSMlp:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 23508032
     projection_nparameters: 9e6
@@ -1667,6 +2206,8 @@ simclr_resnet50_dNone_e100_m2_headTMlpSLin:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 23508032
     projection_nparameters: 9e6
@@ -1721,6 +2262,8 @@ simclr_resnet50_dNone_e100_m2_headTLinSLin:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 23508032
     projection_nparameters: 0.3e6
@@ -1775,6 +2318,8 @@ simclr_resnet50_dNone_e100_m2_data030:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 9e6
@@ -1829,6 +2374,8 @@ simclr_resnet50_dNone_e100_m2_data010:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 9e6
@@ -1883,6 +2430,8 @@ simclr_resnet50_dNone_e100_m2:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 9e6
@@ -1937,6 +2486,8 @@ dissl_resnet50_d4096_e100_m2:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 29023296
     projection_nparameters: 16e6
@@ -1991,6 +2542,8 @@ dissl_resnet50_dNone_e100_m2_headTMlpSMlp:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 17e6
@@ -2045,6 +2598,8 @@ dissl_resnet50_dNone_e100_m2_headTLinSLin:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 23508032
     projection_nparameters: 9e6
@@ -2099,6 +2654,8 @@ dissl_resnet50_dNone_e100_m2_augSmall:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 17e6
@@ -2153,6 +2710,8 @@ dissl_resnet50_dNone_e100_m2_augLarge:
     projection_hid_width: 2048
     projection_hid_depth:
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 17e6
@@ -2208,6 +2767,8 @@ dissl_resnet50_d8192_e800_m8:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 31128640
     projection_nparameters: 17e6
@@ -2262,6 +2823,8 @@ dissl_resnet50_d8192_e400_m6:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 31128640
     projection_nparameters: 17e6
@@ -2316,6 +2879,8 @@ dissl_resnet50_dNone_e400_m6:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 17e6
@@ -2370,6 +2935,8 @@ dissl_resnet50_dNone_e400_m2:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 31128640
     projection_nparameters: 17e6
@@ -2424,6 +2991,8 @@ dissl_resnet50_d8192_e100_m2:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 31128640
     projection_nparameters: 17e6
@@ -2478,6 +3047,8 @@ dissl_resnet50_dNone_e100_m2:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 17e6
@@ -2533,6 +3104,8 @@ simsiam_rn50_bs256_ep100:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 9e6
@@ -2587,6 +3160,8 @@ simsiam_rn50_bs512_ep100:
     projection_hid_width: 2048
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 9e6
@@ -2643,6 +3218,8 @@ selav2_rn50_ep400_2x160+4x96:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -2698,6 +3275,8 @@ selav2_rn50_ep400_2x224:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -2752,6 +3331,8 @@ dc2_rn50_ep800_2x224_6x96:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -2806,6 +3387,8 @@ dc2_rn50_ep400_2x160_4x96:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -2860,6 +3443,8 @@ dc2_rn50_ep400_2x224:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -2914,6 +3499,8 @@ swav_rn50w4:
     projection_hid_width: 8192
     projection_hid_depth: 1
     architecture: resnet50w4
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 375378176
     projection_nparameters: 68e6
@@ -2968,6 +3555,8 @@ swav_rn50w2:
     projection_hid_width: 8192
     projection_hid_depth: 1
     architecture: resnet50w2
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 93907072
     projection_nparameters: 35e6
@@ -3022,6 +3611,8 @@ swav_rn50_ep400_bs256:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -3076,6 +3667,8 @@ swav_rn50_ep400_2x224:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -3130,6 +3723,8 @@ swav_rn50_ep400:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -3184,6 +3779,8 @@ swav_rn50_ep200_bs256:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -3238,6 +3835,8 @@ swav_rn50_ep200:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -3292,6 +3891,8 @@ swav_rn50_ep100:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -3346,6 +3947,8 @@ swav_rn50:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -3401,6 +4004,8 @@ vicreg_rn50w2:
     projection_hid_width: 8192
     projection_hid_depth: 2
     architecture: resnet50w2
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 93907072
     projection_nparameters: 151e6
@@ -3456,6 +4061,8 @@ vicreg_rn50:
     projection_hid_width: 8192
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 23508032
     projection_nparameters: 151e6
@@ -3514,6 +4121,8 @@ pirl_rn50w2_headMLP:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50w2
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 93907072
     projection_nparameters: 17e6
@@ -3569,6 +4178,8 @@ pirl_rn50w2:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50w2
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 93907072
     projection_nparameters: 0.6e6
@@ -3624,6 +4235,8 @@ pirl_rn50_ep200_headMLP:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -3679,6 +4292,8 @@ pirl_rn50_headMLP:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 5e6
@@ -3734,6 +4349,8 @@ pirl_rn50_ep200:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 23508032
     projection_nparameters: 0.4e6
@@ -3789,6 +4406,8 @@ pirl_rn50:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 23508032
     projection_nparameters: 0.4e6
@@ -3844,6 +4463,8 @@ npidpp_rn50w2:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50w2
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 93907072
     projection_nparameters: 0.5e6
@@ -3896,6 +4517,8 @@ npidpp_rn50:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 23508032
     projection_nparameters: 0.3e6
@@ -3948,6 +4571,8 @@ npid_rn50:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 23508032
     projection_nparameters: 0.3e6
@@ -4000,6 +4625,8 @@ clusterfit_rn50:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 23508032
     projection_nparameters: 33e6
@@ -4052,6 +4679,8 @@ jigsaw_rn50_in1k:
     projection_hid_width: 9000
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 20e6
@@ -4104,6 +4733,8 @@ jigsaw_rn50_in22k:
     projection_hid_width: 9000
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 20e6
@@ -4156,6 +4787,8 @@ simclr_rn101_ep100:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet101
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 42500160
     projection_nparameters: 4e6
@@ -4209,6 +4842,8 @@ simclr_rn101:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet101
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 42500160
     projection_nparameters: 68e6
@@ -4262,6 +4897,8 @@ simclr_rn50w4:
     projection_hid_width: 8192
     projection_hid_depth: 1
     architecture: resnet50w4
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 375378176
     projection_nparameters: 68e6
@@ -4315,6 +4952,8 @@ simclr_rn50w2_ep100:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50w2
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 93907072
     projection_nparameters: 17e6
@@ -4368,6 +5007,8 @@ simclr_rn50w2:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50w2
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 93907072
     projection_nparameters: 17e6
@@ -4421,6 +5062,8 @@ simclr_rn50_bs4096_ep100:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 4e6
@@ -4474,6 +5117,8 @@ simclr_rn50_ep800:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 4e6
@@ -4527,6 +5172,8 @@ simclr_rn50_ep400:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 4e6
@@ -4580,6 +5227,8 @@ simclr_rn50_ep200:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 4e6
@@ -4633,6 +5282,8 @@ simclr_rn50:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 4e6
@@ -4686,6 +5337,8 @@ rotnet_rn50_in22k:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 23508032
     projection_nparameters: 0.1e6
@@ -4737,6 +5390,8 @@ rotnet_rn50_in1k:
     projection_hid_width: null
     projection_hid_depth: null
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: linear
     n_parameters: 23508032
     projection_nparameters: 0.1e6
@@ -4788,6 +5443,8 @@ mocov2_rn50_vissl:
     projection_hid_width: 2048
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 4e6
@@ -4842,6 +5499,8 @@ barlow_rn50_ep300:
     projection_hid_width: 8192
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 151e6
@@ -4897,6 +5556,8 @@ barlow_rn50:
     projection_hid_width: 8192
     projection_hid_depth: 2
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 151e6
@@ -4953,6 +5614,8 @@ byol_rn50_bs4096:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 12e6
@@ -5008,6 +5671,8 @@ byol_rn50_bs2048:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 12e6
@@ -5063,6 +5728,8 @@ byol_rn50_bs1024:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 12e6
@@ -5118,6 +5785,8 @@ byol_rn50_bs512:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 12e6
@@ -5173,6 +5842,8 @@ byol_rn50_bs256:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 12e6
@@ -5228,6 +5899,8 @@ byol_rn50_bs128:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 12e6
@@ -5283,6 +5956,8 @@ byol_rn50_bs64:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 12e6
@@ -5338,6 +6013,8 @@ byol_rn50_augCropBlur:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 12e6
@@ -5389,6 +6066,8 @@ byol_rn50_augCropBlur:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 12e6
@@ -5441,6 +6120,8 @@ byol_rn50_augCrop:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 12e6
@@ -5491,6 +6172,8 @@ byol_rn50_augNocolor:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 12e6
@@ -5544,6 +6227,8 @@ byol_rn50_augNogray:
     projection_hid_width: 4096
     projection_hid_depth: 1
     architecture: resnet50
+    family: cnn
+    patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 12e6

@@ -482,3 +482,29 @@ try:
 
 except ImportError as e:
     logging.warning(f"MAE models not available because of the following import error: \n {e}")
+
+
+##### MSN #####
+# pretrained models are from https://github.com/facebookresearch/msn
+
+try:
+    from hub.msn import get_msn_models as _get_msn_models
+
+    def msn_vits16_ep800():
+        return _get_msn_models("msn_vits16_ep800", 'vit_small_patch16_224')
+
+    def msn_vitb16_ep600():
+        return _get_msn_models("msn_vitb16_ep600", 'vit_base_patch16_224')
+
+    def msn_vitb4_ep300():
+        return _get_msn_models("msn_vitb4_ep300", 'vit_base_patch4_224')
+
+    def msn_vitl16_ep600():
+        return _get_msn_models("msn_vitl16_ep600", 'vit_large_patch16_224')
+
+    def msn_vitl7_ep200():
+        return _get_msn_models("msn_vitl7_ep200", 'vit_large_patch7_224')
+
+
+except ImportError as e:
+    logging.warning(f"MSN models not available because of the following import error: \n {e}")
