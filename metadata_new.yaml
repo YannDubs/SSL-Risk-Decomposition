@@ -1,8 +1,62 @@
 # TODO document each field
 # learning_rate : say that for bs 256
 
-##### MOCO #####
-
+##### Pycontrast #####
+infomin_rn50_200ep:
+  ssl:
+    objective: infomin
+    ssl_mode: contrastive
+    version: v3
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 800
+    batch_size: 256
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 1e-4
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - gray
+      - blur
+      - normalize
+  metrics:
+    top1acc_in1k_official: 71.1
+  meta:
+    where: https://github.com/facebookresearch/moco
+    notes: null
+    month: 3
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 8
+    pu_type: V100
+    time_hours: 212
 
 ##### MOCO #####
 mocov2_rn50_ep800:

@@ -568,8 +568,31 @@ except ImportError as e:
     logging.warning(f"Pycontrast models not available because of the following import error: \n {e}")
 
 
-### CLD ###
+### MMSelfSup ###
 
+try:
+    from hub.mmselfsup import get_mmselfsup_models as get_mmselfsup_models
+
+    def relativeloc_rn50_70ep_mmselfsup():
+        return get_mmselfsup_models("relativeloc_rn50_70ep_mmselfsup")
+
+    def odc_rn50_440ep_mmselfsup():
+        return get_mmselfsup_models("odc_rn50_440ep_mmselfsup")
+
+    def densecl_rn50_200ep_mmselfsup():
+        return get_mmselfsup_models("densecl_rn50_200ep_mmselfsup")
+
+    def simsiam_rn50_bs256_ep200_mmselfsup():
+        return get_mmselfsup_models("simsiam_rn50_bs256_ep200_mmselfsup")
+
+    def simclr_rn50_bs256_ep200_mmselfsup():
+        return get_mmselfsup_models("simclr_rn50_bs256_ep200_mmselfsup")
+
+    def deepcluster_rn50_bs512_ep200_mmselfsup():
+        return get_mmselfsup_models("deepcluster_rn50_bs512_ep200_mmselfsup")
+
+except ImportError as e:
+    logging.warning(f"MMSelfSup models not available because of the following import error: \n {e}")
 
 ### BEIT ###
 
