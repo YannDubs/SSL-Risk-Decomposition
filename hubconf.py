@@ -433,3 +433,34 @@ try:
 
 except ImportError as e:
     logging.warning(f"IBOT models not available because of the following import error: \n {e}")
+
+
+##### MUGS #####
+# pretrained models are from https://github.com/sail-sg/mugs
+
+try:
+    from hub.mugs import get_mugs_models as _get_mugs_models
+
+    def mugs_vits16_ep100():
+        return _get_mugs_models("mugs_vits16_ep100", 'vit_small_patch16_224')
+
+    def mugs_vits16_ep300():
+        return _get_mugs_models("mugs_vits16_ep300", 'vit_small_patch16_224')
+
+    def mugs_vits16_ep800():
+        return _get_mugs_models("mugs_vits16_ep800", 'vit_small_patch16_224')
+
+    def mugs_vitb16_ep400():
+        return _get_mugs_models("mugs_vitb16_ep400", 'vit_base_patch16_224')
+
+    def mugs_vitl16_ep250():
+        return _get_mugs_models("mugs_vitl16_ep250", 'vit_large_patch16_224')
+
+    def mugs_vits16_ep800_extractS():
+        return _get_mugs_models("mugs_vits16_ep800", 'vit_small_patch16_224', representation="4xcls")
+
+    def mugs_vitb16_ep400_extractB():
+        return _get_mugs_models("mugs_vitb16_ep400", 'vit_base_patch16_224', representation="cls+avg")
+
+except ImportError as e:
+    logging.warning(f"MUGS models not available because of the following import error: \n {e}")

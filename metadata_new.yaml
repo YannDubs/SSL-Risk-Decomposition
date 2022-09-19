@@ -47,7 +47,7 @@ ibot_vitS16_extractS:
   metrics:
     top1acc_in1k_official: 77.9
   meta:
-    where: https://github.com/facebookresearch/dino
+    where: https://github.com/bytedance/ibot
     notes: prediction shape is block
     month: 11
     year: 2021
@@ -103,7 +103,7 @@ ibot_vitB16_extractB:
   metrics:
     top1acc_in1k_official: 79.5
   meta:
-    where: https://github.com/facebookresearch/dino
+    where: https://github.com/bytedance/ibot
     notes: null
     month: 11
     year: 2021
@@ -159,7 +159,7 @@ ibot_vitL16:
   metrics:
     top1acc_in1k_official: ???
   meta:
-    where: https://github.com/facebookresearch/dino
+    where: https://github.com/bytedance/ibot
     notes: prediction shape is block
     month: 11
     year: 2021
@@ -215,7 +215,7 @@ ibot_vitS16:
   metrics:
     top1acc_in1k_official: ???
   meta:
-    where: https://github.com/facebookresearch/dino
+    where: https://github.com/bytedance/ibot
     notes: prediction shape is block
     month: 11
     year: 2021
@@ -271,7 +271,7 @@ ibot_vitB16:
   metrics:
     top1acc_in1k_official: ???
   meta:
-    where: https://github.com/facebookresearch/dino
+    where: https://github.com/bytedance/ibot
     notes: null
     month: 11
     year: 2021

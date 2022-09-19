@@ -4,7 +4,7 @@ from torch.hub import load_state_dict_from_url
 from torchvision import transforms
 
 from hub.augmentations import get_augmentations
-from hub.helpers import VITWrapper, get_intermediate_layers, interpolate_pos_encoding
+from hub.helpers import VITWrapper, get_intermediate_layers
 
 import timm
 
