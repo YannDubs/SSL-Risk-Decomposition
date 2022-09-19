@@ -2,11 +2,170 @@
 # learning_rate : say that for bs 256
 
 ##### MSN #####
+msn_vits16_ep800:
+  ssl:
+    objective: msn
+    ssl_mode: clustering
+    version: v1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: null
+    projection_hid_width: null # 2048 for proj and 4096 for pred
+    projection_hid_depth: null # 3 for proj and 3 for pred
+    architecture: vith
+    family: vit
+    patch_size: 14
+    projection_arch: null
+    n_parameters: 630764800
+    projection_nparameters: null
+  representation:
+    z_dim: 1536
+    z_layer: cls
+  optimization:
+    epochs: 1600
+    batch_size: 4096
+    optimizer: adamw
+    learning_rate:  1.5e-4
+    weight_decay: 0.05
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 224
+    is_aug_invariant: False
+    augmentations:
+      - crop
+      - masking
+      - normalize
+  metrics:
+    top1acc_in1k_official: 76.6
+  meta:
+    where: https://github.com/facebookresearch/mae
+    notes: null
+    month: 11
+    year: 2021
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 128
+    pu_type: TPU v3
+    time_hours: 78
+
 
 ##### MAE #####
+mae_vitH14:
+  ssl:
+    objective: mae
+    ssl_mode: generative
+    version: v1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: null
+    projection_hid_width: null # 2048 for proj and 4096 for pred
+    projection_hid_depth: null # 3 for proj and 3 for pred
+    architecture: vith
+    family: vit
+    patch_size: 14
+    projection_arch: null
+    n_parameters: 630764800
+    projection_nparameters: null
+  representation:
+    z_dim: 1536
+    z_layer: cls
+  optimization:
+    epochs: 1600
+    batch_size: 4096
+    optimizer: adamw
+    learning_rate:  1.5e-4
+    weight_decay: 0.05
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 224
+    is_aug_invariant: False
+    augmentations:
+      - crop
+      - masking
+      - normalize
+  metrics:
+    top1acc_in1k_official: 76.6
+  meta:
+    where: https://github.com/facebookresearch/mae
+    notes: null
+    month: 11
+    year: 2021
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 128
+    pu_type: TPU v3
+    time_hours: 78
+
+mae_vitL16:
+  ssl:
+    objective: mae
+    ssl_mode: generative
+    version: v1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: null
+    projection_hid_width: null # 2048 for proj and 4096 for pred
+    projection_hid_depth: null # 3 for proj and 3 for pred
+    architecture: vitl
+    family: vit
+    patch_size: 16
+    projection_arch: null
+    n_parameters: 303301632
+    projection_nparameters: null
+  representation:
+    z_dim: 1536
+    z_layer: cls
+  optimization:
+    epochs: 1600
+    batch_size: 4096
+    optimizer: adamw
+    learning_rate:  1.5e-4
+    weight_decay: 0.05
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 224
+    is_aug_invariant: False
+    augmentations:
+      - crop
+      - masking
+      - normalize
+  metrics:
+    top1acc_in1k_official: 75.8
+  meta:
+    where: https://github.com/facebookresearch/mae
+    notes: null
+    month: 11
+    year: 2021
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 128
+    pu_type: TPU v3
+    time_hours: 31
+
 mae_vitB16:
   ssl:
-    objective: bae
+    objective: mae
     ssl_mode: generative
     version: v1
     n_negatives: null
@@ -24,10 +183,10 @@ mae_vitB16:
     n_parameters: 85798656
     projection_nparameters: null
   representation:
-    z_dim: 784
+    z_dim: 768
     z_layer: cls
   optimization:
-    epochs: 800
+    epochs: 1600
     batch_size: 4096
     optimizer: adamw
     learning_rate:  1.5e-4
@@ -53,9 +212,9 @@ mae_vitB16:
     license: CC BY-NC 4.0
     is_official: true
   compute:
-    n_pus: 24
-    pu_type: A100
-    time_hours: 64
+    n_pus: 128
+    pu_type: TPU v3
+    time_hours: ???
 
 ##### MUGS #####
 mugs_vitb16_ep400_extractB:

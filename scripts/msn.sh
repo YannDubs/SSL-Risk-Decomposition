@@ -14,7 +14,7 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=msn_vits16_ep800,msn_vitb16_ep600,msn_vitl16_ep600,msn_vitl7_ep200
+representor=msn_vits16_ep800,msn_vitb16_ep600,msn_vitl16_ep600,msn_vitl7_ep200,msn_vitb4_ep300
 seed=123
 predictor=torch_linear
 "
