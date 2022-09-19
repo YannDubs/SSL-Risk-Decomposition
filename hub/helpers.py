@@ -70,13 +70,10 @@ class VITWrapper(nn.Module):
     representation : {"cls", "cls+avg", "4xcls"}
         Which feature to use as the representation.
 
-    is_interp_pos_encoding : bool
-        Whether to interpolate the position encoding to the input size. Should not be needed if using the same input size as trained on.
     """
-    def __init__(self, encoder : nn.Module, representation: str,  is_interp_pos_encoding : bool = True):
+    def __init__(self, encoder : nn.Module, representation: str):
         super().__init__()
         self.encoder = encoder
-        self.is_interp_pos_encoding = is_interp_pos_encoding
 
         if representation == "cls+avg":
             self.n_last_blocks = 1
@@ -100,7 +97,7 @@ class VITWrapper(nn.Module):
 
         return output
 
-def interpolate_pos_encoding(self, x, pos_embed):
+def interpolate_pos_encoding(x, pos_embed):
     """Interpolated the position encoding to the input size. Should not be needed if using the same input size as trained on."""
     npatch = x.shape[1] - 1
     N = pos_embed.shape[1] - 1
@@ -126,7 +123,7 @@ def get_intermediate_layers(self, x, n=1):
     x = self.patch_embed(x)
     cls_token = self.cls_token.expand(x.shape[0], -1, -1)
     x = torch.cat((cls_token, x), dim=1)
-    pos_embed = self.interpolate_pos_encoding(x, self.pos_embed)
+    pos_embed = interpolate_pos_encoding(x, self.pos_embed)
     x = self.pos_drop(x + pos_embed)
     ######################
 
