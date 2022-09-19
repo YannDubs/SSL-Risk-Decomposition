@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-experiment="clip"
-notes="**Goal**: evaluate all the clip models."
+experiment="dino"
+notes="**Goal**: evaluate all the dino models."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -15,13 +15,13 @@ timeout=$time
 
 
 kwargs_multi="
-representor=clip_rn50,clip_rn50x4,clip_rn50x16,clip_rn50x64,clip_rn101,clip_vitB16,clip_vitB32,clip_vitL14,clip_vitL14_px336
+representor=dino_rn50,dino_vitS16_last,dino_vitS8_last,dino_vitB16_last,dino_vitB8_last
 seed=123
 predictor=torch_linear
 "
 
 kwargs_multi="
-representor=clip_vitL14_px336
+representor=dino_vitS8_last
 seed=123
 predictor=torch_linear
 "

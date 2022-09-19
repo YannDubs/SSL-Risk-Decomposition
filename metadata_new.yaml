@@ -1,8 +1,829 @@
 # TODO document each field
 # learning_rate : say that for bs 256
 
-##### Risk Dec #####
+##### DINO #####
+dino_vitS8_last:
+  ssl:
+    objective: dino
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 2048
+    n_classes: 65536
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture: vits8
+    projection_arch: mlp
+    n_parameters: 21665664
+    projection_nparameters: 26e6
+  representation:
+    z_dim: 1536
+    z_layer: cls
+  optimization:
+    epochs: 800
+    batch_size: 1024
+    optimizer: adamw
+    learning_rate:  0.0005
+    weight_decay: 0.04
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - gray
+      - blur
+      - solarization
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/facebookresearch/dino
+    notes: null
+    month: 4
+    year: 2021
+    license: Apache License 2.0
+    is_official: true
+  compute:
+    n_pus: 64
+    pu_type: V100
+    time_hours: ???
 
+dino_vitS16:
+  ssl:
+    objective: dino
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 2048
+    n_classes: 65536
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture: vits16
+    projection_arch: mlp
+    n_parameters: 21665664
+    projection_nparameters: 26e6
+  representation:
+    z_dim: 1536
+    z_layer: 4xcls
+  optimization:
+    epochs: 800
+    batch_size: 1024
+    optimizer: adamw
+    learning_rate:  0.0005
+    weight_decay: 0.04
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - gray
+      - blur
+      - solarization
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 77.0
+  meta:
+    where: https://github.com/facebookresearch/dino
+    notes: null
+    month: 4
+    year: 2021
+    license: Apache License 2.0
+    is_official: true
+  compute:
+    n_pus: 16
+    pu_type: V100
+    time_hours: 194
+
+dino_vitS16_last:
+  ssl:
+    objective: dino
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 2048
+    n_classes: 65536
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture: vits16
+    projection_arch: mlp
+    n_parameters: 21665664
+    projection_nparameters: 26e6
+  representation:
+    z_dim: 384
+    z_layer: cls
+  optimization:
+    epochs: 800
+    batch_size: 1024
+    optimizer: adamw
+    learning_rate:  0.0005
+    weight_decay: 0.04
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - gray
+      - blur
+      - solarization
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/facebookresearch/dino
+    notes: null
+    month: 4
+    year: 2021
+    license: Apache License 2.0
+    is_official: true
+  compute:
+    n_pus: 16
+    pu_type: V100
+    time_hours: 194
+
+dino_rn50:
+  ssl:
+    objective: dino
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 8160
+    n_classes: 60000
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 24e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 800
+    batch_size: 4080
+    optimizer: lars
+    learning_rate:  0.3
+    weight_decay: 0.000001
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+6x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - gray
+      - blur
+      - solarization
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 75.3
+  meta:
+    where: https://github.com/facebookresearch/dino
+    notes: null
+    month: 4
+    year: 2021
+    license: Apache License 2.0
+    is_official: true
+  compute:
+    n_pus: 80
+    pu_type: V100
+    time_hours: ???
+
+
+##### CLIP #####
+clip_vitL14_px336:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 768
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: vitl14
+    projection_arch: linear
+    n_parameters: 303507456
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 1024
+    z_layer: cls
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 4e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: null
+    img_size: 336
+    views: 2x336
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 85.4
+  meta:
+    where: https://github.com/openai/CLIP
+    notes: null
+    month: 1
+    year: 2021
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 256
+    pu_type: V100
+    time_hours: 288
+
+clip_vitL14:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 768
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: vitl14
+    projection_arch: linear
+    n_parameters: 303179776
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 1024
+    z_layer: cls
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 4e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 83.9
+  meta:
+    where: https://github.com/openai/CLIP
+    notes: null
+    month: 1
+    year: 2021
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: V100
+    time_hours: ???
+
+clip_vitB32:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: vitb32
+    projection_arch: linear
+    n_parameters: 85799424
+    projection_nparameters: 0.4e6
+  representation:
+    z_dim: 768
+    z_layer: cls
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 5e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 76.1
+  meta:
+    where: https://github.com/openai/CLIP
+    notes: null
+    month: 1
+    year: 2021
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: V100
+    time_hours: ???
+
+clip_vitB16:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: vitb16
+    projection_arch: linear
+    n_parameters: 85799424
+    projection_nparameters: 0.4e6
+  representation:
+    z_dim: 768
+    z_layer: cls
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 5e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 80.2
+  meta:
+    where: https://github.com/openai/CLIP
+    notes: null
+    month: 1
+    year: 2021
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: V100
+    time_hours: ???
+
+clip_rn101:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50w64
+    projection_arch: linear
+    n_parameters: 432966336
+    projection_nparameters: 2e6
+  representation:
+    z_dim: 2048
+    z_layer: attnpool
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 3.6e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 75.7
+  meta:
+    where: https://github.com/openai/CLIP
+    notes: unclear for resnet if CLIP uses features before or after the projection head. We use before
+    month: 1
+    year: 2021
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: V100
+    time_hours: ???
+
+clip_rn50x64:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 1024
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50w64
+    projection_arch: linear
+    n_parameters: 432966336
+    projection_nparameters: 2e6
+  representation:
+    z_dim: 4096
+    z_layer: attnpool
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 3.6e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: null
+    img_size: 448
+    views: 2x448
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 83.6
+  meta:
+    where: https://github.com/openai/CLIP
+    notes: unclear for resnet if CLIP uses features before or after the projection head. We use before
+    month: 1
+    year: 2021
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 592
+    pu_type: V100
+    time_hours: 432
+
+clip_rn50x16:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 768
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50w16
+    projection_arch: linear
+    n_parameters: 174409104
+    projection_nparameters: 2e6
+  representation:
+    z_dim: 3072
+    z_layer: attnpool
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 4e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: null
+    img_size: 384
+    views: 2x384
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 81.5
+  meta:
+    where: https://github.com/openai/CLIP
+    notes: unclear for resnet if CLIP uses features before or after the projection head. We use before
+    month: 1
+    year: 2021
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: V100
+    time_hours: ???
+
+clip_rn50x4:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 1024
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50w4
+    projection_arch: linear
+    n_parameters: 92054200
+    projection_nparameters: 2e6
+  representation:
+    z_dim: 640
+    z_layer: attnpool
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 5e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: null
+    img_size: 288
+    views: 2x288
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 78.2
+  meta:
+    where: https://github.com/openai/CLIP
+    notes: unclear for resnet if CLIP uses features before or after the projection head. We use before
+    month: 1
+    year: 2021
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: V100
+    time_hours: ???
+
+clip_rn50:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 1024
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 38317920
+    projection_nparameters: 2e6
+  representation:
+    z_dim: 2048
+    z_layer: attnpool
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 5e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 73.3
+  meta:
+    where: https://github.com/openai/CLIP
+    notes: unclear for resnet if CLIP uses features before or after the projection head. We use before
+    month: 1
+    year: 2021
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: V100
+    time_hours: ???
+
+##### Lossyless #####
+lossyless_b01:
+  ssl:
+    objective: clip+eb
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: vitb32
+    projection_arch: linear
+    n_parameters: 85799424
+    projection_nparameters: 0.4e6
+  representation:
+    z_dim: 768
+    z_layer: cls
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 5e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: mscoco
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/lossyless
+    notes: the only difference compared to clip is an invertible linear layer one top of representations that was trained on mscoco to compress the representations. b denotes `beta`, larger means more compression.
+    month: 6
+    year: 2021
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: V100
+    time_hours: ???
+
+lossyless_b005:
+  ssl:
+    objective: clip+eb
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: vitb32
+    projection_arch: linear
+    n_parameters: 85799424
+    projection_nparameters: 0.4e6
+  representation:
+    z_dim: 768
+    z_layer: cls
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 5e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: mscoco
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/lossyless
+    notes: the only difference compared to clip is an invertible linear layer one top of representations that was trained on mscoco to compress the representations. b denotes `beta`, larger means more compression.
+    month: 6
+    year: 2021
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: V100
+    time_hours: ???
+
+lossyless_b001:
+  ssl:
+    objective: clip+eb
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: vitb32
+    projection_arch: linear
+    n_parameters: 85799424
+    projection_nparameters: 0.4e6
+  representation:
+    z_dim: 768
+    z_layer: cls
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 5e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: mscoco
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/lossyless
+    notes: the only difference compared to clip is an invertible linear layer one top of representations that was trained on mscoco to compress the representations. b denotes `beta`, larger means more compression.
+    month: 6
+    year: 2021
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: ???
+    pu_type: V100
+    time_hours: ???
 
 ##### Risk Dec #####
 speccl_bs384_ep100:

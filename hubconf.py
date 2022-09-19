@@ -370,3 +370,41 @@ try:
 except ImportError as e:
     logging.warning(f"CLIP models not available because of the following import error: \n {e}")
 
+##### DINO #####
+# pretrained models are from https://github.com/facebookresearch/dino
+
+try:
+    from hub.dino import get_dino_models as _get_dino_models
+
+    def dino_rn50():
+        return _get_dino_models("dino_resnet50")
+
+    def dino_vitS16_last():
+        return _get_dino_models("dino_vits16")
+
+    def dino_vitS8_last():
+        return _get_dino_models("dino_vits8")
+
+    def dino_vitB16_last():
+        return _get_dino_models("dino_vitb16")
+
+    def dino_vitB8_last():
+        return _get_dino_models("dino_vitb8")
+
+    def dino_vitS16():
+        return _get_dino_models("dino_vits16", representation="4xcls")
+
+    def dino_vitB16():
+        return _get_dino_models("dino_vitb16", representation="cls+avg")
+
+    def dino_vitB8():
+        return _get_dino_models("dino_vitb8", representation="cls+avg")
+
+    def dino_vitS16_extractB():
+        return _get_dino_models("dino_vits16", representation="cls+avg")
+
+    def dino_vitB16_extractS():
+        return _get_dino_models("dino_vitb16", representation="4xcls")
+
+except ImportError as e:
+    logging.warning(f"DINO models not available because of the following import error: \n {e}")
