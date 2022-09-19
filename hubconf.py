@@ -464,3 +464,21 @@ try:
 
 except ImportError as e:
     logging.warning(f"MUGS models not available because of the following import error: \n {e}")
+
+##### MAE #####
+# pretrained models are from https://github.com/facebookresearch/mae
+
+try:
+    from hub.mae import get_mae_models as _get_mae_models
+
+    def mae_vitB16():
+        return _get_mae_models("mae_vitB16", 'vit_base_patch16_224')
+
+    def mae_vitL16():
+        return _get_mae_models("mae_vitL16", 'vit_large_patch16_224')
+
+    def mae_vitH14():
+        return _get_mae_models("mae_vitH14", 'vit_huge_patch14_224')
+
+except ImportError as e:
+    logging.warning(f"MAE models not available because of the following import error: \n {e}")

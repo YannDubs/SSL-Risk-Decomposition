@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 experiment="vit"
-notes="**Goal**: evaluate all the mugs models."
+notes="**Goal**: evaluate all the MAE models."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -14,13 +14,7 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=mugs_vits16_ep100,mugs_vits16_ep300,mugs_vits16_ep800,mugs_vitb16_ep400,mugs_vitl16_ep250,mugs_vits16_ep800_extractS,mugs_vitb16_ep400_extractB
-seed=123
-predictor=torch_linear
-"
-
-kwargs_multi="
-representor=mugs_vits16_ep800_extractS,mugs_vitb16_ep400_extractB
+representor=mae_vitB16,mae_vitL16,mae_vitH14
 seed=123
 predictor=torch_linear
 "
