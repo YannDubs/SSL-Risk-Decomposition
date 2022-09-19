@@ -24,22 +24,30 @@ RISKDEC_MODELS = {"dissl_resnet50_dNone_e100_m2_augLarge": "https://github.com/Y
                   }
 
 
-def get_riskdec_models(model, dim=None):
+def get_riskdec_models(model, dim=None, is_speccl=False):
 
     encoder = tmodels.resnet.resnet50(pretrained=False, num_classes=0)
+    ckpt_path = RISKDEC_MODELS[model]
+    state_dict = torch.hub.load_state_dict_from_url(url=ckpt_path, map_location="cpu")
+
+    if is_speccl:
+        state_dict = state_dict["state_dict"]
+        state_dict = {k.replace("backbone.", ""): v for k, v in state_dict.items()
+                      if "backbone." in k and "proj_resnet" not in k and "fc." not in k}
+        preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BICUBIC,
+                                         normalize="imagenet", pre_resize=256)
+    else:
+        preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
+                                         normalize="imagenet", pre_resize=256)
 
     if dim is not None:
         update_dim_resnet_(encoder, z_dim=dim, bottleneck_channel=512, is_residual=True)
 
-    encoder.fc = torch.nn.Identity()
-    ckpt_path = RISKDEC_MODELS[model]
-    state_dict = torch.hub.load_state_dict_from_url(url=ckpt_path, map_location="cpu")
-    # torchvision models do not have a resizer
-    state_dict = {k.replace("resizer", "avgpool.0", 1) if k.startswith("resizer") else k: v
-                  for k, v in state_dict.items()}
-    encoder.load_state_dict(state_dict, strict=True)
+        # torchvision models do not have a resizer
+        state_dict = {k.replace("resizer", "avgpool.0", 1) if k.startswith("resizer") else k: v
+                      for k, v in state_dict.items()}
 
-    preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
-                                     normalize="imagenet", pre_resize=256)
+    encoder.fc = torch.nn.Identity()
+    encoder.load_state_dict(state_dict, strict=True)
 
     return encoder, preprocessor

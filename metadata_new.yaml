@@ -1,3 +1,766 @@
+# TODO document each field
+# learning_rate : say that for bs 256
+
+##### Risk Dec #####
+
+
+##### Risk Dec #####
+speccl_bs384_ep100:
+  ssl:
+    objective: speccl
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 5120
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 8192
+    projection_hid_width: 8192
+    projection_hid_depth: 2
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 31128640
+    projection_nparameters: 151e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 384
+    optimizer: sgd # larc
+    learning_rate: 0.033
+    weight_decay: 1e-4
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 66.97
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes: null
+    month: 6
+    year: 2022
+    license: MIT
+    is_official: true
+  compute:
+    n_pus: 8
+    pu_type: GTX 1080
+    time_hours: ???
+
+simclr_resnet50_d8192_e100_m2:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 5120
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 2
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 31128640
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 8192
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes: null
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+simclr_resnet50_dNone_e100_m2_headTNoneSNone:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 5120
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 2048
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50
+    projection_arch: null
+    n_parameters: 23508032
+    projection_nparameters: 0
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes: no projection head
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+simclr_resnet50_dNone_e100_m2_headTMlpSMlp:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 5120
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 2
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 9e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes: both teacher and student have same mlp projection heads but weights are not shared
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+simclr_resnet50_dNone_e100_m2_headTMlpSLin:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 5120
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 2
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 9e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes: student has linear head
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+simclr_resnet50_dNone_e100_m2_headTLinSLin:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 5120
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 0.3e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes: both teacher and student have linear projection heads
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+simclr_resnet50_dNone_e100_m2_data030:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 5120
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 2
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 9e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 300
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: 30% ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes:  trains on 30% of imagenet but multiplies by 3 number of epochs to keep same steps.
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+simclr_resnet50_dNone_e100_m2_data010:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 5120
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 2
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 9e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 1000
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: 10% ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes:  trains on 10% of imagenet but multiplies by 10 number of epochs to keep same steps.
+    month: 2
+    year: 2020
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+simclr_resnet50_dNone_e100_m2:
+  ssl:
+    objective: simclr
+    ssl_mode: contrastive
+    version: v1
+    n_negatives: 5120
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 2
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 9e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes:  null
+    month: 6
+    year: 2022
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+dissl_resnet50_d4096_e100_m2:
+  ssl:
+    objective: dissl
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 5120
+    n_classes: 16384
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: 2048
+    projection_hid_depth: 2
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 29023296
+    projection_nparameters: 16e6
+  representation:
+    z_dim: 4096
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes:  null
+    month: 6
+    year: 2022
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+dissl_resnet50_dNone_e100_m2_headTMlpSMlp:
+  ssl:
+    objective: dissl
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 5120
+    n_classes: 16384
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: 2048
+    projection_hid_depth: 2
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes:  uses mlp projection head for teacher and student
+    month: 6
+    year: 2022
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+dissl_resnet50_dNone_e100_m2_headTLinSLin:
+  ssl:
+    objective: dissl
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 5120
+    n_classes: 16384
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture: resnet50
+    projection_arch: linear
+    n_parameters: 23508032
+    projection_nparameters: 9e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes:  uses linear projection head for teacher and student
+    month: 6
+    year: 2022
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+dissl_resnet50_dNone_e100_m2_augSmall:
+  ssl:
+    objective: dissl
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 5120
+    n_classes: 16384
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: 2048
+    projection_hid_depth: 2
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes: decreases strength of crop and color distortion
+    month: 6
+    year: 2022
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
+dissl_resnet50_dNone_e100_m2_augLarge:
+  ssl:
+    objective: dissl
+    ssl_mode: clustering
+    version: v1
+    n_negatives: 5120
+    n_classes: 16384
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: 2048
+    projection_hid_depth:
+    architecture: resnet50
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 100
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: ???
+  meta:
+    where: https://github.com/YannDubs/SSL-Risk-Decomposition
+    notes: increases strength of crop and color distortion
+    month: 6
+    year: 2022
+    license: MIT
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: A100
+    time_hours: ???
+
 ##### ISSL #####
 dissl_resnet50_d8192_e800_m8:
   ssl:
@@ -11,9 +774,9 @@ dissl_resnet50_d8192_e800_m8:
   model:
     pred_dim: 512
     projection_hid_width: 2048
-    projection_hid_depth: 3
+    projection_hid_depth: 2
     architecture: resnet50
-    projection_arch: linear
+    projection_arch: mlp
     n_parameters: 31128640
     projection_nparameters: 17e6
   representation:
@@ -65,9 +828,9 @@ dissl_resnet50_d8192_e400_m6:
   model:
     pred_dim: 512
     projection_hid_width: 2048
-    projection_hid_depth: 3
+    projection_hid_depth: 2
     architecture: resnet50
-    projection_arch: linear
+    projection_arch: mlp
     n_parameters: 31128640
     projection_nparameters: 17e6
   representation:
@@ -119,9 +882,9 @@ dissl_resnet50_dNone_e400_m6:
   model:
     pred_dim: 512
     projection_hid_width: 2048
-    projection_hid_depth: 3
+    projection_hid_depth: 2
     architecture: resnet50
-    projection_arch: linear
+    projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 17e6
   representation:
@@ -173,9 +936,9 @@ dissl_resnet50_dNone_e400_m2:
   model:
     pred_dim: 512
     projection_hid_width: 2048
-    projection_hid_depth: 3
+    projection_hid_depth: 2
     architecture: resnet50
-    projection_arch: linear
+    projection_arch: mlp
     n_parameters: 31128640
     projection_nparameters: 17e6
   representation:
@@ -227,9 +990,9 @@ dissl_resnet50_d8192_e100_m2:
   model:
     pred_dim: 512
     projection_hid_width: 2048
-    projection_hid_depth: 3
+    projection_hid_depth: 2
     architecture: resnet50
-    projection_arch: linear
+    projection_arch: mlp
     n_parameters: 31128640
     projection_nparameters: 17e6
   representation:
@@ -281,9 +1044,9 @@ dissl_resnet50_dNone_e100_m2:
   model:
     pred_dim: 512
     projection_hid_width: 2048
-    projection_hid_depth: 3
+    projection_hid_depth: 2
     architecture: resnet50
-    projection_arch: linear
+    projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 17e6
   representation:
@@ -336,9 +1099,9 @@ simsiam_rn50_bs256_ep100:
   model:
     pred_dim: 512
     projection_hid_width: 2048
-    projection_hid_depth: 3
+    projection_hid_depth: 2
     architecture: resnet50
-    projection_arch: linear
+    projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 9e6
   representation:
@@ -390,9 +1153,9 @@ simsiam_rn50_bs512_ep100:
   model:
     pred_dim: 512
     projection_hid_width: 2048
-    projection_hid_depth: 3
+    projection_hid_depth: 2
     architecture: resnet50
-    projection_arch: linear
+    projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 9e6
   representation:

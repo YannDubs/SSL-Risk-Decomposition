@@ -309,8 +309,64 @@ try:
         return _get_riskdec_models('simclr_resnet50_d8192_e100_m2', dim=8192)
 
     def speccl_bs384_ep100():
-        return _get_riskdec_models('speccl_bs384_ep100')
+        return _get_riskdec_models('speccl_bs384_ep100', is_speccl=True)
 
 except ImportError as e:
     logging.warning(f"RiskDec models not available because of the following import error: \n {e}")
+
+
+##### Lossyless #####
+# pretrained models are from https://github.com/YannDubs/lossyless
+
+try:
+    from hub.lossyless import get_lossyless_models as _get_lossyless_models
+
+    def lossyless_b001():
+        return _get_lossyless_models('clip_compressor_b001')
+
+    def lossyless_b005():
+        return _get_lossyless_models('clip_compressor_b005')
+
+    def lossyless_b01():
+        return _get_lossyless_models('clip_compressor_b01')
+
+except ImportError as e:
+    logging.warning(f"Lossyless models not available because of the following import error: \n {e}")
+
+
+##### CLIP #####
+# pretrained models are from https://github.com/openai/CLIP
+
+try:
+    from hub.clip import get_clip_models as _get_clip_models
+
+    def clip_rn50():
+        return _get_clip_models('RN50')
+
+    def clip_rn50x4():
+        return _get_clip_models('RN50x4')
+
+    def clip_rn50x16():
+        return _get_clip_models('RN50x16')
+
+    def clip_rn50x64():
+        return _get_clip_models('RN50x64')
+
+    def clip_rn101():
+        return _get_clip_models('RN101')
+
+    def clip_vitB16():
+        return _get_clip_models('ViT-B/16')
+
+    def clip_vitB32():
+        return _get_clip_models('ViT-B/32')
+
+    def clip_vitL14():
+        return _get_clip_models('ViT-L/14')
+
+    def clip_vitL14_px336():
+        return _get_clip_models('ViT-L/14@336px')
+
+except ImportError as e:
+    logging.warning(f"CLIP models not available because of the following import error: \n {e}")
 

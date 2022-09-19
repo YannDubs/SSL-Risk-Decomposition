@@ -20,7 +20,7 @@ predictor=torch_linear
 "
 
 kwargs_multi="
-representor=simclr_resnet50_d8192_e100_m2
+representor=speccl_bs384_ep100
 seed=123
 predictor=torch_linear
 "

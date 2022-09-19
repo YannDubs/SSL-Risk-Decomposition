@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-experiment="swav"
-notes="**Goal**: evaluate all the swav models."
+experiment="clip"
+notes="**Goal**: evaluate all the clip models."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -13,15 +13,9 @@ experiment=$experiment
 timeout=$time
 "
 
-kwargs_multi="
-representor=swav_rn50,swav_rn50_ep100,swav_rn50_ep200,swav_rn50_ep200_bs256,swav_rn50_ep400,swav_rn50_ep400_2x224,swav_rn50_ep400_bs256,dc2_rn50_ep400_2x224,dc2_rn50_ep400_2x160_4x96,dc2_rn50_ep800_2x224_6x96,selav2_rn50_ep400_2x224,selav2_rn50_ep400_2x160_4x96
-seed=123
-predictor=torch_linear
-"
 
-# to run
 kwargs_multi="
-representor=swav_rn50w2,swav_rn50w4,swav_rn50w5
+representor=clip_rn50,clip_rn50x4,clip_rn50x16,clip_rn50x64
 seed=123
 predictor=torch_linear
 "

@@ -455,6 +455,7 @@ class ImgDataModule(LightningDataModule):
         Z, Y = zip(*out)
         Z = np.concatenate(Z, axis=0)
         Y = np.concatenate(Y, axis=0)
+        assert Z.ndim == 2
         return Z, Y
 
 
