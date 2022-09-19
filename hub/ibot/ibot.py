@@ -4,7 +4,7 @@ from torch.hub import load_state_dict_from_url
 from torchvision import transforms
 
 from hub.augmentations import get_augmentations
-from hub.helpers import VITWrapper, get_intermediate_layers
+from hub.helpers import VITWrapper, get_intermediate_layers, interpolate_pos_encoding
 
 import timm
 
@@ -31,6 +31,7 @@ def get_ibot_models(name, model, architecture, representation="cls"):
     encoder.load_state_dict(state_dict, strict=True)
 
     # makes timm compatible with VITWrapper
+    encoder.interpolate_pos_encoding = types.MethodType(interpolate_pos_encoding, encoder)
     encoder.get_intermediate_layers = types.MethodType(get_intermediate_layers, encoder)
     encoder = VITWrapper(encoder, representation=representation)
 

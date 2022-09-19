@@ -23,7 +23,7 @@ ibot_vitL16:
     z_dim: 768
     z_layer: cls
   optimization:
-    epochs: 800
+    epochs: 250
     batch_size: 1024
     optimizer: adamw
     learning_rate:  0.0005
@@ -48,15 +48,15 @@ ibot_vitL16:
     top1acc_in1k_official: ???
   meta:
     where: https://github.com/facebookresearch/dino
-    notes: null
+    notes: prediction shape is block
     month: 11
     year: 2021
     license: Apache License 2.0
     is_official: true
   compute:
-    n_pus: 16
+    n_pus: 64
     pu_type: V100
-    time_hours: 193.4
+    time_hours: ???
 
 ibot_vitS16:
   ssl:
@@ -104,7 +104,7 @@ ibot_vitS16:
     top1acc_in1k_official: ???
   meta:
     where: https://github.com/facebookresearch/dino
-    notes: null
+    notes: prediction shape is block
     month: 11
     year: 2021
     license: Apache License 2.0
@@ -143,7 +143,7 @@ ibot_vitB16:
     scheduler: cosine
   data:
     pretraining_data: ImageNet-1K
-    finetuning_data: null
+    finetuning_data: prediction shape is block
     img_size: 224
     views: 2x224+10x96
     is_aug_invariant: true

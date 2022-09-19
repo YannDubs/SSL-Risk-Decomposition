@@ -100,22 +100,22 @@ class VITWrapper(nn.Module):
 
         return output
 
-    def interpolate_pos_encoding(self, x, pos_embed):
-        """Interpolated the position encoding to the input size. Should not be needed if using the same input size as trained on."""
-        npatch = x.shape[1] - 1
-        N = pos_embed.shape[1] - 1
-        if npatch == N:
-            return pos_embed
-        class_emb = pos_embed[:, 0]
-        pos_embed = pos_embed[:, 1:]
-        dim = x.shape[-1]
-        pos_embed = F.interpolate(
-            pos_embed.reshape(1, int(math.sqrt(N)), int(math.sqrt(N)), dim).permute(0, 3, 1, 2),
-            scale_factor=math.sqrt(npatch / N),
-            mode='bicubic',
-        )
-        pos_embed = pos_embed.permute(0, 2, 3, 1).view(1, -1, dim)
-        return torch.cat((class_emb.unsqueeze(0), pos_embed), dim=1)
+def interpolate_pos_encoding(self, x, pos_embed):
+    """Interpolated the position encoding to the input size. Should not be needed if using the same input size as trained on."""
+    npatch = x.shape[1] - 1
+    N = pos_embed.shape[1] - 1
+    if npatch == N:
+        return pos_embed
+    class_emb = pos_embed[:, 0]
+    pos_embed = pos_embed[:, 1:]
+    dim = x.shape[-1]
+    pos_embed = F.interpolate(
+        pos_embed.reshape(1, int(math.sqrt(N)), int(math.sqrt(N)), dim).permute(0, 3, 1, 2),
+        scale_factor=math.sqrt(npatch / N),
+        mode='bicubic',
+    )
+    pos_embed = pos_embed.permute(0, 2, 3, 1).view(1, -1, dim)
+    return torch.cat((class_emb.unsqueeze(0), pos_embed), dim=1)
 
 def get_intermediate_layers(self, x, n=1):
     """Replicates https://github.com/facebookresearch/dino/blob/3247a0cacb4c0642270469e06facf96e895f56de
