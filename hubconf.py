@@ -505,6 +505,44 @@ try:
     def msn_vitl7_ep200():
         return _get_msn_models("msn_vitl7_ep200", 'vit_large_patch7_224')
 
-
 except ImportError as e:
     logging.warning(f"MSN models not available because of the following import error: \n {e}")
+
+### MOCOV3 ###
+# pretrained models are from https://github.com/facebookresearch/moco-v3
+
+try:
+    from hub.mocov3 import get_mocov3_models as _get_mocov3_models
+
+    def mocov3_rn50_ep100():
+        return _get_mocov3_models("mocov3_rn50_ep100", 'resnet50')
+
+    def mocov3_rn50_ep300():
+        return _get_mocov3_models("mocov3_rn50_ep300", 'resnet50')
+
+    def mocov3_rn50_ep1000():
+        return _get_mocov3_models("mocov3_rn50_ep1000", 'resnet50')
+
+    def mocov3_vitS_ep300():
+        return _get_mocov3_models("mocov3_vitS_ep300", 'vit_small_patch16_224')
+
+    def mocov3_vitB_ep300():
+        return _get_mocov3_models("mocov3_vitB_ep300", 'vit_base_patch16_224')
+
+except ImportError as e:
+    logging.warning(f"MOCOV3 models not available because of the following import error: \n {e}")
+
+### MOCO ###
+
+
+### BEIT ###
+
+### BEITV2 ###
+
+### INFOMIN ###
+
+### CLD ###
+
+### TIMM ###
+
+### TORCHVISION ###

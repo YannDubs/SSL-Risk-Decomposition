@@ -20,7 +20,7 @@ predictor=torch_linear
 "
 
 kwargs_multi="
-representor=msn_vitb4_ep300,msn_vitl7_ep200
+representor=msn_vitl7_ep200
 seed=123
 predictor=torch_linear
 "
