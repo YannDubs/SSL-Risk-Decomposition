@@ -1,5 +1,5 @@
 import torch
-from utils.helpers import rm_module
+from hub.helpers import rm_module
 
 __all__ = ["get_lossyless_models"]
 

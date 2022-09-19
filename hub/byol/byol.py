@@ -4,7 +4,7 @@ from pathlib import Path
 import logging
 
 
-from utils.helpers import check_import, download_url_tmp
+from hub.helpers import download_url_tmp
 import re
 import torch
 import numpy as np
@@ -13,11 +13,7 @@ from torchvision import transforms
 
 from torch.hub import load_state_dict_from_url
 from hub.augmentations import get_augmentations
-
-try:
-    import dill
-except ImportError:
-    pass
+import dill
 
 logger = logging.getLogger(__name__)
 CURR_DIR = Path(__file__).parent
@@ -43,7 +39,6 @@ BYOL_MODELS = {
 
 def get_byol_models(name, model, architecture= "resnet50"):
     """Loads the BYOL encoder and preprocessor."""
-    check_import("dill", f"mode=byol in load_representor")
     ckpt_path = CURR_DIR / "pretrained_models" / f"{name}.pth"
 
     if not ckpt_path.exists():

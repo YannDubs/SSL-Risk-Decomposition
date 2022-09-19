@@ -231,10 +231,6 @@ MOCO_MODELS = {
     "mocov2_ep800" : "https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_800ep/moco_v2_800ep_pretrain.pth.tar",
 }
 
-SPECCL_MODELS = {
-    "speccl_bs384_ep100" : "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/speccl_bs384_ep100.pth"
-}
-
 CLD_MODELS = {
     "mocov2_normmlp_ep200" : "https://drive.google.com/uc?export=download&id=1Jc2_rJiFZF1PzNB7UPyzhzpIv_NfUuls&confirm=t&uuid=53f91ad8-5322-47e4-942e-d734a1c116e8",
     "infomin_normmlp_ep200" : "https://drive.google.com/u/0/uc?id=18hs7B4eQQK03p-dRhvJsVkw34Lm5Sg_x&export=download&confirm=t&uuid=1db9f198-2652-4d4b-8fbc-3724751d1347"

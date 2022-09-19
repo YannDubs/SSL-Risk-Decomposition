@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import torch
 from hub.augmentations import get_augmentations
-from utils.helpers import replace_module_prefix
+from hub.helpers import replace_module_prefix
 import torchvision.models as tmodels
 from torchvision import transforms
 

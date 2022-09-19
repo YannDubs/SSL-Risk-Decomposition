@@ -408,3 +408,22 @@ try:
 
 except ImportError as e:
     logging.warning(f"DINO models not available because of the following import error: \n {e}")
+
+
+##### IBOT #####
+# pretrained models are from https://github.com/bytedance/ibot
+
+try:
+    from hub.ibot import get_ibot_models as _get_ibot_models
+
+    def ibot_vitB16():
+        return _get_ibot_models("ibot_vitB16", "vitb16", 'vit_base_patch16_224')
+
+    def ibot_vitS16():
+        return _get_ibot_models("ibot_vitS16", "vits16", 'vit_small_patch16_224')
+
+    def ibot_vitL16():
+        return _get_ibot_models("ibot_vitL16", "vitl16", 'vit_large_patch16_224')
+
+except ImportError as e:
+    logging.warning(f"IBOT models not available because of the following import error: \n {e}")

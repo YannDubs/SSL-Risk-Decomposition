@@ -2,8 +2,7 @@ import torch
 from torchvision import transforms
 
 from hub.augmentations import get_augmentations
-from utils.helpers import rm_module
-from hub.dino.vit_wrapper import VITWrapper
+from hub.helpers import rm_module, VITWrapper
 
 __all__ = ["get_dino_models"]
 

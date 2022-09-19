@@ -357,20 +357,7 @@ def rm_module(module: str) -> Iterator[None]:
         if is_module_loaded:
             sys.modules[module] = val
 
-# from https://github.com/facebookresearch/vissl/blob/012f86f249158f00ac009a1cb7504352bcf3c6e6/vissl/utils/checkpoint.py
-def replace_module_prefix(
-    state_dict: Dict[str, Any], prefix: str, replace_with: str = ""
-):
-    """
-    Remove prefixes in a state_dict needed when loading models that are not VISSL
-    trained models.
-    Specify the prefix in the keys that should be removed.
-    """
-    state_dict = {
-        (key.replace(prefix, replace_with, 1) if key.startswith(prefix) else key): val
-        for (key, val) in state_dict.items()
-    }
-    return state_dict
+
 
 # modified from https://github.com/skorch-dev/skorch/blob/92ae54b/skorch/utils.py#L106
 def to_numpy(X) -> np.array:
