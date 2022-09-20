@@ -13,19 +13,7 @@ def metadata_dict():
         raise ImportError("Please install `pyaml` to use metadata_dict")
 
     with open(BASE_DIR/'metadata.yaml') as f:
-        metadata = yaml.safe_load(f)
-
-        # adds exact architecture
-        for k,v in metadata.items():
-            sffx = []
-
-            ps = metadata["model"]["patch_size"]
-            if ps is not None:
-                sffx += [f"ps{ps}"]
-
-            metadata["model"]["architecture_exact"] = metadata["model"]["architecture"] + "_".join(sffx)
-
-        return metadata
+        return yaml.safe_load(f)
 
 def metadata_df(is_multiindex=False, is_lower=True):
     try:
