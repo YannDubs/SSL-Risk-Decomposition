@@ -6400,7 +6400,7 @@ clusterfit_rn50:
     pu_type: ???
     time_hours: ???
 
-jigsaw_rn50_in1k:
+jigsaw_rn50:
   ssl:
     objective: jigsaw
     ssl_mode: transform
