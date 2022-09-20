@@ -2,10 +2,10 @@
 dependencies = [ "torch", "torchvision", "timm"]
 
 import logging
-from pathlib import Path
+import pathlib
 import utils.helpers as _helpers
 
-BASE_DIR = Path(__file__).absolute().parents[0]
+BASE_DIR = pathlib.Path(__file__).absolute().parents[0]
 
 def metadata():
     _helpers.check_import('yaml', "metadata")
