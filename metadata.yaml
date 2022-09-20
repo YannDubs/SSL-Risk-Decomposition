@@ -2507,7 +2507,7 @@ dino_vitS16_extractB:
     pu_type: V100
     time_hours: 194
 
-dino_vitB8_last:
+dino_vitB8:
   ssl:
     objective: dino
     ssl_mode: clustering
@@ -2564,7 +2564,7 @@ dino_vitB8_last:
     pu_type: V100
     time_hours: ???
 
-dino_vitB16_last:
+dino_vitB16:
   ssl:
     objective: dino
     ssl_mode: clustering
@@ -7675,7 +7675,7 @@ byol_rn50_augCropBlur:
     pu_type: Cloud TPU v3
     time_hours: ???
 
-byol_rn50_augCropBlur:
+byol_rn50_augCropColor:
   ssl:
     objective: byol
     ssl_mode: distillation
@@ -7912,7 +7912,7 @@ sup_vitS16_dino_extractB:
     license: Apache 2.0
     is_official: false
 
-sup_vitS16_dino_extractB:
+sup_vitS16_dino:
   ssl:
     ssl_mode: supervised
   model:
