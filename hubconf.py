@@ -5,7 +5,7 @@ import logging
 from pathlib import Path
 import utils.helpers as _helpers
 
-`BASE_DIR = Path(__file__).absolute().parents[0]`
+BASE_DIR = Path(__file__).absolute().parents[0]
 
 def metadata():
     _helpers.check_import('yaml', "metadata")
