@@ -3,16 +3,17 @@ dependencies = [ "torch", "torchvision", "timm"]
 
 import logging as _logging
 import pathlib as _pathlib
-import utils.helpers as _helpers
 
 BASE_DIR = _pathlib.Path(__file__).absolute().parents[0]
 
 def metadata_dict():
-    _helpers.check_import('yaml', "metadata_dict")
-    import yaml
+    try:
+        import yaml
+    except ImportError:
+        raise ImportError("Please install `pyaml` to use metadata_dict")
 
     with open(BASE_DIR/'metadata.yaml') as f:
-        metadata =  yaml.safe_load(f)
+        metadata = yaml.safe_load(f)
 
         # adds exact architecture
         for k,v in metadata.items():
@@ -27,10 +28,10 @@ def metadata_dict():
         return metadata
 
 def metadata_df(is_multiindex=False, is_lower=True):
-    _helpers.check_import('yaml', "metadata_df")
-    _helpers.check_import('pandas', "metadata_df")
-
-    import pandas as pd
+    try:
+        import pandas as pd
+    except ImportError:
+        raise ImportError("Please install `pandas` to use metadata_df")
 
     metadata_flatten = {k1: {(k2, k3): v
                              for k2, d2 in d.items()
