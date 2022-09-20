@@ -1,14 +1,14 @@
 
-dependencies = [ "torch", "torchvision"]
+dependencies = [ "torch", "torchvision", "timm"]
 
 import logging
 from pathlib import Path
 import utils.helpers as _helpers
 
-BASE_DIR = Path(__file__).absolute().parents[0]
+`BASE_DIR = Path(__file__).absolute().parents[0]`
 
 def metadata():
-    _helpers.check_import('yaml')
+    _helpers.check_import('yaml', "metadata")
     import yaml
 
     with open(BASE_DIR/'metadata.yaml') as f:
@@ -601,6 +601,9 @@ try:
     def beit_vitL16_pt22k():
         return _get_beit_models("beit_vitL16_pt22k", 'beit_large_patch16_224', normalize="half")
 
+    def beitv2_vitB16_pt1k_ep300():
+        return _get_beit_models("beitv2_vitB16_pt1k_ep300", 'beit_base_patch16_224')
+
     def beitv2_vitB16_pt1k():
         return _get_beit_models("beitv2_vitB16_pt1k", 'beit_base_patch16_224')
 
@@ -613,9 +616,59 @@ try:
 except ImportError as e:
     logging.warning(f"BEIT models not available because of the following import error: \n {e}")
 
-
-### BEITV2 ###
-
 ### TIMM ###
+try:
+    from hub.timm import get_timm_models as _get_timm_models
+
+    def sup_vitB8():
+        return _get_timm_models('vit_base_patch8_224')
+
+    def sup_vitB8_dino():
+        return _get_timm_models('vit_base_patch8_224', representation_vit='cls+avg')
+
+    def sup_vitB16():
+        return _get_timm_models('vit_base_patch16_224')
+
+    def sup_vitB16_dino():
+        return _get_timm_models('vit_base_patch16_224', representation_vit="cls+avg")
+
+    def sup_vitB16_dino_extractS():
+        return _get_timm_models('vit_base_patch16_224', representation_vit="4xcls")
+
+    def sup_vitB32():
+        return _get_timm_models('vit_base_patch32_224')
+
+    def sup_vitH14():
+        return _get_timm_models('vit_huge_patch14_224')
+
+    def sup_vitL16():
+        return _get_timm_models('vit_large_patch16_224')
+
+    def sup_vitS16():
+        return _get_timm_models('vit_small_patch16_224')
+
+    def sup_vitS16_dino():
+        return _get_timm_models('vit_small_patch16_224', representation_vit="4xcls")
+
+    def sup_vitS16_dino_extractB():
+        return _get_timm_models('vit_small_patch16_224', representation_vit="cls+avg")
+
+except ImportError as e:
+    logging.warning(f"TIMM models not available because of the following import error: \n {e}")
 
 ### TORCHVISION ###
+
+try:
+    from hub.torchvision import get_torchvision_models as _get_torchvision_models
+
+    def sup_rn50():
+        return _get_torchvision_models("resnet50")
+
+    def sup_rn50w2():
+        return _get_torchvision_models("wide_resnet50_2")
+
+    def sup_rn101():
+        return _get_torchvision_models("resnet101")
+
+except ImportError as e:
+    logging.warning(f"Torchvision models not available because of the following import error: \n {e}")

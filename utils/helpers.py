@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import contextlib
+
 import json
 import logging
 import numbers
 import shutil
-from tqdm import tqdm
-import urllib.request
 from copy import deepcopy
 from functools import  wraps
 import pytorch_lightning as pl
@@ -14,7 +12,7 @@ import math
 import torch
 from torch import nn
 from pathlib import Path
-from typing import Any, Dict, Iterator, Optional, Union
+from typing import Optional, Union
 import sys
 from joblib import dump, load
 from sklearn.metrics import log_loss, accuracy_score
@@ -33,11 +31,6 @@ from collections.abc import MutableMapping
 
 try:
     import wandb
-except ImportError:
-    pass
-
-try:
-    import cv2
 except ImportError:
     pass
 
@@ -307,8 +300,6 @@ def init_std_modules(module: nn.Module, nonlinearity: str = "relu") -> bool:
 
     return True
 
-
-
 def weights_init(module: nn.Module, nonlinearity: str = "relu") -> None:
     """Initialize a module and all its descendents.
 
@@ -344,21 +335,6 @@ class ModelCheckpoint(pl.callbacks.ModelCheckpoint):
         self.best_k_models[self.best_model_path] = self.best_model_score
         self.kth_best_model_path = self.best_model_path
 
-@contextlib.contextmanager
-def rm_module(module: str) -> Iterator[None]:
-    """Temporarily remove module from sys.Modules."""
-    is_module_loaded = module in sys.modules
-    try:
-        if is_module_loaded:
-            val = sys.modules[module]
-            del sys.modules[module]
-        yield
-    finally:
-        if is_module_loaded:
-            sys.modules[module] = val
-
-
-
 # modified from https://github.com/skorch-dev/skorch/blob/92ae54b/skorch/utils.py#L106
 def to_numpy(X) -> np.array:
     """Convert tensors,list,tuples,dataframes to numpy arrays."""
@@ -382,93 +358,6 @@ def to_numpy(X) -> np.array:
         X = X.detach()
 
     return X.numpy()
-
-
-#
-# @contextlib.contextmanager
-# def add_sys_path(path: Union[str, os.PathLike]) -> Iterator[None]:
-#     """Temporarily add the given path to `sys.path`."""
-#     path = os.fspath(path)
-#     try:
-#         sys.path.insert(0, path)
-#         yield
-#     finally:
-#         sys.path.remove(path)
-
-class ImgPil2LabTensor(torch.nn.Module):
-    """
-    Convert a PIL image to LAB tensor of shape C x H x W
-    This transform was proposed in Colorization - https://arxiv.org/abs/1603.08511
-    The input image is PIL Image. We first convert it to tensor
-    HWC which has channel order RGB. We then convert the RGB to BGR
-    and use OpenCV to convert the image to LAB. The LAB image is
-    8-bit image in range > L [0, 255], A [0, 255], B [0, 255]. We
-    rescale it to: L [0, 100], A [-128, 127], B [-128, 127]
-    The output is image torch tensor.
-    """
-
-    def __init__(self, indices = []):
-        super().__init__()
-        check_import("cv2", "ImgPil2LabTensor")
-        self.indices = indices
-
-    def forward(self, image):
-        img_tensor = np.array(image)
-        # PIL image tensor is RGB. Convert to BGR
-        img_bgr = img_tensor[:, :, ::-1]
-        img_lab = self._convertbgr2lab(img_bgr.astype(np.uint8))
-        # convert HWC -> CHW. The image is LAB.
-        img_lab = np.transpose(img_lab, (2, 0, 1))
-        # torch tensor output
-        img_lab_tensor = torch.from_numpy(img_lab).float()
-
-        return img_lab_tensor
-
-    def _convertbgr2lab(self, img):
-
-        # img is [0, 255] , HWC, BGR format, uint8 type
-        assert len(img.shape) == 3, "Image should have dim H x W x 3"
-        assert img.shape[2] == 3, "Image should have dim H x W x 3"
-        assert img.dtype == np.uint8, "Image should be uint8 type"
-        img_lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
-        # 8-bit image range -> L [0, 255], A [0, 255], B [0, 255]. Rescale it to:
-        # L [0, 100], A [-128, 127], B [-128, 127]
-        img_lab = img_lab.astype(np.float32)
-        img_lab[:, :, 0] = (img_lab[:, :, 0] * (100.0 / 255.0)) - 50.0
-        img_lab[:, :, 1:] = img_lab[:, :, 1:] - 128.0
-        return img_lab
-
-class DownloadProgressBar(tqdm):
-    """Progress bar for downloading files."""
-
-    def update_to(self, b=1, bsize=1, tsize=None):
-        if tsize is not None:
-            self.total = tsize
-        self.update(b * bsize - self.n)
-
-# Modified from https://stackoverflow.com/questions/15644964/python-progress-bar-and-downloads
-def download_url(url, save_path):
-    """Download a url to `save_path`."""
-    if save_path is not None:
-        save_path = Path(save_path)
-        save_path.mkdir(parents=True, exist_ok=True)
-
-    with DownloadProgressBar(
-        unit="B", unit_scale=True, miniters=1, desc=url.split("/")[-1]
-    ) as t:
-
-        f, _ = urllib.request.urlretrieve(
-            url, filename=save_path, reporthook=t.update_to
-        )
-
-    return f
-
-@contextlib.contextmanager
-def download_url_tmp(url):
-    try:
-        yield download_url(url, None)
-    finally:
-        urllib.request.urlcleanup()
 
 class LightningWrapper(pl.LightningModule):
     def __init__(self, encoder):

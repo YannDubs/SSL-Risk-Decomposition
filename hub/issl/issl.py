@@ -2,7 +2,7 @@ import torch
 
 __all__ = ["get_issl_models"]
 
-from utils.helpers import rm_module
+from hub.helpers import rm_module
 
 
 def get_issl_models(model):

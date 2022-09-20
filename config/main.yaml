@@ -57,15 +57,6 @@ data:
 
 representor: ???
 
-shatterability:
-  n_bin_tasks: 10000
-
-rand_task:
-  n_runs: 1
-  is_sum_tasks: False
-  n_rand_tasks: 10000
-  n_label_per_task: 2
-  components: ["train_train"]
 
 wandb_kwargs:
   project: risk_dec

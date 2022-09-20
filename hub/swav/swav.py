@@ -31,15 +31,15 @@ def get_swav_models(name, model, architecture):
         encoder.fc = torch.nn.Identity()
 
     elif architecture == "resnet50w2":
-        from utils.resnet50w import resnet50w2
+        from hub.swav.resnet50w import resnet50w2
         encoder = resnet50w2()
 
     elif architecture == "resnet50w4":
-        from utils.resnet50w import resnet50w4
+        from hub.swav.resnet50w import resnet50w4
         encoder = resnet50w4()
 
     elif architecture == "resnet50w5":
-        from utils.resnet50w import resnet50w5
+        from hub.swav.resnet50w import resnet50w5
         encoder = resnet50w5()
 
     else:

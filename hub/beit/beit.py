@@ -14,6 +14,7 @@ __all__ = ["get_beit_models"]
 BEIT_MODELS = {
 "beit_vitB16_pt22k": "https://conversationhub.blob.core.windows.net/beit-share-public/beit/beit_base_patch16_224_pt22k.pth",
 "beit_vitL16_pt22k": "https://conversationhub.blob.core.windows.net/beit-share-public/beit/beit_large_patch16_224_pt22k.pth",
+"beitv2_vitB16_pt1k_ep300": "https://conversationhub.blob.core.windows.net/beit-share-public/beitv2/beitv2_base_patch16_224_pt1k_300e.pth",
 "beitv2_vitB16_pt1k": "https://conversationhub.blob.core.windows.net/beit-share-public/beitv2/beitv2_base_patch16_224_pt1k.pth",
 "beitv2_vitL16_pt1k": "https://conversationhub.blob.core.windows.net/beit-share-public/beitv2/beitv2_large_patch16_224_pt1k.pth",
 }

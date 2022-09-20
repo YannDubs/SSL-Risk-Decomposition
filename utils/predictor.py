@@ -1,9 +1,7 @@
 import torch
-from torch import nn
-import copy
 from torch.nn import functional as F
 import pytorch_lightning as pl
-from typing import Any, Optional, Union
+from typing import Any, Optional
 from torchmetrics.functional import accuracy
 
 
