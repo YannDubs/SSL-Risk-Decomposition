@@ -26,16 +26,30 @@ def get_beit_models(name, architecture, representation="cls", normalize="imagene
         file_name=name
     )['model']
 
-    encoder = timm.create_model(architecture,
-                                pretrained=False,
-                                num_classes=0)
-    encoder.load_state_dict(state_dict, strict=True)
+
+    encoder = timm.create_model(architecture, pretrained=False,
+                                num_classes=0, global_pool='')
+
+    state_dict = {k: v for k, v in state_dict.items()
+                  if "relative_position_index" not in k and "head." not in k and "mask_token" not in k}
+
+    if "rel_pos_bias.relative_position_bias_table" in state_dict:
+        # copies shared relative position table to each block
+        rel_pos_bias = state_dict.pop("rel_pos_bias.relative_position_bias_table")
+        for i in range(len(encoder.blocks)):
+            state_dict[f"blocks.{i}.attn.relative_position_bias_table"] = rel_pos_bias.clone()
+
+
+    missing_keys, unexpected_keys= encoder.load_state_dict(state_dict, strict=False)
+    actual_missing_keys = [k for k in missing_keys if "relative_position_index" not in k]
+    assert len(unexpected_keys) == 0, f"Unexpected keys: {unexpected_keys}"
+    assert len(actual_missing_keys) == 0, f"Missing keys: {actual_missing_keys}"
 
     # makes timm compatible with VITWrapper
     encoder.get_intermediate_layers = types.MethodType(get_intermediate_layers, encoder)
     encoder = VITWrapper(encoder, representation=representation)
 
     preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BICUBIC,
-                                     normalize="imagenet", pre_resize=256)
+                                     normalize=normalize, pre_resize=256)
 
     return encoder, preprocessor
