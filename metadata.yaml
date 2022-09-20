@@ -15,6 +15,7 @@ beitv2_vitB16_pt1k_extractB:
     pred_dim: null
     projection_hid_width: null # 2048 for proj and 4096 for pred
     projection_hid_depth: null # 3 for proj and 3 for pred
+    architecture_exact: beitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -69,6 +70,7 @@ beitv2_vitL16_pt1k:
     pred_dim: null
     projection_hid_width: null # 2048 for proj and 4096 for pred
     projection_hid_depth: null # 3 for proj and 3 for pred
+    architecture_exact: beitl16
     architecture: vitl
     family: vit
     patch_size: 16
@@ -123,6 +125,7 @@ beitv2_vitB16_pt1k:
     pred_dim: null
     projection_hid_width: null # 2048 for proj and 4096 for pred
     projection_hid_depth: null # 3 for proj and 3 for pred
+    architecture_exact: beitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -177,6 +180,7 @@ beitv2_vitB16_pt1k_ep300:
     pred_dim: null
     projection_hid_width: null # 2048 for proj and 4096 for pred
     projection_hid_depth: null # 3 for proj and 3 for pred
+    architecture_exact: beitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -231,6 +235,7 @@ beit_vitL16_pt22k:
     pred_dim: null
     projection_hid_width: null # 2048 for proj and 4096 for pred
     projection_hid_depth: null # 3 for proj and 3 for pred
+    architecture_exact: beitl16
     architecture: vitl
     family: vit
     patch_size: 16
@@ -286,6 +291,7 @@ beit_vitB16_pt22k:
     pred_dim: null
     projection_hid_width: null # 2048 for proj and 4096 for pred
     projection_hid_depth: null # 3 for proj and 3 for pred
+    architecture_exact: beitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -343,8 +349,9 @@ deepcluster_rn50_bs512_ep200_mmselfsup:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -399,8 +406,9 @@ simclr_rn50_bs256_ep200_mmselfsup:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -454,8 +462,9 @@ simsiam_rn50_bs256_ep200_mmselfsup:
     pred_dim: 512
     projection_hid_width: 2048
     projection_hid_depth: 5
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -510,8 +519,9 @@ densecl_rn50_200ep_mmselfsup:
     pred_dim: 256
     projection_hid_width: 512
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -566,8 +576,9 @@ odc_rn50_440ep_mmselfsup:
     pred_dim: 256
     projection_hid_width: 512
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -622,8 +633,9 @@ relativeloc_rn50_70ep_mmselfsup:
     pred_dim: 128
     projection_hid_width: 4096
     projection_hid_depth: 3
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -678,8 +690,9 @@ infomin_rn50_800ep:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -736,8 +749,9 @@ infomin_rn50_200ep:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -795,8 +809,9 @@ mocov2_rn50_ep800:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -851,8 +866,9 @@ mocov2_rn50_ep200:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -907,8 +923,9 @@ mocov1_rn50_ep200:
     pred_dim: 128
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 23508032
@@ -963,6 +980,7 @@ mocov3_vitB_ep300:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 5
+    architecture_exact: vitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -1019,6 +1037,7 @@ mocov3_vitS_ep300:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 5
+    architecture_exact: vits16
     architecture: vits
     family: vit
     patch_size: 16
@@ -1075,8 +1094,9 @@ mocov3_rn50_ep1000:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 5
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -1131,8 +1151,9 @@ mocov3_rn50_ep300:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 5
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -1187,8 +1208,9 @@ mocov3_rn50_ep100:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 5
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -1245,6 +1267,7 @@ msn_vitl7_ep200:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vitl7
     architecture: vitl
     family: vit
     patch_size: 7
@@ -1302,6 +1325,7 @@ msn_vitl16_ep600:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vitl16
     architecture: vitl
     family: vit
     patch_size: 16
@@ -1359,6 +1383,7 @@ msn_vitb4_ep300:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vitb4
     architecture: vitb
     family: vit
     patch_size: 4
@@ -1417,6 +1442,7 @@ msn_vitb16_ep600:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -1475,6 +1501,7 @@ msn_vits16_ep800:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vits16
     architecture: vits
     family: vit
     patch_size: 16
@@ -1534,6 +1561,7 @@ mae_vitH14:
     pred_dim: null
     projection_hid_width: null # 2048 for proj and 4096 for pred
     projection_hid_depth: null # 3 for proj and 3 for pred
+    architecture_exact: vith14
     architecture: vith
     family: vit
     patch_size: 14
@@ -1587,6 +1615,7 @@ mae_vitL16:
     pred_dim: null
     projection_hid_width: null # 2048 for proj and 4096 for pred
     projection_hid_depth: null # 3 for proj and 3 for pred
+    architecture_exact: vitl16
     architecture: vitl
     family: vit
     patch_size: 16
@@ -1640,6 +1669,7 @@ mae_vitB16:
     pred_dim: null
     projection_hid_width: null # 2048 for proj and 4096 for pred
     projection_hid_depth: null # 3 for proj and 3 for pred
+    architecture_exact: vitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -1694,6 +1724,7 @@ mugs_vitb16_ep400_extractB:
     pred_dim: 256
     projection_hid_width: 2048 # 2048 for proj and 4096 for pred
     projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture_exact: vits16
     architecture: vits
     family: vit
     patch_size: 16
@@ -1754,6 +1785,7 @@ mugs_vits16_ep800_extractS:
     pred_dim: 256
     projection_hid_width: 2048 # 2048 for proj and 4096 for pred
     projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture_exact: vits16
     architecture: vits
     family: vit
     patch_size: 16
@@ -1814,6 +1846,7 @@ mugs_vitl16_ep250:
     pred_dim: 256
     projection_hid_width: 2048 # 2048 for proj and 4096 for pred
     projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture_exact: vitl16
     architecture: vitl
     family: vit
     patch_size: 16
@@ -1874,6 +1907,7 @@ mugs_vitb16_ep400:
     pred_dim: 256
     projection_hid_width: 2048 # 2048 for proj and 4096 for pred
     projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture_exact: vitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -1934,6 +1968,7 @@ mugs_vits16_ep800:
     pred_dim: 256
     projection_hid_width: 2048 # 2048 for proj and 4096 for pred
     projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture_exact: vits16
     architecture: vits
     family: vit
     patch_size: 16
@@ -1994,6 +2029,7 @@ mugs_vits16_ep300:
     pred_dim: 256
     projection_hid_width: 2048 # 2048 for proj and 4096 for pred
     projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture_exact: vits16
     architecture: vits
     family: vit
     patch_size: 16
@@ -2054,6 +2090,7 @@ mugs_vits16_ep100:
     pred_dim: 256
     projection_hid_width: 2048 # 2048 for proj and 4096 for pred
     projection_hid_depth: 6 # 3 for proj and 3 for pred
+    architecture_exact: vits16
     architecture: vits
     family: vit
     patch_size: 16
@@ -2115,6 +2152,7 @@ ibot_vitS16_extractS:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vits16
     architecture: vits
     family: vit
     patch_size: 16
@@ -2173,6 +2211,7 @@ ibot_vitB16_extractB:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -2231,6 +2270,7 @@ ibot_vitL16:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vitl16
     architecture: vitl
     family: vit
     patch_size: 16
@@ -2289,6 +2329,7 @@ ibot_vitS16:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vits16
     architecture: vits
     family: vit
     patch_size: 16
@@ -2347,6 +2388,7 @@ ibot_vitB16:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -2406,6 +2448,7 @@ dino_vitB16_extractS:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -2463,6 +2506,7 @@ dino_vitS16_extractB:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vits16
     architecture: vits
     family: vit
     patch_size: 16
@@ -2520,6 +2564,7 @@ dino_vitB8:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vitb8
     architecture: vitb
     family: vit
     patch_size: 8
@@ -2577,6 +2622,7 @@ dino_vitB16:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -2634,6 +2680,7 @@ dino_vitS16:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vits16
     architecture: vits
     family: vit
     patch_size: 16
@@ -2691,6 +2738,7 @@ dino_vitB8_last:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vitb8
     architecture: vitb
     family: vit
     patch_size: 8
@@ -2748,6 +2796,7 @@ dino_vitB16_last:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -2805,6 +2854,7 @@ dino_vitS8_last:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vits8
     architecture: vits
     family: vit
     patch_size: 8
@@ -2862,6 +2912,7 @@ dino_vitS16_last:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: vits16
     architecture: vits
     family: vit
     patch_size: 16
@@ -2919,8 +2970,9 @@ dino_rn50:
     pred_dim: 256
     projection_hid_width: 2048
     projection_hid_depth: 3
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -2978,6 +3030,7 @@ clip_vitL14_px336:
     pred_dim: 768
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: vitl14
     architecture: vitl
     family: vit
     patch_size: 14
@@ -3030,6 +3083,7 @@ clip_vitL14:
     pred_dim: 768
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: vitl14
     architecture: vitl
     family: vit
     patch_size: 14
@@ -3082,6 +3136,7 @@ clip_vitB32:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: vitb32
     architecture: vitb
     family: vit
     patch_size: 32
@@ -3134,6 +3189,7 @@ clip_vitB16:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: vitb16
     architecture: vitb
     family: vit
     patch_size: 16
@@ -3186,8 +3242,9 @@ clip_rn101:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet101
     architecture: resnet101
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 59407200
@@ -3238,8 +3295,9 @@ clip_rn50x64:
     pred_dim: 1024
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50w64
     architecture: resnet50w64
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 432966336
@@ -3290,8 +3348,9 @@ clip_rn50x16:
     pred_dim: 768
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50w16
     architecture: resnet50w16
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 174409104
@@ -3342,8 +3401,9 @@ clip_rn50x4:
     pred_dim: 1024
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50w4
     architecture: resnet50w4
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 92054200
@@ -3394,8 +3454,9 @@ clip_rn50:
     pred_dim: 1024
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 38317920
@@ -3447,6 +3508,7 @@ lossyless_b01:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: vitb32
     architecture: vitb
     family: vit
     patch_size: 32
@@ -3499,6 +3561,7 @@ lossyless_b005:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: vitb32
     architecture: vitb
     family: vit
     patch_size: 32
@@ -3551,6 +3614,7 @@ lossyless_b001:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: vitb32
     architecture: vitb
     family: vit
     patch_size: 32
@@ -3604,8 +3668,9 @@ speccl_bs384_ep100:
     pred_dim: 8192
     projection_hid_width: 8192
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 31128640
@@ -3660,8 +3725,9 @@ simclr_resnet50_d8192_e100_m2:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50d8192
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 31128640
@@ -3716,8 +3782,9 @@ simclr_resnet50_dNone_e100_m2_headTNoneSNone:
     pred_dim: 2048
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: null
     n_parameters: 23508032
@@ -3772,8 +3839,9 @@ simclr_resnet50_dNone_e100_m2_headTMlpSMlp:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 23508032
@@ -3828,8 +3896,9 @@ simclr_resnet50_dNone_e100_m2_headTMlpSLin:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 23508032
@@ -3884,8 +3953,9 @@ simclr_resnet50_dNone_e100_m2_headTLinSLin:
     pred_dim: 128
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 23508032
@@ -3940,8 +4010,9 @@ simclr_resnet50_dNone_e100_m2_data030:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -3996,8 +4067,9 @@ simclr_resnet50_dNone_e100_m2_data010:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -4052,8 +4124,9 @@ simclr_resnet50_dNone_e100_m2:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -4108,8 +4181,9 @@ dissl_resnet50_d4096_e100_m2:
     pred_dim: 512
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50d4096
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 29023296
@@ -4164,8 +4238,9 @@ dissl_resnet50_dNone_e100_m2_headTMlpSMlp:
     pred_dim: 512
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -4220,8 +4295,9 @@ dissl_resnet50_dNone_e100_m2_headTLinSLin:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 23508032
@@ -4276,8 +4352,9 @@ dissl_resnet50_dNone_e100_m2_augSmall:
     pred_dim: 512
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -4331,9 +4408,10 @@ dissl_resnet50_dNone_e100_m2_augLarge:
   model:
     pred_dim: 512
     projection_hid_width: 2048
-    projection_hid_depth:
+    projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -4389,8 +4467,9 @@ dissl_resnet50_d8192_e800_m8:
     pred_dim: 512
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50d8192
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 31128640
@@ -4445,8 +4524,9 @@ dissl_resnet50_d8192_e400_m6:
     pred_dim: 512
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50d8192
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 31128640
@@ -4501,8 +4581,9 @@ dissl_resnet50_dNone_e400_m6:
     pred_dim: 512
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -4557,8 +4638,9 @@ dissl_resnet50_dNone_e400_m2:
     pred_dim: 512
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 31128640
@@ -4613,8 +4695,9 @@ dissl_resnet50_d8192_e100_m2:
     pred_dim: 512
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50d8192
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 31128640
@@ -4669,8 +4752,9 @@ dissl_resnet50_dNone_e100_m2:
     pred_dim: 512
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -4726,8 +4810,9 @@ simsiam_rn50_bs256_ep100:
     pred_dim: 512
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -4782,8 +4867,9 @@ simsiam_rn50_bs512_ep100:
     pred_dim: 512
     projection_hid_width: 2048
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -4840,8 +4926,9 @@ selav2_rn50_ep400_2x160+4x96:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -4897,8 +4984,9 @@ selav2_rn50_ep400_2x224:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -4953,8 +5041,9 @@ dc2_rn50_ep800_2x224_6x96:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -5009,8 +5098,9 @@ dc2_rn50_ep400_2x160_4x96:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -5065,8 +5155,9 @@ dc2_rn50_ep400_2x224:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -5121,8 +5212,9 @@ swav_rn50w4:
     pred_dim: 128
     projection_hid_width: 8192
     projection_hid_depth: 1
+    architecture_exact: resnet50w4
     architecture: resnet50w4
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 375378176
@@ -5177,8 +5269,9 @@ swav_rn50w2:
     pred_dim: 128
     projection_hid_width: 8192
     projection_hid_depth: 1
+    architecture_exact: resnet50w2
     architecture: resnet50w2
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 93907072
@@ -5233,8 +5326,9 @@ swav_rn50_ep400_bs256:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -5289,8 +5383,9 @@ swav_rn50_ep400_2x224:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -5345,8 +5440,9 @@ swav_rn50_ep400:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -5401,8 +5497,9 @@ swav_rn50_ep200_bs256:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -5457,8 +5554,9 @@ swav_rn50_ep200:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -5513,8 +5611,9 @@ swav_rn50_ep100:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -5569,8 +5668,9 @@ swav_rn50:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -5626,8 +5726,9 @@ vicreg_rn50w2:
     pred_dim: 8192
     projection_hid_width: 8192
     projection_hid_depth: 2
+    architecture_exact: resnet50w2
     architecture: resnet50w2
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 93907072
@@ -5683,8 +5784,9 @@ vicreg_rn50:
     pred_dim: 8192
     projection_hid_width: 8192
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 23508032
@@ -5743,8 +5845,9 @@ pirl_rn50w2_headMLP:
     pred_dim: 128
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50w2
     architecture: resnet50w2
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 93907072
@@ -5800,8 +5903,9 @@ pirl_rn50w2:
     pred_dim: 128
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50w2
     architecture: resnet50w2
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 93907072
@@ -5857,8 +5961,9 @@ pirl_rn50_ep200_headMLP:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -5914,8 +6019,9 @@ pirl_rn50_headMLP:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -5971,8 +6077,9 @@ pirl_rn50_ep200:
     pred_dim: 128
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 23508032
@@ -6028,8 +6135,9 @@ pirl_rn50:
     pred_dim: 128
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 23508032
@@ -6085,8 +6193,9 @@ npidpp_rn50w2:
     pred_dim: 128
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50w2
     architecture: resnet50w2
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 93907072
@@ -6139,8 +6248,9 @@ npidpp_rn50:
     pred_dim: 128
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 23508032
@@ -6193,8 +6303,9 @@ npid_rn50:
     pred_dim: 128
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 23508032
@@ -6247,8 +6358,9 @@ clusterfit_rn50:
     pred_dim: null
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 23508032
@@ -6301,8 +6413,9 @@ jigsaw_rn50_in1k:
     pred_dim: null
     projection_hid_width: 9000
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -6355,8 +6468,9 @@ jigsaw_rn50_in22k:
     pred_dim: null
     projection_hid_width: 9000
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -6409,8 +6523,9 @@ simclr_rn101_ep100:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet101
     architecture: resnet101
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 42500160
@@ -6464,8 +6579,9 @@ simclr_rn101:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet101
     architecture: resnet101
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 42500160
@@ -6519,8 +6635,9 @@ simclr_rn50w4:
     pred_dim: 128
     projection_hid_width: 8192
     projection_hid_depth: 1
+    architecture_exact: resnet50w4
     architecture: resnet50w4
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 375378176
@@ -6574,8 +6691,9 @@ simclr_rn50w2_ep100:
     pred_dim: 128
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50w2
     architecture: resnet50w2
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 93907072
@@ -6629,8 +6747,9 @@ simclr_rn50w2:
     pred_dim: 128
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50w2
     architecture: resnet50w2
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 93907072
@@ -6684,8 +6803,9 @@ simclr_rn50_bs4096_ep100:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -6739,8 +6859,9 @@ simclr_rn50_ep800:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -6794,8 +6915,9 @@ simclr_rn50_ep400:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -6849,8 +6971,9 @@ simclr_rn50_ep200:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -6904,8 +7027,9 @@ simclr_rn50:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -6959,8 +7083,9 @@ rotnet_rn50_in22k:
     pred_dim: null
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 23508032
@@ -7012,8 +7137,9 @@ rotnet_rn50_in1k:
     pred_dim: null
     projection_hid_width: null
     projection_hid_depth: null
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: linear
     n_parameters: 23508032
@@ -7065,8 +7191,9 @@ mocov2_rn50_vissl:
     pred_dim: 128
     projection_hid_width: 2048
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7121,8 +7248,9 @@ barlow_rn50_ep300:
     pred_dim: 8192
     projection_hid_width: 8192
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7178,8 +7306,9 @@ barlow_rn50:
     pred_dim: 8192
     projection_hid_width: 8192
     projection_hid_depth: 2
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7236,8 +7365,9 @@ byol_rn50_bs4096:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7293,8 +7423,9 @@ byol_rn50_bs2048:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7350,8 +7481,9 @@ byol_rn50_bs1024:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7407,8 +7539,9 @@ byol_rn50_bs512:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7464,8 +7597,9 @@ byol_rn50_bs256:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7521,8 +7655,9 @@ byol_rn50_bs128:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7578,8 +7713,9 @@ byol_rn50_bs64:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7635,8 +7771,9 @@ byol_rn50_augCropBlur:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7688,8 +7825,9 @@ byol_rn50_augCropColor:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7742,8 +7880,9 @@ byol_rn50_augCrop:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7794,8 +7933,9 @@ byol_rn50_augNocolor:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7849,8 +7989,9 @@ byol_rn50_augNogray:
     pred_dim: 256
     projection_hid_width: 4096
     projection_hid_depth: 1
+    architecture_exact: resnet50
     architecture: resnet50
-    family: cnn
+    family: resnet
     patch_size: null
     projection_arch: mlp
     n_parameters: 23508032
@@ -7898,6 +8039,7 @@ sup_vitS16_dino_extractB:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: vits16
     architecture: vits
     patch_size: 16
   representation:
@@ -7916,6 +8058,7 @@ sup_vitS16_dino:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: vits16
     architecture: vits
     patch_size: 16
   representation:
@@ -7934,6 +8077,7 @@ sup_vitS16:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: vits16
     architecture: vits
     patch_size: 16
   representation:
@@ -7952,6 +8096,7 @@ sup_vitL16:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: vitl16
     architecture: vitl
     patch_size: 16
   representation:
@@ -7970,6 +8115,7 @@ sup_vitH14:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: vitl16
     architecture: vitl
     patch_size: 16
   representation:
@@ -7988,6 +8134,7 @@ sup_vitB32:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: vitb32
     architecture: vitb
     patch_size: 32
   representation:
@@ -8006,6 +8153,7 @@ sup_vitB16_dino_extractS:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: vitb16
     architecture: vitb
     patch_size: 16
   representation:
@@ -8024,6 +8172,7 @@ sup_vitB16_dino:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: vitb16
     architecture: vitb
     patch_size: 16
   representation:
@@ -8042,6 +8191,7 @@ sup_vitB16:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: vitb16
     architecture: vitb
     patch_size: 16
   representation:
@@ -8060,6 +8210,7 @@ sup_vitB8_dino:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: vitb8
     architecture: vitb
     patch_size: 8
   representation:
@@ -8078,6 +8229,7 @@ sup_vitB8:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: vitb8
     architecture: vitb
     patch_size: 8
   representation:
@@ -8097,6 +8249,7 @@ sup_rn50:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: resnet50
     architecture: resnet50
     patch_size: null
   representation:
@@ -8115,6 +8268,7 @@ sup_rn50w2:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: wide_resnet50_2
     architecture: resnet50w2
     patch_size: null
   representation:
@@ -8134,6 +8288,7 @@ sup_rn101:
   ssl:
     ssl_mode: supervised
   model:
+    architecture_exact: resnet101
     architecture: resnet101
     patch_size: null
   representation:

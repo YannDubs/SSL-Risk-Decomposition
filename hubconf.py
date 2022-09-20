@@ -1,18 +1,55 @@
 
 dependencies = [ "torch", "torchvision", "timm"]
 
-import logging
-import pathlib
+import logging as _logging
+import pathlib as _pathlib
 import utils.helpers as _helpers
 
-BASE_DIR = pathlib.Path(__file__).absolute().parents[0]
+BASE_DIR = _pathlib.Path(__file__).absolute().parents[0]
 
-def metadata():
-    _helpers.check_import('yaml', "metadata")
+def metadata_dict():
+    _helpers.check_import('yaml', "metadata_dict")
     import yaml
 
     with open(BASE_DIR/'metadata.yaml') as f:
-        return yaml.safe_load(f)
+        metadata =  yaml.safe_load(f)
+
+        # adds exact architecture
+        for k,v in metadata.items():
+            sffx = []
+
+            ps = metadata["model"]["patch_size"]
+            if ps is not None:
+                sffx += [f"ps{ps}"]
+
+            metadata["model"]["architecture_exact"] = metadata["model"]["architecture"] + "_".join(sffx)
+
+        return metadata
+
+def metadata_df(is_multiindex=False, is_lower=True):
+    _helpers.check_import('yaml', "metadata_df")
+    _helpers.check_import('pandas', "metadata_df")
+
+    import pandas as pd
+
+    metadata_flatten = {k1: {(k2, k3): v
+                             for k2, d2 in d.items()
+                             for k3, v in d2.items()
+                             }
+                        for k1, d in metadata_dict().items()}
+    df = pd.DataFrame.from_dict(metadata_flatten, orient="index")
+
+    if not is_multiindex:
+        df = df.droplevel(0, axis=1)
+
+    if is_lower:
+        df.applymap(lambda s: s.lower() if isinstance(s,str) else s)
+        metadata_df.columns = [c.lower() for c in metadata_df.columns if isinstance(c, str)]
+        metadata_df.index = [i.lower() for i in metadata_df.index if isinstance(i, str)]
+
+    return df
+
+
 
 ##### BYOL #####
 # pretrained models are from https://github.com/deepmind/deepmind-research/tree/master/byol
@@ -58,7 +95,7 @@ try:
         return _get_byol_models('byol_rn50_bs4096', "pretrain_res50x1", architecture='resnet50')
 
 except ImportError as e:
-    logging.warning(f"BYOL models not available because of the following import error: \n {e}")
+    _logging.warning(f"BYOL models not available because of the following import error: \n {e}")
 
 ##### VISSL #####
 # pretrained models are from https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
@@ -149,7 +186,7 @@ try:
         return _get_vissl_models('pirl_rn50w2_headMLP', architecture='resnet50', width_multiplier=2)
 
 except ImportError as e:
-    logging.warning(f"VISSL models not available because of the following import error: \n {e}")
+    _logging.warning(f"VISSL models not available because of the following import error: \n {e}")
 
 ##### VICReg #####
 # pretrained models are from https://github.com/facebookresearch/vicreg
@@ -163,7 +200,7 @@ try:
         return _get_vicreg_models('resnet50x2')
 
 except ImportError as e:
-    logging.warning(f"VICReg models not available because of the following import error: \n {e}")
+    _logging.warning(f"VICReg models not available because of the following import error: \n {e}")
 
 ##### SwAV #####
 # pretrained models are from https://github.com/facebookresearch/vicreg
@@ -217,7 +254,7 @@ try:
         return _get_swav_models('selav2_rn50_ep400_2x160_4x96', 'selav2_rn50_ep400_2x160_4x96', architecture='resnet50')
 
 except ImportError as e:
-    logging.warning(f"SwAV models not available because of the following import error: \n {e}")
+    _logging.warning(f"SwAV models not available because of the following import error: \n {e}")
 
 ##### SimSiam #####
 # pretrained models are from https://github.com/facebookresearch/simsiam
@@ -232,7 +269,7 @@ try:
         return _get_simsiam_models('simsiam_rn50_bs256_ep100')
 
 except ImportError as e:
-    logging.warning(f"SimSiam models not available because of the following import error: \n {e}")
+    _logging.warning(f"SimSiam models not available because of the following import error: \n {e}")
 
 
 
@@ -261,7 +298,7 @@ try:
         return _get_issl_models('dissl_resnet50_d8192_e800_m8')
 
 except ImportError as e:
-    logging.warning(f"ISSL models not available because of the following import error: \n {e}")
+    _logging.warning(f"ISSL models not available because of the following import error: \n {e}")
 
 ##### Riskdec #####
 # pretrained models available on our directory https://github.com/YannDubs/SSL-Risk-Decomposition
@@ -312,7 +349,7 @@ try:
         return _get_riskdec_models('speccl_bs384_ep100', is_speccl=True)
 
 except ImportError as e:
-    logging.warning(f"RiskDec models not available because of the following import error: \n {e}")
+    _logging.warning(f"RiskDec models not available because of the following import error: \n {e}")
 
 
 ##### Lossyless #####
@@ -331,7 +368,7 @@ try:
         return _get_lossyless_models('clip_compressor_b01')
 
 except ImportError as e:
-    logging.warning(f"Lossyless models not available because of the following import error: \n {e}")
+    _logging.warning(f"Lossyless models not available because of the following import error: \n {e}")
 
 
 ##### CLIP #####
@@ -368,7 +405,7 @@ try:
         return _get_clip_models('ViT-L/14@336px')
 
 except ImportError as e:
-    logging.warning(f"CLIP models not available because of the following import error: \n {e}")
+    _logging.warning(f"CLIP models not available because of the following import error: \n {e}")
 
 ##### DINO #####
 # pretrained models are from https://github.com/facebookresearch/dino
@@ -407,7 +444,7 @@ try:
         return _get_dino_models("dino_vitb16", representation="4xcls")
 
 except ImportError as e:
-    logging.warning(f"DINO models not available because of the following import error: \n {e}")
+    _logging.warning(f"DINO models not available because of the following import error: \n {e}")
 
 
 ##### IBOT #####
@@ -432,7 +469,7 @@ try:
         return _get_ibot_models("ibot_vitS16", "vits16", 'vit_small_patch16_224', representation="4xcls")
 
 except ImportError as e:
-    logging.warning(f"IBOT models not available because of the following import error: \n {e}")
+    _logging.warning(f"IBOT models not available because of the following import error: \n {e}")
 
 
 ##### MUGS #####
@@ -463,7 +500,7 @@ try:
         return _get_mugs_models("mugs_vitb16_ep400", 'vit_base_patch16_224', representation="cls+avg")
 
 except ImportError as e:
-    logging.warning(f"MUGS models not available because of the following import error: \n {e}")
+    _logging.warning(f"MUGS models not available because of the following import error: \n {e}")
 
 ##### MAE #####
 # pretrained models are from https://github.com/facebookresearch/mae
@@ -481,7 +518,7 @@ try:
         return _get_mae_models("mae_vitH14", 'vit_huge_patch14_224')
 
 except ImportError as e:
-    logging.warning(f"MAE models not available because of the following import error: \n {e}")
+    _logging.warning(f"MAE models not available because of the following import error: \n {e}")
 
 
 ##### MSN #####
@@ -506,7 +543,7 @@ try:
         return _get_msn_models("msn_vitl7_ep200", 'vit_large_patch7_224')
 
 except ImportError as e:
-    logging.warning(f"MSN models not available because of the following import error: \n {e}")
+    _logging.warning(f"MSN models not available because of the following import error: \n {e}")
 
 ### MOCOV3 ###
 # pretrained models are from https://github.com/facebookresearch/moco-v3
@@ -530,7 +567,7 @@ try:
         return _get_mocov3_models("mocov3_vitB_ep300", 'vit_base_patch16_224')
 
 except ImportError as e:
-    logging.warning(f"MOCOV3 models not available because of the following import error: \n {e}")
+    _logging.warning(f"MOCOV3 models not available because of the following import error: \n {e}")
 
 ### MOCO ###
 # pretrained models are from https://github.com/facebookresearch/moco
@@ -548,7 +585,7 @@ try:
         return get_moco_models("mocov2_rn50_ep800")
 
 except ImportError as e:
-    logging.warning(f"MOCO models not available because of the following import error: \n {e}")
+    _logging.warning(f"MOCO models not available because of the following import error: \n {e}")
 
 ### PYCONTRAST ###
 # pretrained models are from https://github.com/HobbitLong/PyContrast
@@ -562,7 +599,7 @@ try:
         return get_pycontrast_models("infomin_rn50_800ep")
 
 except ImportError as e:
-    logging.warning(f"Pycontrast models not available because of the following import error: \n {e}")
+    _logging.warning(f"Pycontrast models not available because of the following import error: \n {e}")
 
 
 ### MMSelfSup ###
@@ -589,7 +626,7 @@ try:
         return get_mmselfsup_models("deepcluster_rn50_bs512_ep200_mmselfsup")
 
 except ImportError as e:
-    logging.warning(f"MMSelfSup models not available because of the following import error: \n {e}")
+    _logging.warning(f"MMSelfSup models not available because of the following import error: \n {e}")
 
 ### BEIT ###
 try:
@@ -614,7 +651,7 @@ try:
         return _get_beit_models("beitv2_vitB16_pt1k", 'beit_base_patch16_224', representation="cls+avg")
 
 except ImportError as e:
-    logging.warning(f"BEIT models not available because of the following import error: \n {e}")
+    _logging.warning(f"BEIT models not available because of the following import error: \n {e}")
 
 ### TIMM ###
 try:
@@ -654,7 +691,7 @@ try:
         return _get_timm_models('vit_small_patch16_224', representation_vit="cls+avg")
 
 except ImportError as e:
-    logging.warning(f"TIMM models not available because of the following import error: \n {e}")
+    _logging.warning(f"TIMM models not available because of the following import error: \n {e}")
 
 ### TORCHVISION ###
 
@@ -671,4 +708,4 @@ try:
         return _get_torchvision_models("resnet101")
 
 except ImportError as e:
-    logging.warning(f"Torchvision models not available because of the following import error: \n {e}")
+    _logging.warning(f"Torchvision models not available because of the following import error: \n {e}")
