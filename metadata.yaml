@@ -4912,7 +4912,7 @@ simsiam_rn50_bs512_ep100:
     time_hours: ???
 
 ### SwAV ###
-selav2_rn50_ep400_2x160+4x96:
+selav2_rn50_ep400_2x160_4x96:
   ssl:
     objective: sela
     ssl_mode: clustering
