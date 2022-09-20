@@ -561,9 +561,6 @@ try:
     def infomin_rn50_800ep():
         return get_pycontrast_models("infomin_rn50_800ep")
 
-    def instdist_rn50():
-        return get_pycontrast_models("instdist_rn50")
-
 except ImportError as e:
     logging.warning(f"Pycontrast models not available because of the following import error: \n {e}")
 
@@ -595,6 +592,27 @@ except ImportError as e:
     logging.warning(f"MMSelfSup models not available because of the following import error: \n {e}")
 
 ### BEIT ###
+try:
+    from hub.beit import get_beit_models as _get_beit_models
+
+    def beit_vitB16_pt22k():
+        return _get_beit_models("beit_vitB16_pt22k", 'beit_base_patch16_224', normalize="half")
+
+    def beit_vitL16_pt22k():
+        return _get_beit_models("beit_vitL16_pt22k", 'beit_large_patch16_224', normalize="half")
+
+    def beitv2_vitB16_pt1k():
+        return _get_beit_models("beitv2_vitB16_pt1k", 'beit_base_patch16_224')
+
+    def beitv2_vitL16_pt1k():
+        return _get_beit_models("beitv2_vitL16_pt1k", 'beit_large_patch16_224')
+
+    def beitv2_vitB16_pt1k_extractB():
+        return _get_beit_models("beitv2_vitB16_pt1k", 'beit_base_patch16_224', representation="cls+avg")
+
+except ImportError as e:
+    logging.warning(f"BEIT models not available because of the following import error: \n {e}")
+
 
 ### BEITV2 ###
 

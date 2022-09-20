@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-experiment="pycontrast"
-notes="**Goal**: evaluate all the pycontrast models."
+experiment="mmselfsup"
+notes="**Goal**: evaluate all the mmselfsup models."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -14,7 +14,7 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=infomin_rn50_200ep,infomin_rn50_800ep
+representor=relativeloc_rn50_70ep_mmselfsup,odc_rn50_440ep_mmselfsup,densecl_rn50_200ep_mmselfsup,simsiam_rn50_bs256_ep200_mmselfsup,simclr_rn50_bs256_ep200_mmselfsup,deepcluster_rn50_bs512_ep200_mmselfsup
 seed=123
 predictor=torch_linear
 "

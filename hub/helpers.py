@@ -123,13 +123,20 @@ def get_intermediate_layers(self, x, n=1):
     x = self.patch_embed(x)
     cls_token = self.cls_token.expand(x.shape[0], -1, -1)
     x = torch.cat((cls_token, x), dim=1)
-    pos_embed = interpolate_pos_encoding(x, self.pos_embed)
-    x = self.pos_drop(x + pos_embed)
+    if self.pos_embed is not None:
+        pos_embed = interpolate_pos_encoding(x, self.pos_embed)
+        x = self.pos_drop(x + pos_embed)
     ######################
 
     output = []
     for i, blk in enumerate(self.blocks):
-        x = blk(x)
+
+        if hasattr(self, "rel_pos_bias") and self.rel_pos_bias is not None:
+            x = blk(x, self.rel_pos_bias)
+        else:
+            # BEIT uses a relative positional embedding
+            x = blk(x, shared_rel_pos_bias=self.rel_pos_bias)
+
         if len(self.blocks) - i <= n:
             output.append(self.norm(x))
 

@@ -1,12 +1,349 @@
 # TODO document each field
 # learning_rate : say that for bs 256
 
-##### Pycontrast #####
-infomin_rn50_200ep:
+### BEIT ###
+
+### MMSelfSup ###
+deepcluster_rn50_bs512_ep200_mmselfsup:
   ssl:
-    objective: infomin
+    objective: deepcluster
+    ssl_mode: clustering
+    version: 1
+    n_negatives: null
+    n_classes: 10000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 4e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 512
+    optimizer: sgd
+    learning_rate: 0.1
+    weight_decay: 1e-5
+    scheduler: multistep
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - gray
+      - color
+      - flip
+      - rotate
+      - normalize
+  metrics:
+    top1acc_in1k_official: 46.92
+  meta:
+    where: https://github.com/open-mmlab/mmselfsup
+    notes: null
+    month: 7
+    year: 2018
+    license: Apache 2.0
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: V100
+    time_hours: ???
+
+simclr_rn50_bs256_ep200_mmselfsup:
+  ssl:
+    objective: simclr
     ssl_mode: contrastive
-    version: v3
+    version: 1
+    n_negatives: 512
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 4e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 256
+    optimizer: lars #larc
+    learning_rate: 0.3
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 62.56
+  meta:
+    where: https://github.com/open-mmlab/mmselfsup
+    notes: null
+    month: 2
+    year: 2020
+    license: Apache 2.0
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: ???
+    time_hours: ???
+
+simsiam_rn50_bs256_ep200_mmselfsup:
+  ssl:
+    objective: simsiam
+    ssl_mode: distillation
+    version: 1
+    n_negatives: null
+    n_classes: null
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: 2048
+    projection_hid_depth: 5
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 17e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 256
+    optimizer: sgd # larc
+    learning_rate: 0.05
+    weight_decay: 1e-4
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - gray
+      - color
+      - flip
+      - blur
+      - normalize
+  metrics:
+    top1acc_in1k_official: 69.84
+  meta:
+    where: https://github.com/open-mmlab/mmselfsup
+    notes: null
+    month: 10
+    year: 2020
+    license: Apache 2.0
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: ???
+    time_hours: ???
+
+densecl_rn50_200ep_mmselfsup:
+  ssl:
+    objective: odc
+    ssl_mode: hierarchical contrastive
+    version: 1
+    n_negatives: 512
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 256
+    projection_hid_width: 512
+    projection_hid_depth: 1
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 2e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 256
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 1e-4
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: false # it's equivariant
+    augmentations:
+      - crop
+      - gray
+      - color
+      - flip
+      - blur
+      - normalize
+  metrics:
+    top1acc_in1k_official: 63.34
+  meta:
+    where: https://github.com/open-mmlab/mmselfsup
+    notes: null
+    month: 9
+    year: 2020
+    license: Apache 2.0
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: ???
+    time_hours: ???
+
+odc_rn50_440ep_mmselfsup:
+  ssl:
+    objective: odc
+    ssl_mode: clustering
+    version: 1
+    n_negatives: null
+    n_classes: 10000
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 256
+    projection_hid_width: 512
+    projection_hid_depth: 1
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 2e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 440
+    batch_size: 512
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 1e-5
+    scheduler: multistep
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - gray
+      - color
+      - flip
+      - rotate
+      - normalize
+  metrics:
+    top1acc_in1k_official: 53.42
+  meta:
+    where: https://github.com/open-mmlab/mmselfsup
+    notes: null
+    month: 6
+    year: 2020
+    license: Apache 2.0
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: ???
+    time_hours: ???
+
+relativeloc_rn50_70ep_mmselfsup:
+  ssl:
+    objective: locnet
+    ssl_mode: transform # predict the transformation
+    version: 1
+    n_negatives: null
+    n_classes: 8
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 4096
+    projection_hid_depth: 3
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 50e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 70
+    batch_size: 512
+    optimizer: sgd
+    learning_rate: 0.1
+    weight_decay: 1e-4
+    scheduler: multistep
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - gray
+      - normalize
+  metrics:
+    top1acc_in1k_official: 39.65
+  meta:
+    where: https://github.com/open-mmlab/mmselfsup
+    notes: null
+    month: 5
+    year: 2015
+    license: Apache 2.0
+    is_official: false
+  compute:
+    n_pus: 8
+    pu_type: ???
+    time_hours: ???
+
+
+
+##### Pycontrast #####
+infomin_rn50_800ep:
+  ssl:
+    objective: moco
+    ssl_mode: contrastive
+    version: 2
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -43,27 +380,87 @@ infomin_rn50_200ep:
       - color
       - gray
       - blur
+      - autoaugment
+      - jigsaw
       - normalize
   metrics:
-    top1acc_in1k_official: 71.1
+    top1acc_in1k_official: 73.0
   meta:
-    where: https://github.com/facebookresearch/moco
-    notes: null
-    month: 3
+    where: https://github.com/HobbitLong/PyContrast
+    notes: this is simply mocov2 with autoaugment and jigsaw augment
+    month: 5
     year: 2020
-    license: CC BY-NC 4.0
+    license: BSD 3-Clause
     is_official: true
   compute:
     n_pus: 8
-    pu_type: V100
-    time_hours: 212
+    pu_type: ???
+    time_hours: ???
+
+infomin_rn50_200ep:
+  ssl:
+    objective: moco
+    ssl_mode: contrastive
+    version: 2
+    n_negatives: 65536
+    n_classes: null
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 128
+    projection_hid_width: 2048
+    projection_hid_depth: 1
+    architecture: resnet50
+    family: cnn
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 23508032
+    projection_nparameters: 5e6
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  optimization:
+    epochs: 200
+    batch_size: 256
+    optimizer: sgd
+    learning_rate: 0.03
+    weight_decay: 1e-4
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - flip
+      - color
+      - gray
+      - blur
+      - autoaugment
+      - jigsaw
+      - normalize
+  metrics:
+    top1acc_in1k_official: 70.1
+  meta:
+    where: https://github.com/HobbitLong/PyContrast
+    notes: this is simply mocov2 with autoaugment and jigsaw augment
+    month: 5
+    year: 2020
+    license: BSD 3-Clause
+    is_official: true
+  compute:
+    n_pus: 8
+    pu_type: ???
+    time_hours: ???
 
 ##### MOCO #####
 mocov2_rn50_ep800:
   ssl:
     objective: moco
     ssl_mode: contrastive
-    version: v3
+    version: 3
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -119,7 +516,7 @@ mocov2_rn50_ep200:
   ssl:
     objective: moco
     ssl_mode: contrastive
-    version: v3
+    version: 3
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -175,7 +572,7 @@ mocov1_rn50_ep200:
   ssl:
     objective: moco
     ssl_mode: contrastive
-    version: v3
+    version: 3
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -231,7 +628,7 @@ mocov3_vitB_ep300:
   ssl:
     objective: moco
     ssl_mode: contrastive
-    version: v3
+    version: 3
     n_negatives: 8192
     n_classes: null
     is_stopgrad: true
@@ -287,7 +684,7 @@ mocov3_vitS_ep300:
   ssl:
     objective: moco
     ssl_mode: contrastive
-    version: v3
+    version: 3
     n_negatives: 8192
     n_classes: null
     is_stopgrad: true
@@ -343,7 +740,7 @@ mocov3_rn50_ep1000:
   ssl:
     objective: moco
     ssl_mode: contrastive
-    version: v3
+    version: 3
     n_negatives: 8192
     n_classes: null
     is_stopgrad: true
@@ -399,7 +796,7 @@ mocov3_rn50_ep300:
   ssl:
     objective: moco
     ssl_mode: contrastive
-    version: v3
+    version: 3
     n_negatives: 8192
     n_classes: null
     is_stopgrad: true
@@ -455,7 +852,7 @@ mocov3_rn50_ep100:
   ssl:
     objective: moco
     ssl_mode: contrastive
-    version: v3
+    version: 3
     n_negatives: 8192
     n_classes: null
     is_stopgrad: true
@@ -513,7 +910,7 @@ msn_vitl7_ep200:
   ssl:
     objective: msn
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 1024
     is_stopgrad: true
@@ -570,7 +967,7 @@ msn_vitl16_ep600:
   ssl:
     objective: msn
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 1024
     is_stopgrad: true
@@ -627,7 +1024,7 @@ msn_vitb4_ep300:
   ssl:
     objective: msn
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 1024
     is_stopgrad: true
@@ -685,7 +1082,7 @@ msn_vitb16_ep600:
   ssl:
     objective: msn
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 1024
     is_stopgrad: true
@@ -743,7 +1140,7 @@ msn_vits16_ep800:
   ssl:
     objective: msn
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 1024
     is_stopgrad: true
@@ -802,7 +1199,7 @@ mae_vitH14:
   ssl:
     objective: mae
     ssl_mode: generative
-    version: v1
+    version: 1
     n_negatives: null
     n_classes: null
     is_stopgrad: false
@@ -855,7 +1252,7 @@ mae_vitL16:
   ssl:
     objective: mae
     ssl_mode: generative
-    version: v1
+    version: 1
     n_negatives: null
     n_classes: null
     is_stopgrad: false
@@ -908,7 +1305,7 @@ mae_vitB16:
   ssl:
     objective: mae
     ssl_mode: generative
-    version: v1
+    version: 1
     n_negatives: null
     n_classes: null
     is_stopgrad: false
@@ -962,7 +1359,7 @@ mugs_vitb16_ep400_extractB:
   ssl:
     objective: mugs
     ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -1022,7 +1419,7 @@ mugs_vits16_ep800_extractS:
   ssl:
     objective: mugs
     ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -1082,7 +1479,7 @@ mugs_vitl16_ep250:
   ssl:
     objective: mugs
     ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -1142,7 +1539,7 @@ mugs_vitb16_ep400:
   ssl:
     objective: mugs
     ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -1202,7 +1599,7 @@ mugs_vits16_ep800:
   ssl:
     objective: mugs
     ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -1262,7 +1659,7 @@ mugs_vits16_ep300:
   ssl:
     objective: mugs
     ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -1322,7 +1719,7 @@ mugs_vits16_ep100:
   ssl:
     objective: mugs
     ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -1383,7 +1780,7 @@ ibot_vitS16_extractS:
   ssl:
     objective: ibot
     ssl_mode: clustering #actually it's clustering of patches => not really clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 8192
     is_stopgrad: true
@@ -1441,7 +1838,7 @@ ibot_vitB16_extractB:
   ssl:
     objective: ibot
     ssl_mode: clustering #actually it's clustering of patches => not really clustering
-    version: v1
+    version: 1
     n_negatives: 2064
     n_classes: 8192
     is_stopgrad: true
@@ -1499,7 +1896,7 @@ ibot_vitL16:
   ssl:
     objective: ibot
     ssl_mode: clustering #actually it's clustering of patches => not really clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 8192
     is_stopgrad: true
@@ -1557,7 +1954,7 @@ ibot_vitS16:
   ssl:
     objective: ibot
     ssl_mode: clustering #actually it's clustering of patches => not really clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 8192
     is_stopgrad: true
@@ -1615,7 +2012,7 @@ ibot_vitB16:
   ssl:
     objective: ibot
     ssl_mode: clustering #actually it's clustering of patches => not really clustering
-    version: v1
+    version: 1
     n_negatives: 2064
     n_classes: 8192
     is_stopgrad: true
@@ -1674,7 +2071,7 @@ dino_vitB16_extractS:
   ssl:
     objective: dino
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 65536
     is_stopgrad: true
@@ -1731,7 +2128,7 @@ dino_vitS16_extractB:
   ssl:
     objective: dino
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 65536
     is_stopgrad: true
@@ -1788,7 +2185,7 @@ dino_vitB8_last:
   ssl:
     objective: dino
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2112
     n_classes: 65536
     is_stopgrad: true
@@ -1845,7 +2242,7 @@ dino_vitB16_last:
   ssl:
     objective: dino
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 65536
     is_stopgrad: true
@@ -1902,7 +2299,7 @@ dino_vitS16:
   ssl:
     objective: dino
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 65536
     is_stopgrad: true
@@ -1959,7 +2356,7 @@ dino_vitB8_last:
   ssl:
     objective: dino
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2112
     n_classes: 65536
     is_stopgrad: true
@@ -2016,7 +2413,7 @@ dino_vitB16_last:
   ssl:
     objective: dino
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 65536
     is_stopgrad: true
@@ -2073,7 +2470,7 @@ dino_vitS8_last:
   ssl:
     objective: dino
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 65536
     is_stopgrad: true
@@ -2130,7 +2527,7 @@ dino_vitS16_last:
   ssl:
     objective: dino
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 2048
     n_classes: 65536
     is_stopgrad: true
@@ -2187,7 +2584,7 @@ dino_rn50:
   ssl:
     objective: dino
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 8160
     n_classes: 60000
     is_stopgrad: true
@@ -2246,7 +2643,7 @@ clip_vitL14_px336:
   ssl:
     objective: clip
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: false
@@ -2298,7 +2695,7 @@ clip_vitL14:
   ssl:
     objective: clip
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: false
@@ -2350,7 +2747,7 @@ clip_vitB32:
   ssl:
     objective: clip
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: false
@@ -2402,7 +2799,7 @@ clip_vitB16:
   ssl:
     objective: clip
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: false
@@ -2454,7 +2851,7 @@ clip_rn101:
   ssl:
     objective: clip
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: false
@@ -2506,7 +2903,7 @@ clip_rn50x64:
   ssl:
     objective: clip
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: false
@@ -2558,7 +2955,7 @@ clip_rn50x16:
   ssl:
     objective: clip
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: false
@@ -2610,7 +3007,7 @@ clip_rn50x4:
   ssl:
     objective: clip
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: false
@@ -2662,7 +3059,7 @@ clip_rn50:
   ssl:
     objective: clip
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: false
@@ -2715,7 +3112,7 @@ lossyless_b01:
   ssl:
     objective: clip+eb
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: false
@@ -2767,7 +3164,7 @@ lossyless_b005:
   ssl:
     objective: clip+eb
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: false
@@ -2819,7 +3216,7 @@ lossyless_b001:
   ssl:
     objective: clip+eb
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: false
@@ -2872,7 +3269,7 @@ speccl_bs384_ep100:
   ssl:
     objective: speccl
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: null
     is_stopgrad: false
@@ -2928,7 +3325,7 @@ simclr_resnet50_d8192_e100_m2:
   ssl:
     objective: simclr
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: null
     is_stopgrad: false
@@ -2984,7 +3381,7 @@ simclr_resnet50_dNone_e100_m2_headTNoneSNone:
   ssl:
     objective: simclr
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: null
     is_stopgrad: false
@@ -3040,7 +3437,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSMlp:
   ssl:
     objective: simclr
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: null
     is_stopgrad: false
@@ -3096,7 +3493,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSLin:
   ssl:
     objective: simclr
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: null
     is_stopgrad: false
@@ -3152,7 +3549,7 @@ simclr_resnet50_dNone_e100_m2_headTLinSLin:
   ssl:
     objective: simclr
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: null
     is_stopgrad: false
@@ -3208,7 +3605,7 @@ simclr_resnet50_dNone_e100_m2_data030:
   ssl:
     objective: simclr
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: null
     is_stopgrad: false
@@ -3264,7 +3661,7 @@ simclr_resnet50_dNone_e100_m2_data010:
   ssl:
     objective: simclr
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: null
     is_stopgrad: false
@@ -3320,7 +3717,7 @@ simclr_resnet50_dNone_e100_m2:
   ssl:
     objective: simclr
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: null
     is_stopgrad: false
@@ -3376,7 +3773,7 @@ dissl_resnet50_d4096_e100_m2:
   ssl:
     objective: dissl
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: 16384
     is_stopgrad: false
@@ -3432,7 +3829,7 @@ dissl_resnet50_dNone_e100_m2_headTMlpSMlp:
   ssl:
     objective: dissl
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: 16384
     is_stopgrad: false
@@ -3488,7 +3885,7 @@ dissl_resnet50_dNone_e100_m2_headTLinSLin:
   ssl:
     objective: dissl
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: 16384
     is_stopgrad: false
@@ -3544,7 +3941,7 @@ dissl_resnet50_dNone_e100_m2_augSmall:
   ssl:
     objective: dissl
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: 16384
     is_stopgrad: false
@@ -3600,7 +3997,7 @@ dissl_resnet50_dNone_e100_m2_augLarge:
   ssl:
     objective: dissl
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: 16384
     is_stopgrad: false
@@ -3657,7 +4054,7 @@ dissl_resnet50_d8192_e800_m8:
   ssl:
     objective: dissl
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: 16384
     is_stopgrad: false
@@ -3713,7 +4110,7 @@ dissl_resnet50_d8192_e400_m6:
   ssl:
     objective: dissl
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: 16384
     is_stopgrad: false
@@ -3769,7 +4166,7 @@ dissl_resnet50_dNone_e400_m6:
   ssl:
     objective: dissl
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: 16384
     is_stopgrad: false
@@ -3825,7 +4222,7 @@ dissl_resnet50_dNone_e400_m2:
   ssl:
     objective: dissl
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: 16384
     is_stopgrad: false
@@ -3881,7 +4278,7 @@ dissl_resnet50_d8192_e100_m2:
   ssl:
     objective: dissl
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: 16384
     is_stopgrad: false
@@ -3937,7 +4334,7 @@ dissl_resnet50_dNone_e100_m2:
   ssl:
     objective: dissl
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 5120
     n_classes: 16384
     is_stopgrad: false
@@ -3994,7 +4391,7 @@ simsiam_rn50_bs256_ep100:
   ssl:
     objective: simsiam
     ssl_mode: distillation
-    version: v1
+    version: 1
     n_negatives: null
     n_classes: null
     is_stopgrad: true
@@ -4050,7 +4447,7 @@ simsiam_rn50_bs512_ep100:
   ssl:
     objective: simsiam
     ssl_mode: distillation
-    version: v1
+    version: 1
     n_negatives: null
     n_classes: null
     is_stopgrad: true
@@ -4107,7 +4504,7 @@ selav2_rn50_ep400_2x160+4x96:
   ssl:
     objective: sela
     ssl_mode: clustering
-    version: v2
+    version: 2
     # assuming the following information is same  as swav and dc2
     n_negatives: 8192
     n_classes: 3000
@@ -4164,7 +4561,7 @@ selav2_rn50_ep400_2x224:
   ssl:
     objective: sela
     ssl_mode: clustering
-    version: v2
+    version: 2
     # assuming the following information is same  as swav and dc2
     n_negatives: 8192
     n_classes: 3000
@@ -4221,7 +4618,7 @@ dc2_rn50_ep800_2x224_6x96:
   ssl:
     objective: deepcluster
     ssl_mode: clustering
-    version: v2
+    version: 2
     n_negatives: 8192
     n_classes: 3000
     is_stopgrad: true
@@ -4277,7 +4674,7 @@ dc2_rn50_ep400_2x160_4x96:
   ssl:
     objective: deepcluster
     ssl_mode: clustering
-    version: v2
+    version: 2
     n_negatives: 8192
     n_classes: 3000
     is_stopgrad: true
@@ -4333,7 +4730,7 @@ dc2_rn50_ep400_2x224:
   ssl:
     objective: deepcluster
     ssl_mode: clustering
-    version: v2
+    version: 2
     n_negatives: 8192
     n_classes: 3000
     is_stopgrad: true
@@ -4389,7 +4786,7 @@ swav_rn50w4:
   ssl:
     objective: swav
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 7680
     n_classes: 3000
     is_stopgrad: true
@@ -4445,7 +4842,7 @@ swav_rn50w2:
   ssl:
     objective: swav
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 8192
     n_classes: 3000
     is_stopgrad: true
@@ -4501,7 +4898,7 @@ swav_rn50_ep400_bs256:
   ssl:
     objective: swav
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 4352
     n_classes: 3000
     is_stopgrad: true
@@ -4557,7 +4954,7 @@ swav_rn50_ep400_2x224:
   ssl:
     objective: swav
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 8192
     n_classes: 3000
     is_stopgrad: true
@@ -4613,7 +5010,7 @@ swav_rn50_ep400:
   ssl:
     objective: swav
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 8192
     n_classes: 3000
     is_stopgrad: true
@@ -4669,7 +5066,7 @@ swav_rn50_ep200_bs256:
   ssl:
     objective: swav
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 4352
     n_classes: 3000
     is_stopgrad: true
@@ -4725,7 +5122,7 @@ swav_rn50_ep200:
   ssl:
     objective: swav
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 8192
     n_classes: 3000
     is_stopgrad: true
@@ -4781,7 +5178,7 @@ swav_rn50_ep100:
   ssl:
     objective: swav
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 8192
     n_classes: 3000
     is_stopgrad: true
@@ -4837,7 +5234,7 @@ swav_rn50:
   ssl:
     objective: swav
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 8192
     n_classes: 3000
     is_stopgrad: true
@@ -4894,7 +5291,7 @@ vicreg_rn50w2:
   ssl:
     objective: deepcluster
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 4096
     n_classes: null
     is_stopgrad: false
@@ -4951,7 +5348,7 @@ vicreg_rn50:
   ssl:
     objective: deepcluster
     ssl_mode: clustering
-    version: v1
+    version: 1
     n_negatives: 4096
     n_classes: null
     is_stopgrad: false
@@ -5011,7 +5408,7 @@ pirl_rn50w2_headMLP:
   ssl:
     objective: pirl
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 32000
     n_classes: null
     is_stopgrad: false
@@ -5068,7 +5465,7 @@ pirl_rn50w2:
   ssl:
     objective: pirl
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 32000
     n_classes: null
     is_stopgrad: false
@@ -5125,7 +5522,7 @@ pirl_rn50_ep200_headMLP:
   ssl:
     objective: pirl
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 32000
     n_classes: null
     is_stopgrad: false
@@ -5182,7 +5579,7 @@ pirl_rn50_headMLP:
   ssl:
     objective: pirl
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 32000
     n_classes: null
     is_stopgrad: false
@@ -5239,7 +5636,7 @@ pirl_rn50_ep200:
   ssl:
     objective: pirl
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 32000
     n_classes: null
     is_stopgrad: false
@@ -5296,7 +5693,7 @@ pirl_rn50:
   ssl:
     objective: pirl
     ssl_mode: contrastive
-    version: v1
+    version: 1
     n_negatives: 32000
     n_classes: null
     is_stopgrad: false
@@ -5353,7 +5750,7 @@ npidpp_rn50w2:
   ssl:
     objective: npid
     ssl_mode: contrastive
-    version: v2 #  npid++ is an improvement of npid
+    version: 2 #  npid++ is an improvement of npid
     n_negatives: 32000
     n_classes: null
     is_stopgrad: false
@@ -5407,7 +5804,7 @@ npidpp_rn50:
   ssl:
     objective: npid
     ssl_mode: contrastive
-    version: v2 #  npid++ is an improvement of npid
+    version: 2 #  npid++ is an improvement of npid
     n_negatives: 32000
     n_classes: null
     is_stopgrad: false
