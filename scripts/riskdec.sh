@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-experiment="dissl"
+experiment="riskdec"
 notes="**Goal**: evaluate all the models we pretrained."
 
 # parses special mode for running the script
@@ -14,13 +14,13 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=dissl_resnet50_d4096_e100_m2,dissl_resnet50_dNone_e100_m2_augLarge,dissl_resnet50_dNone_e100_m2_augSmall,dissl_resnet50_dNone_e100_m2_headTLinSLin,dissl_resnet50_dNone_e100_m2_headTMlpSMlp,simclr_resnet50_dNone_e100_m2,simclr_resnet50_dNone_e100_m2_data010,simclr_resnet50_dNone_e100_m2_data030,simclr_resnet50_dNone_e100_m2_headTLinSLin,simclr_resnet50_dNone_e100_m2_headTMlpSLin,simclr_resnet50_dNone_e100_m2_headTMlpSMlp,simclr_resnet50_dNone_e100_m2_headTNoneSNone
+representor=dissl_resnet50_d4096_e100_m2,dissl_resnet50_dNone_e100_m2_augLarge,dissl_resnet50_dNone_e100_m2_augSmall,dissl_resnet50_dNone_e100_m2_headTLinSLin,dissl_resnet50_dNone_e100_m2_headTMlpSMlp,simclr_resnet50_dNone_e100_m2,simclr_resnet50_dNone_e100_m2_data010,simclr_resnet50_dNone_e100_m2_data030,simclr_resnet50_dNone_e100_m2_headTLinSLin,simclr_resnet50_dNone_e100_m2_headTMlpSLin,simclr_resnet50_dNone_e100_m2_headTMlpSMlp,simclr_resnet50_dNone_e100_m2_headTNoneSNone,speccl_bs384_ep100
 seed=123
 predictor=torch_linear
 "
 
 kwargs_multi="
-representor=speccl_bs384_ep100
+representor=simclr_resnet50_d8192_e100_m2
 seed=123
 predictor=torch_linear
 "
