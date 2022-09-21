@@ -135,7 +135,7 @@ def get_intermediate_layers(self, x, n=1):
             # BEIT uses a relative positional embedding
             x = blk(x, self.rel_pos_bias)
         else:
-            x = blk()
+            x = blk(x)
 
         if len(self.blocks) - i <= n:
             output.append(self.norm(x))
