@@ -34,9 +34,9 @@ def metadata_df(is_multiindex=False, is_lower=True):
     if is_lower:
         df.applymap(lambda s: s.lower() if isinstance(s,str) else s)
         if df.index.nlevels > 1:
-            df.columns = [tuple(c.lower() if isinstance(c, str) else c
-                                for c in t)
-                          for t in df.columns ]
+            df.columns = pd.MultiIndex.from_tuples(tuple(c.lower() if isinstance(c, str) else c
+                                                         for c in t)
+                                                   for t in df.columns )
         else:
             df.columns = [c.lower() if isinstance(c, str) else c
                           for c in df.columns ]
