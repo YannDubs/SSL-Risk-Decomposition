@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-experiment="vit"
+experiment="msn"
 notes="**Goal**: evaluate all the MSN models."
 
 # parses special mode for running the script
@@ -20,7 +20,7 @@ predictor=torch_linear
 "
 
 kwargs_multi="
-representor=msn_vitl7_ep200
+representor=msn_vits16_ep800,msn_vitb16_ep600,msn_vitl16_ep600
 seed=123
 predictor=torch_linear
 "

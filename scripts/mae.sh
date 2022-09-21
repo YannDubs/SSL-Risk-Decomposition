@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-experiment="vit"
+experiment="mae"
 notes="**Goal**: evaluate all the MAE models."
 
 # parses special mode for running the script

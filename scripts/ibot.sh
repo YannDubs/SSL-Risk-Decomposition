@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-experiment="vit"
+experiment="ibot"
 notes="**Goal**: evaluate all the ibot models."
 
 # parses special mode for running the script
@@ -20,7 +20,7 @@ predictor=torch_linear
 "
 
 kwargs_multi="
-representor=ibot_vitL16,ibot_vitB16_extractB,ibot_vitS16_extractS
+representor=ibot_vitB16,ibot_vitS16
 seed=123
 predictor=torch_linear
 "

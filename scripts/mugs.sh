@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-experiment="vit"
+experiment="mugs"
 notes="**Goal**: evaluate all the mugs models."
 
 # parses special mode for running the script
@@ -20,7 +20,7 @@ predictor=torch_linear
 "
 
 kwargs_multi="
-representor=mugs_vits16_ep800_extractS,mugs_vitb16_ep400_extractB
+representor=mugs_vits16_ep100,mugs_vits16_ep300,mugs_vits16_ep800,mugs_vitb16_ep400,mugs_vitl16_ep250
 seed=123
 predictor=torch_linear
 "

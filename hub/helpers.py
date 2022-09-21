@@ -132,10 +132,10 @@ def get_intermediate_layers(self, x, n=1):
     for i, blk in enumerate(self.blocks):
 
         if hasattr(self, "rel_pos_bias") and self.rel_pos_bias is not None:
+            # BEIT uses a relative positional embedding
             x = blk(x, self.rel_pos_bias)
         else:
-            # BEIT uses a relative positional embedding
-            x = blk(x, shared_rel_pos_bias=self.rel_pos_bias)
+            x = blk()
 
         if len(self.blocks) - i <= n:
             output.append(self.norm(x))
