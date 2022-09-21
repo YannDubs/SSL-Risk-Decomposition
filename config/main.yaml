@@ -43,6 +43,7 @@ data:
   name: ???
   n_classes: ???
   n_train: ???
+  check_length: 1200000 # min length
   kwargs:
     seed: ${seed}
     data_dir: ${paths.data}

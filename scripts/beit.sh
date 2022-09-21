@@ -20,7 +20,7 @@ predictor=torch_linear
 "
 
 kwargs_multi="
-representor=beitv2_vitL16_pt1k,beitv2_vitB16_pt1k_extractB
+representor=beitv2_vitB16_pt1k_extractB
 seed=123
 predictor=torch_linear
 "

@@ -14,13 +14,13 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=dissl_resnet50_dNone_e400_m6,dissl_resnet50_dNone_e100_m2
+representor=dissl_resnet50_dNone_e400_m6,dissl_resnet50_dNone_e100_m2,dissl_resnet50_dNone_e400_m2
 seed=123
 predictor=torch_linear
 "
 
 kwargs_multi="
-representor=dissl_resnet50_d8192_e100_m2,dissl_resnet50_d8192_e400_m6,dissl_resnet50_d8192_e800_m8,dissl_resnet50_dNone_e400_m2
+representor=dissl_resnet50_d8192_e100_m2,dissl_resnet50_d8192_e400_m6,dissl_resnet50_d8192_e800_m8
 seed=123
 predictor=torch_linear
 "

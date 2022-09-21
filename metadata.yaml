@@ -5199,62 +5199,62 @@ dc2_rn50_ep400_2x224:
     pu_type: V100
     time_hours: ???
 
-swav_rn50w4:
-  ssl:
-    objective: swav
-    ssl_mode: clustering
-    version: 1
-    n_negatives: 7680
-    n_classes: 3000
-    is_stopgrad: true
-    is_ema: false
-  model:
-    pred_dim: 128
-    projection_hid_width: 8192
-    projection_hid_depth: 1
-    architecture_exact: resnet50w4
-    architecture: resnet50w4
-    family: resnet
-    patch_size: null
-    projection_arch: mlp
-    n_parameters: 375378176
-    projection_nparameters: 68e6
-  representation:
-    z_dim: 8192
-    z_layer: avgpool
-  optimization:
-    epochs: 400
-    batch_size: 2560
-    optimizer: lars # larc
-    learning_rate: 0.48
-    weight_decay: 1e-6
-    scheduler: cosine
-  data:
-    pretraining_data: ImageNet-1K
-    finetuning_data: null
-    img_size: 224
-    views: 2x224+6x96
-    is_aug_invariant: true
-    augmentations:
-      - crop
-      - color
-      - blur
-      - gray
-      - flip
-      - normalize
-  metrics:
-    top1acc_in1k_official: 77.3
-  meta:
-    where: https://github.com/facebookresearch/swav
-    notes: null
-    month: 2
-    year: 2020
-    license: CC BY-NC 4.0
-    is_official: true
-  compute:
-    n_pus: 64
-    pu_type: V100
-    time_hours: ???
+#swav_rn50w4:
+#  ssl:
+#    objective: swav
+#    ssl_mode: clustering
+#    version: 1
+#    n_negatives: 7680
+#    n_classes: 3000
+#    is_stopgrad: true
+#    is_ema: false
+#  model:
+#    pred_dim: 128
+#    projection_hid_width: 8192
+#    projection_hid_depth: 1
+#    architecture_exact: resnet50w4
+#    architecture: resnet50w4
+#    family: resnet
+#    patch_size: null
+#    projection_arch: mlp
+#    n_parameters: 375378176
+#    projection_nparameters: 68e6
+#  representation:
+#    z_dim: 8192
+#    z_layer: avgpool
+#  optimization:
+#    epochs: 400
+#    batch_size: 2560
+#    optimizer: lars # larc
+#    learning_rate: 0.48
+#    weight_decay: 1e-6
+#    scheduler: cosine
+#  data:
+#    pretraining_data: ImageNet-1K
+#    finetuning_data: null
+#    img_size: 224
+#    views: 2x224+6x96
+#    is_aug_invariant: true
+#    augmentations:
+#      - crop
+#      - color
+#      - blur
+#      - gray
+#      - flip
+#      - normalize
+#  metrics:
+#    top1acc_in1k_official: 77.3
+#  meta:
+#    where: https://github.com/facebookresearch/swav
+#    notes: null
+#    month: 2
+#    year: 2020
+#    license: CC BY-NC 4.0
+#    is_official: true
+#  compute:
+#    n_pus: 64
+#    pu_type: V100
+#    time_hours: ???
 
 swav_rn50w2:
   ssl:

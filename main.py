@@ -139,6 +139,12 @@ def instantiate_datamodule_(cfg: Container, representor : Callable, preprocess: 
     data_kwargs.dataset_kwargs.transform = preprocess
     Datamodule = get_Datamodule(cfg.data.name)
     datamodule = Datamodule(representor=representor, representor_name=cfg.representor, **data_kwargs, **kwargs)
+
+    if cfg.data.check_length is not None:
+        actual_length = len(datamodule.get_train_dataset())
+        check_length = cfg.data.check_length
+        assert actual_length > check_length, f"Training set supposed to be at least {check_length} long but it is {actual_length} long."
+
     return datamodule
 
 def run_component_(component : str, datamodule : pl.LightningDataModule, cfg : Container, results : dict,

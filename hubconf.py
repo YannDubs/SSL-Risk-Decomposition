@@ -33,8 +33,15 @@ def metadata_df(is_multiindex=False, is_lower=True):
 
     if is_lower:
         df.applymap(lambda s: s.lower() if isinstance(s,str) else s)
-        df.columns = [c.lower() for c in df.columns if isinstance(c, str)]
-        df.index = [i.lower() for i in df.index if isinstance(i, str)]
+        if df.index.nlevels > 1:
+            df.columns = [tuple(c.lower() if isinstance(c, str) else c
+                                for c in t)
+                          for t in df.columns ]
+        else:
+            df.columns = [c.lower() if isinstance(c, str) else c
+                          for c in df.columns ]
+        df.index = [i.lower() if isinstance(i, str) else i
+                    for i in df.index if isinstance(i, str)]
 
     return df
 
