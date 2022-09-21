@@ -667,6 +667,9 @@ try:
     def sup_vitH14():
         return _get_timm_models('vit_huge_patch14_224')
 
+    def sup_vitL14():
+        return _get_timm_models('vit_large_patch14_224')
+
     def sup_vitL16():
         return _get_timm_models('vit_large_patch16_224')
 

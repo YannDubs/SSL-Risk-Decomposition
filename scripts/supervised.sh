@@ -20,6 +20,13 @@ predictor=torch_linear
 is_supervised=True
 "
 
+kwargs_multi="
+representor=sup_vitL14
+seed=123
+predictor=torch_linear
+is_supervised=True
+"
+
 #predictor=torch_bnlinear
 #seed=123,124,125
 #"predictor=torch_linear,torch_momlinear" #"predictor.opt_kwargs.lr=3e-3,3e-2" "predictor.opt_kwargs.weight_decay=0,1e-4" "trainer.max_epochs=33,300" "data.kwargs.batch_size=64,1024"

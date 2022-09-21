@@ -8111,11 +8111,30 @@ sup_vitL16:
     license: Apache 2.0
     is_official: false
 
+sup_vitL14:
+  ssl:
+    ssl_mode: supervised
+  model:
+    architecture_exact: vitl14 cls
+    architecture: vitl
+    patch_size: 14
+  representation:
+    z_dim: 1024
+    z_layer: cls
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+  meta:
+    where: https://github.com/rwightman/pytorch-image-models
+    license: Apache 2.0
+    is_official: false
+
 sup_vitH14:
   ssl:
     ssl_mode: supervised
   model:
-    architecture_exact: vitlh4 cls
+    architecture_exact: vith14 cls
     architecture: vith
     patch_size: 14
   representation:
