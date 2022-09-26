@@ -49,13 +49,13 @@ done
 
 experiment="${prfx}""$experiment"
 results="results/exp_$experiment"
+tuning="tuning/exp_$experiment"
 pretrained="pretrained/exp_$experiment"
 checkpoints="checkpoints/exp_$experiment"
-optuna="$results/optuna.db"
 logs="logs/exp_$experiment"
 
 if [[ "$is_plot_only" = false && "$mode" != "continue" ]] ; then
-  if [[ -d "$checkpoints" || -d "$logs" || -d "$optuna" || -d "$pretrained" ]]; then
+  if [[ -d "$checkpoints" || -d "$logs" || -d "$tuning" || -d "$pretrained" ]]; then
 
     echo -n "$checkpoints and/or pretrained/... exist and/or logs/... exist. Should I delete them (y/n) ? "
     read answer
@@ -67,8 +67,8 @@ if [[ "$is_plot_only" = false && "$mode" != "continue" ]] ; then
         rm -rf $checkpoints
         echo "Deleted $logs"
         rm -rf $logs
-        echo "Deleted $optuna"
-        rm -rf $optuna
+        echo "Deleted $tuning"
+        rm -rf $tuning
     fi
   fi
 fi

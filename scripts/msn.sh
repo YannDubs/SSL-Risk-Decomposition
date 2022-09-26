@@ -16,14 +16,9 @@ timeout=$time
 kwargs_multi="
 representor=msn_vits16_ep800,msn_vitb16_ep600,msn_vitl16_ep600,msn_vitl7_ep200,msn_vitb4_ep300
 seed=123
-predictor=torch_linear
+predictor=torch_linear_hypopt
 "
 
-kwargs_multi="
-representor=msn_vitl16_ep600
-seed=123
-predictor=torch_linear
-"
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

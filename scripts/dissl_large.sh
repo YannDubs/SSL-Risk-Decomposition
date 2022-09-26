@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-experiment="dino"
-notes="**Goal**: evaluate all the dino models."
+experiment="dissl"
+notes="**Goal**: evaluate all the models we pretrained."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -13,12 +13,24 @@ experiment=$experiment
 timeout=$time
 "
 
+#dissl_resnet50_dNone_e400_m6,dissl_resnet50_dNone_e100_m2,dissl_resnet50_dNone_e400_m2
+
+
+
+
 kwargs_multi="
-representor=dino_rn50,dino_vitS16_last,dino_vitS8_last,dino_vitB16_last,dino_vitB8_last,dino_vitS16,dino_vitB16,dino_vitB8,dino_vitS16_extractB,dino_vitB16_extractS
+representor=dissl_resnet50_dNone_e100_m2,dissl_resnet50_dNone_e400_m2,dissl_resnet50_dNone_e400_m6
 seed=123
 predictor=torch_linear_hypopt
 "
 
+kwargs_multi="
+representor=dissl_resnet50_d8192_e100_m2,dissl_resnet50_d8192_e400_m6,dissl_resnet50_d8192_e800_m8
+seed=123
+predictor=torch_linear_hypopt
+"
+# need to run seed=124,125
+# torch_linear_erm
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

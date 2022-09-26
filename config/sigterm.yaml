@@ -1,0 +1,12 @@
+defaults:
+  - override /hydra/launcher: submitit_slurm
+
+hydra:
+  launcher:
+    timeout_min: 10
+    nodes: 1
+    name: sigterm
+    gres: gpu:1
+
+    # cluster specific
+    partition: jag-standard # jag-hi, jag-important, jag-standard, john (CPU)

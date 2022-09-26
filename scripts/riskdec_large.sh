@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
-
-experiment="algorithm"
-notes="**Goal**: comparing different SSL algorithms."
-
+experiment="riskdec"
+notes="**Goal**: evaluate all the models we pretrained."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
+
 
 # define all the arguments modified or added to `conf`. If they are added use `+`
 kwargs="
@@ -14,16 +13,14 @@ experiment=$experiment
 timeout=$time
 "
 
-kwargs_multi="
-representor=simclr_rn50,swav_rn50,clip_rn50,dino_rn50,barlow_rn50,mocov3_rn50_ep1000
-predictor=torch_momlinear
-seed=123
-" # RUNNING
 
 kwargs_multi="
-representor=simclr_rn50,swav_rn50,clip_rn50,dino_rn50,barlow_rn50,mocov3_rn50_ep1000
-seed=123,124,125
+representor=simclr_resnet50_d8192_e100_m2,dissl_resnet50_d4096_e100_m2
+seed=123
+predictor=torch_linear_hypopt
 "
+# torch_linear_erm
+# need to run seed=124,125
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
@@ -36,6 +33,3 @@ if [ "$is_plot_only" = false ] ; then
   done
 fi
 
-wait
-
-# ADD plotting behavior

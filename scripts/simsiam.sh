@@ -16,7 +16,7 @@ timeout=$time
 kwargs_multi="
 representor=simsiam_rn50_bs512_ep100,simsiam_rn50_bs256_ep100
 seed=123
-predictor=torch_linear
+predictor=torch_linear_hypopt
 "
 
 

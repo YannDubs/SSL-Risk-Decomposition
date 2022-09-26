@@ -16,7 +16,7 @@ timeout=$time
 kwargs_multi="
 representor=infomin_rn50_200ep,infomin_rn50_800ep
 seed=123
-predictor=torch_linear
+predictor=torch_linear_hypopt
 "
 
 if [ "$is_plot_only" = false ] ; then

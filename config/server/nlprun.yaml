@@ -15,4 +15,4 @@ hydra:
     array_parallelism: 30 # max number of parallel tasks
 
     max_num_timeout: 30 # allow resume from checkpointing
-    gres: gpu:${trainer.gpus}
+    gres: gpu:${trainer.devices}

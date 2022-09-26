@@ -261,7 +261,7 @@ beit_vitL16_pt22k:
     augmentations:
       - crop
       - masking
-      - flipping
+      - flip
       - color
       - normalize
   metrics:
@@ -317,7 +317,7 @@ beit_vitB16_pt22k:
     augmentations:
       - crop
       - masking
-      - flipping
+      - flip
       - color
       - normalize
   metrics:
@@ -914,7 +914,7 @@ mocov1_rn50_ep200:
   ssl:
     objective: moco
     ssl_mode: contrastive
-    version: 3
+    version: 1
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -1299,7 +1299,7 @@ msn_vitl7_ep200:
       - gray
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/facebookresearch/msn
     notes: null
@@ -1415,7 +1415,7 @@ msn_vitb4_ep300:
       - gray
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/facebookresearch/msn
     notes: null
@@ -1474,7 +1474,7 @@ msn_vitb16_ep600:
       - gray
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/facebookresearch/msn
     notes: null
@@ -1753,7 +1753,7 @@ mugs_vitb16_ep400_extractB:
       - gray
       - blur
       - masking
-      - solarization
+      - solarize
       - autoaugment # for student
       - erasing
       - flip
@@ -1814,7 +1814,7 @@ mugs_vits16_ep800_extractS:
       - gray
       - blur
       - masking
-      - solarization
+      - solarize
       - autoaugment # for student
       - erasing
       - flip
@@ -1875,13 +1875,13 @@ mugs_vitl16_ep250:
       - gray
       - blur
       - masking
-      - solarization
+      - solarize
       - autoaugment # for student
       - erasing
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/sail-sg/mugs
     notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
@@ -1936,13 +1936,13 @@ mugs_vitb16_ep400:
       - gray
       - blur
       - masking
-      - solarization
+      - solarize
       - autoaugment # for student
       - erasing
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/sail-sg/mugs
     notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
@@ -1997,13 +1997,13 @@ mugs_vits16_ep800:
       - gray
       - blur
       - masking
-      - solarization
+      - solarize
       - autoaugment # for student
       - erasing
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/sail-sg/mugs
     notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
@@ -2058,13 +2058,13 @@ mugs_vits16_ep300:
       - gray
       - blur
       - masking
-      - solarization
+      - solarize
       - autoaugment # for student
       - erasing
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/sail-sg/mugs
     notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
@@ -2119,13 +2119,13 @@ mugs_vits16_ep100:
       - gray
       - blur
       - masking
-      - solarization
+      - solarize
       - autoaugment # for student
       - erasing
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/sail-sg/mugs
     notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
@@ -2181,7 +2181,7 @@ ibot_vitS16_extractS:
       - gray
       - blur
       - masking
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
@@ -2240,7 +2240,7 @@ ibot_vitB16_extractB:
       - gray
       - blur
       - masking
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
@@ -2299,11 +2299,11 @@ ibot_vitL16:
       - gray
       - blur
       - masking
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/bytedance/ibot
     notes: prediction shape is block
@@ -2358,11 +2358,11 @@ ibot_vitS16:
       - gray
       - blur
       - masking
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/bytedance/ibot
     notes: prediction shape is block
@@ -2417,11 +2417,11 @@ ibot_vitB16:
       - gray
       - blur
       - masking
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/bytedance/ibot
     notes: null
@@ -2476,7 +2476,7 @@ dino_vitB16_extractS:
       - color
       - gray
       - blur
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
@@ -2534,11 +2534,11 @@ dino_vitS16_extractB:
       - color
       - gray
       - blur
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -2592,7 +2592,7 @@ dino_vitB8:
       - color
       - gray
       - blur
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
@@ -2650,7 +2650,7 @@ dino_vitB16:
       - color
       - gray
       - blur
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
@@ -2708,7 +2708,7 @@ dino_vitS16:
       - color
       - gray
       - blur
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
@@ -2766,11 +2766,11 @@ dino_vitB8_last:
       - color
       - gray
       - blur
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -2824,11 +2824,11 @@ dino_vitB16_last:
       - color
       - gray
       - blur
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -2882,11 +2882,11 @@ dino_vitS8_last:
       - color
       - gray
       - blur
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -2940,11 +2940,11 @@ dino_vitS16_last:
       - color
       - gray
       - blur
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -2998,7 +2998,7 @@ dino_rn50:
       - color
       - gray
       - blur
-      - solarization
+      - solarize
       - flip
       - normalize
   metrics:
@@ -3242,7 +3242,7 @@ clip_rn101:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
-    architecture_exact: resnet101
+    architecture_exact:  clipresnet101
     architecture: resnet101
     family: resnet
     patch_size: null
@@ -3295,7 +3295,7 @@ clip_rn50x64:
     pred_dim: 1024
     projection_hid_width: null
     projection_hid_depth: null
-    architecture_exact: resnet50w64
+    architecture_exact:  clipresnet50w64
     architecture: resnet50w64
     family: resnet
     patch_size: null
@@ -3348,7 +3348,7 @@ clip_rn50x16:
     pred_dim: 768
     projection_hid_width: null
     projection_hid_depth: null
-    architecture_exact: resnet50w16
+    architecture_exact:  clipresnet50w16
     architecture: resnet50w16
     family: resnet
     patch_size: null
@@ -3401,7 +3401,7 @@ clip_rn50x4:
     pred_dim: 1024
     projection_hid_width: null
     projection_hid_depth: null
-    architecture_exact: resnet50w4
+    architecture_exact:  clipresnet50w4
     architecture: resnet50w4
     family: resnet
     patch_size: null
@@ -3454,7 +3454,7 @@ clip_rn50:
     pred_dim: 1024
     projection_hid_width: null
     projection_hid_depth: null
-    architecture_exact: resnet50
+    architecture_exact: clipresnet50
     architecture: resnet50
     family: resnet
     patch_size: null
@@ -3535,7 +3535,7 @@ lossyless_b01:
       - crop
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/lossyless
     notes: the only difference compared to clip is an invertible linear layer one top of representations that was trained on mscoco to compress the representations. b denotes `beta`, larger means more compression.
@@ -3588,7 +3588,7 @@ lossyless_b005:
       - crop
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/lossyless
     notes: the only difference compared to clip is an invertible linear layer one top of representations that was trained on mscoco to compress the representations. b denotes `beta`, larger means more compression.
@@ -3641,7 +3641,7 @@ lossyless_b001:
       - crop
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/lossyless
     notes: the only difference compared to clip is an invertible linear layer one top of representations that was trained on mscoco to compress the representations. b denotes `beta`, larger means more compression.
@@ -3756,7 +3756,7 @@ simclr_resnet50_d8192_e100_m2:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: null
@@ -3813,7 +3813,7 @@ simclr_resnet50_dNone_e100_m2_headTNoneSNone:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: no projection head
@@ -3870,7 +3870,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSMlp:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: both teacher and student have same mlp projection heads but weights are not shared
@@ -3927,7 +3927,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSLin:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: student has linear head
@@ -3984,7 +3984,7 @@ simclr_resnet50_dNone_e100_m2_headTLinSLin:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: both teacher and student have linear projection heads
@@ -4041,7 +4041,7 @@ simclr_resnet50_dNone_e100_m2_data030:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes:  trains on 30% of imagenet but multiplies by 3 number of epochs to keep same steps.
@@ -4098,7 +4098,7 @@ simclr_resnet50_dNone_e100_m2_data010:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes:  trains on 10% of imagenet but multiplies by 10 number of epochs to keep same steps.
@@ -4155,7 +4155,7 @@ simclr_resnet50_dNone_e100_m2:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes:  null
@@ -4212,7 +4212,7 @@ dissl_resnet50_d4096_e100_m2:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes:  null
@@ -4269,7 +4269,7 @@ dissl_resnet50_dNone_e100_m2_headTMlpSMlp:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes:  uses mlp projection head for teacher and student
@@ -4326,7 +4326,7 @@ dissl_resnet50_dNone_e100_m2_headTLinSLin:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes:  uses linear projection head for teacher and student
@@ -4383,7 +4383,7 @@ dissl_resnet50_dNone_e100_m2_augSmall:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: decreases strength of crop and color distortion
@@ -4440,7 +4440,7 @@ dissl_resnet50_dNone_e100_m2_augLarge:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: increases strength of crop and color distortion
@@ -5199,62 +5199,62 @@ dc2_rn50_ep400_2x224:
     pu_type: V100
     time_hours: ???
 
-#swav_rn50w4:
-#  ssl:
-#    objective: swav
-#    ssl_mode: clustering
-#    version: 1
-#    n_negatives: 7680
-#    n_classes: 3000
-#    is_stopgrad: true
-#    is_ema: false
-#  model:
-#    pred_dim: 128
-#    projection_hid_width: 8192
-#    projection_hid_depth: 1
-#    architecture_exact: resnet50w4
-#    architecture: resnet50w4
-#    family: resnet
-#    patch_size: null
-#    projection_arch: mlp
-#    n_parameters: 375378176
-#    projection_nparameters: 68e6
-#  representation:
-#    z_dim: 8192
-#    z_layer: avgpool
-#  optimization:
-#    epochs: 400
-#    batch_size: 2560
-#    optimizer: lars # larc
-#    learning_rate: 0.48
-#    weight_decay: 1e-6
-#    scheduler: cosine
-#  data:
-#    pretraining_data: ImageNet-1K
-#    finetuning_data: null
-#    img_size: 224
-#    views: 2x224+6x96
-#    is_aug_invariant: true
-#    augmentations:
-#      - crop
-#      - color
-#      - blur
-#      - gray
-#      - flip
-#      - normalize
-#  metrics:
-#    top1acc_in1k_official: 77.3
-#  meta:
-#    where: https://github.com/facebookresearch/swav
-#    notes: null
-#    month: 2
-#    year: 2020
-#    license: CC BY-NC 4.0
-#    is_official: true
-#  compute:
-#    n_pus: 64
-#    pu_type: V100
-#    time_hours: ???
+swav_rn50w4:
+  ssl:
+    objective: swav
+    ssl_mode: clustering
+    version: 1
+    n_negatives: 7680
+    n_classes: 3000
+    is_stopgrad: true
+    is_ema: false
+  model:
+    pred_dim: 128
+    projection_hid_width: 8192
+    projection_hid_depth: 1
+    architecture_exact: resnet50w4
+    architecture: resnet50w4
+    family: resnet
+    patch_size: null
+    projection_arch: mlp
+    n_parameters: 375378176
+    projection_nparameters: 68e6
+  representation:
+    z_dim: 8192
+    z_layer: avgpool
+  optimization:
+    epochs: 400
+    batch_size: 2560
+    optimizer: lars # larc
+    learning_rate: 0.48
+    weight_decay: 1e-6
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+6x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - color
+      - blur
+      - gray
+      - flip
+      - normalize
+  metrics:
+    top1acc_in1k_official: 77.3
+  meta:
+    where: https://github.com/facebookresearch/swav
+    notes: null
+    month: 2
+    year: 2020
+    license: CC BY-NC 4.0
+    is_official: true
+  compute:
+    n_pus: 64
+    pu_type: V100
+    time_hours: ???
 
 swav_rn50w2:
   ssl:
@@ -6180,60 +6180,60 @@ pirl_rn50:
     pu_type: ???
     time_hours: ???
 
-npidpp_rn50w2:
-  ssl:
-    objective: npid
-    ssl_mode: contrastive
-    version: 2 #  npid++ is an improvement of npid
-    n_negatives: 32000
-    n_classes: null
-    is_stopgrad: false
-    is_ema: false
-  model:
-    pred_dim: 128
-    projection_hid_width: null
-    projection_hid_depth: null
-    architecture_exact: resnet50w2
-    architecture: resnet50w2
-    family: resnet
-    patch_size: null
-    projection_arch: linear
-    n_parameters: 93907072
-    projection_nparameters: 0.5e6
-  representation:
-    z_dim: 4096
-    z_layer: avgpool
-  optimization:
-    epochs: 800
-    batch_size: 1024
-    optimizer: sgd
-    learning_rate: 0.03
-    weight_decay: 0.0001
-    scheduler: cosine
-  data:
-    pretraining_data: ImageNet-1K
-    finetuning_data: null
-    img_size: 224
-    views: 2x224
-    is_aug_invariant: true
-    augmentations:
-      - crop
-      - color
-      - flip
-      - normalize
-  metrics:
-    top1acc_in1k_official: 62.73
-  meta:
-    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
-    notes: null
-    month: 12
-    year: 2019
-    license: MIT
-    is_official: false
-  compute:
-    n_pus: 32
-    pu_type: ???
-    time_hours: ???
+#npidpp_rn50w2:
+#  ssl:
+#    objective: npid
+#    ssl_mode: contrastive
+#    version: 2 #  npid++ is an improvement of npid
+#    n_negatives: 32000
+#    n_classes: null
+#    is_stopgrad: false
+#    is_ema: false
+#  model:
+#    pred_dim: 128
+#    projection_hid_width: null
+#    projection_hid_depth: null
+#    architecture_exact: resnet50w2
+#    architecture: resnet50w2
+#    family: resnet
+#    patch_size: null
+#    projection_arch: linear
+#    n_parameters: 93907072
+#    projection_nparameters: 0.5e6
+#  representation:
+#    z_dim: 4096
+#    z_layer: avgpool
+#  optimization:
+#    epochs: 800
+#    batch_size: 1024
+#    optimizer: sgd
+#    learning_rate: 0.03
+#    weight_decay: 0.0001
+#    scheduler: cosine
+#  data:
+#    pretraining_data: ImageNet-1K
+#    finetuning_data: null
+#    img_size: 224
+#    views: 2x224
+#    is_aug_invariant: true
+#    augmentations:
+#      - crop
+#      - color
+#      - flip
+#      - normalize
+#  metrics:
+#    top1acc_in1k_official: 62.73
+#  meta:
+#    where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
+#    notes: null
+#    month: 12
+#    year: 2019
+#    license: MIT
+#    is_official: false
+#  compute:
+#    n_pus: 32
+#    pu_type: ???
+#    time_hours: ???
 
 npidpp_rn50:
   ssl:
@@ -7218,7 +7218,7 @@ mocov2_rn50_vissl:
       - crop
       - flip
       - color
-      - grayscale
+      - gray
       - blur
       - normalize
   metrics:
@@ -7275,7 +7275,7 @@ barlow_rn50_ep300:
       - crop
       - flip
       - color
-      - grayscale
+      - gray
       - blur
       - solarize
       - normalize
@@ -7301,7 +7301,7 @@ barlow_rn50:
     n_negatives: 4095
     n_classes: null
     is_stopgrad: false
-    is_ema: flase
+    is_ema: False
   model:
     pred_dim: 8192
     projection_hid_width: 8192
@@ -7333,7 +7333,7 @@ barlow_rn50:
       - crop
       - flip
       - color
-      - grayscale
+      - gray
       - blur
       - solarize
       - normalize
@@ -7392,7 +7392,7 @@ byol_rn50_bs4096:
       - crop
       - flip
       - color
-      - grayscale
+      - gray
       - blur
       - solarize
       - normalize
@@ -7450,7 +7450,7 @@ byol_rn50_bs2048:
       - crop
       - flip
       - color
-      - grayscale
+      - gray
       - blur
       - solarize
       - normalize
@@ -7508,7 +7508,7 @@ byol_rn50_bs1024:
       - crop
       - flip
       - color
-      - grayscale
+      - gray
       - blur
       - solarize
       - normalize
@@ -7566,7 +7566,7 @@ byol_rn50_bs512:
       - crop
       - flip
       - color
-      - grayscale
+      - gray
       - blur
       - solarize
       - normalize
@@ -7624,7 +7624,7 @@ byol_rn50_bs256:
       - crop
       - flip
       - color
-      - grayscale
+      - gray
       - blur
       - solarize
       - normalize
@@ -7682,7 +7682,7 @@ byol_rn50_bs128:
       - crop
       - flip
       - color
-      - grayscale
+      - gray
       - blur
       - solarize
       - normalize
@@ -7740,7 +7740,7 @@ byol_rn50_bs64:
       - crop
       - flip
       - color
-      - grayscale
+      - gray
       - blur
       - solarize
       - normalize
@@ -7959,7 +7959,7 @@ byol_rn50_augNocolor:
     augmentations:
       - crop
       - flip
-      - grayscale
+      - gray
       - blur
       - normalize
   metrics:
@@ -8048,7 +8048,7 @@ sup_vitS16_dino_extractB:
   data:
     img_size: 224
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/rwightman/pytorch-image-models
     license: Apache 2.0
@@ -8067,7 +8067,7 @@ sup_vitS16_dino:
   data:
     img_size: 224
   metrics:
-    top1acc_in1k_official: ???
+    top1acc_in1k_official: null
   meta:
     where: https://github.com/rwightman/pytorch-image-models
     license: Apache 2.0
@@ -8106,44 +8106,6 @@ sup_vitL16:
     img_size: 224
   metrics:
     top1acc_in1k_official: 85.844
-  meta:
-    where: https://github.com/rwightman/pytorch-image-models
-    license: Apache 2.0
-    is_official: false
-
-sup_vitL14:
-  ssl:
-    ssl_mode: supervised
-  model:
-    architecture_exact: vitl14 cls
-    architecture: vitl
-    patch_size: 14
-  representation:
-    z_dim: 1024
-    z_layer: cls
-  data:
-    img_size: 224
-  metrics:
-    top1acc_in1k_official: null
-  meta:
-    where: https://github.com/rwightman/pytorch-image-models
-    license: Apache 2.0
-    is_official: false
-
-sup_vitH14:
-  ssl:
-    ssl_mode: supervised
-  model:
-    architecture_exact: vith14 cls
-    architecture: vith
-    patch_size: 14
-  representation:
-    z_dim: 1280
-    z_layer: cls
-  data:
-    img_size: 224
-  metrics:
-    top1acc_in1k_official: null
   meta:
     where: https://github.com/rwightman/pytorch-image-models
     license: Apache 2.0

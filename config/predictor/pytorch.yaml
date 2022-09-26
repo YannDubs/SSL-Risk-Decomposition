@@ -9,16 +9,44 @@ predictor:
   opt_kwargs:
     lr: 0.3
     weight_decay: 1e-6
-    momentum: 0 # should really be usign 0.9 historical reasons 0.0
+    optim: sgd
+    scheduler: cosine
+
+  hypopt:
+    n_hyper: 50
+    sampler: TPESampler
+    metric: err
+    is_tune_on_train: False
+    to_eval_first: {}
+    kwargs_sampler:
+      seed: ${seed}
+      n_startup_trials: 20 # first trials are with random search => ensure that covers the space
+      multivariate: True # better captures dependencies
+      group: True # partitions search space and looks through all of them
+      consider_endpoints: True
+    search_space:
+      to_tune: [lr, weight_decay, batch_size, is_batchnorm, optim, scheduler]
+      lr: # loguniform. Note: for adam we divide lr by 100. Note that multiplied by batch_size/256.
+        min: 1e-3
+        max: 1
+      weight_decay: # loguniform
+        min: 1e-8
+        max: 2e-4
+      batch_size: # randint in power of 2
+        min: 9 # 512
+        max: 12 # 4096
+      is_batchnorm: [ true, false ]
+      optim: [ adam, sgd, lars ]
+      scheduler: [ multistep, cosine, warmcosine ]
 
 trainer:
   max_epochs:  100
   log_every_n_steps: 200
-  flush_logs_every_n_steps: 200
   enable_checkpointing: True
 
   # ENGINEERING / SPEED #
-  gpus: 1
+  accelerator: 'gpu'
+  devices: 1
   num_nodes: 1  # number gpu nodes
   precision: 16 # use 16 bit for speed # TODO use "b16" once it is not experiemntal (maybe lightning 1.6)
 
@@ -32,3 +60,5 @@ checkpoint:
     save_last: True
     save_top_k: 1
     save_weights_only: false
+
+

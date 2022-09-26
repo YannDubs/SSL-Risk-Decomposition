@@ -17,14 +17,9 @@ timeout=$time
 kwargs_multi="
 representor=clip_rn50,clip_rn50x4,clip_rn50x16,clip_rn50x64,clip_rn101,clip_vitB16,clip_vitB32,clip_vitL14,clip_vitL14_px336
 seed=123
-predictor=torch_linear
+predictor=torch_linear_hypopt
 "
 
-kwargs_multi="
-representor=clip_vitL14_px336
-seed=123
-predictor=torch_linear
-"
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

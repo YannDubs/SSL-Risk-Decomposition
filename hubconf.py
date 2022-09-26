@@ -6,18 +6,33 @@ import pathlib as _pathlib
 
 BASE_DIR = _pathlib.Path(__file__).absolute().parents[0]
 
-def metadata_dict():
+def metadata_dict(drop_missing=True):
+    """Returns the metadata as a dictionary of dictionaries. If `drop_missing`,
+    removes both missing ??? and not applicable `None` values.
+    """
     try:
         import yaml
     except ImportError:
         raise ImportError("Please install `pyaml` to use metadata_dict")
 
     with open(BASE_DIR/'metadata.yaml') as f:
-        return yaml.safe_load(f)
+        metadata = yaml.safe_load(f)
 
-def metadata_df(is_multiindex=False, is_lower=True):
+    if drop_missing:
+        metadata = {k1: {k2: {k3:v for k3, v in d2.items()
+                              if v is not None and v != "???"}
+                         for k2, d2 in d.items()}
+                    for k1, d in metadata.items()}
+    return metadata
+
+def metadata_df(is_multiindex=False, is_lower=True, **kwargs):
+    """Returns the metadata as a pandas dataframe. If `is_multiindex` then returns then keeps
+    the first level of keys as a multi index of columns. If `is_lower` then lower cases all the
+    strings in the dataframe.
+    """
     try:
         import pandas as pd
+        import numpy as np
     except ImportError:
         raise ImportError("Please install `pandas` to use metadata_df")
 
@@ -25,7 +40,7 @@ def metadata_df(is_multiindex=False, is_lower=True):
                              for k2, d2 in d.items()
                              for k3, v in d2.items()
                              }
-                        for k1, d in metadata_dict().items()}
+                        for k1, d in metadata_dict(**kwargs).items()}
     df = pd.DataFrame.from_dict(metadata_flatten, orient="index")
 
     if not is_multiindex:
@@ -33,7 +48,7 @@ def metadata_df(is_multiindex=False, is_lower=True):
 
     if is_lower:
         df.applymap(lambda s: s.lower() if isinstance(s,str) else s)
-        if df.index.nlevels > 1:
+        if df.columns.nlevels > 1:
             df.columns = pd.MultiIndex.from_tuples(tuple(c.lower() if isinstance(c, str) else c
                                                          for c in t)
                                                    for t in df.columns )
@@ -42,6 +57,16 @@ def metadata_df(is_multiindex=False, is_lower=True):
                           for c in df.columns ]
         df.index = [i.lower() if isinstance(i, str) else i
                     for i in df.index if isinstance(i, str)]
+
+    cols_to_types = _metadata_cols_to_types()
+    assert set(cols_to_types.keys()) == set(df.columns.get_level_values(-1))
+    for c,dtype in cols_to_types.items():
+        i_col = df.columns.get_level_values(-1) == c
+        if dtype == pd.Int64Dtype():
+            # for int needs to first convert to float if nan
+            df.iloc[:, i_col] = pd.to_numeric(df.iloc[:, i_col].squeeze(), errors='coerce').astype('Int64')
+        else:
+            df.iloc[:, i_col] = df.iloc[:, i_col].astype(dtype)
 
     return df
 
@@ -599,7 +624,7 @@ except ImportError as e:
 
 
 ### MMSelfSup ###
-
+# pretrained models are from https://github.com/open-mmlab/mmselfsup/blob/master/docs/en/model_zoo.md
 try:
     from hub.mmselfsup import get_mmselfsup_models as get_mmselfsup_models
 
@@ -671,11 +696,12 @@ try:
     def sup_vitB32():
         return _get_timm_models('vit_base_patch32_224')
 
-    def sup_vitH14():
-        return _get_timm_models('vit_huge_patch14_224')
-
-    def sup_vitL14():
-        return _get_timm_models('vit_large_patch14_224')
+    # no pretrained weights for those
+    # def sup_vitH14():
+    #     return _get_timm_models('vit_huge_patch14_224')
+    #
+    # def sup_vitL14():
+    #     return _get_timm_models('vit_large_patch14_224')
 
     def sup_vitL16():
         return _get_timm_models('vit_large_patch16_224')
@@ -708,3 +734,48 @@ try:
 
 except ImportError as e:
     _logging.warning(f"Torchvision models not available because of the following import error: \n {e}")
+
+
+def _metadata_cols_to_types():
+    import pandas as pd
+    return {'objective': pd.StringDtype(),  # ssl objective
+            'ssl_mode': pd.StringDtype(),  # coarse type of ssl, eg generative vs contrastive
+            'version': pd.Int64Dtype(),  # version of ssl objective
+            'is_stopgrad': "boolean",  # are you stopping gradients
+            'is_ema': "boolean",  # are you using some exponential moving average
+            'architecture_exact': pd.StringDtype(),  # exact architercture (flags minor diff)
+            'architecture': pd.StringDtype(),  # typical architecture: eg resnet50
+            'family': pd.StringDtype(),  # coarse type of arch (eg cnn/vit)
+            'patch_size': pd.Int64Dtype(),  # patch size if applicable
+            'n_parameters': pd.Int64Dtype(),  # number of param
+            'z_dim': pd.Int64Dtype(),  # dim of rep
+            'z_layer': pd.StringDtype(),  # which representation uses for extraction
+            'epochs': pd.Int64Dtype(),  # n train epochs
+            'batch_size': pd.Int64Dtype(),
+            'optimizer': pd.StringDtype(),
+            'learning_rate': "float64",
+            'weight_decay': "float64",
+            'scheduler': pd.StringDtype(),  # learning rate scheduler
+            'pretraining_data': pd.StringDtype(),
+            'img_size': pd.Int64Dtype(),  # smallest size of image side to input
+            'views': pd.StringDtype(),  # input crop during training
+            'is_aug_invariant': "boolean",  # whether the method tries to be augmentation invariant (somewhat subjective_
+            'augmentations': "object",  # list of augmentations
+            'where': pd.StringDtype(),  # where pretraining model can be found
+            'notes': pd.StringDtype(),  # additional notes
+            'month': pd.Int64Dtype(),  # publication month
+            'year': pd.Int64Dtype(),  # publication year
+            'license': pd.StringDtype(),  # license of pretraining weights / code
+            'is_official': "boolean",  # whether official pretraining weights
+            'n_pus': pd.Int64Dtype(),  # number of processors used for training
+            'pu_type': pd.StringDtype(),  # type of processors used for training
+            'time_hours': "float64",  # total training time
+            'n_classes': pd.Int64Dtype(),  # number of classes trying to predict if applicable
+            'pred_dim': pd.Int64Dtype(),  # output of projection head if applicable
+            'projection_hid_width': pd.Int64Dtype(),  # width of projection head
+            'projection_hid_depth': pd.Int64Dtype(),  # depth of projection head
+            'projection_arch': pd.StringDtype(),  # projection architecture
+            'projection_nparameters': pd.Int64Dtype(),  # number of parameters of projection head
+            'top1acc_in1k_official': "float64",  # accuracy that authors said they would achieve
+            'n_negatives': pd.Int64Dtype(),  # number of negatives if applicable
+            'finetuning_data': pd.StringDtype()}  # what data it was finetuned on

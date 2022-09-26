@@ -29,9 +29,10 @@ from utils.cluster import nlp_cluster
 from utils.data import get_Datamodule
 from utils.helpers import (LightningWrapper, SklearnTrainer, check_import, get_torch_trainer, log_dict, namespace2dict,
                            omegaconf2namespace,
-                           NamespaceMap, remove_rf)
+                           NamespaceMap)
 import hubconf
 from utils.predictor import Predictor
+from utils.tune_hyperparam import tune_hyperparam_
 
 try:
     import wandb
@@ -45,6 +46,12 @@ FILE_END = "end.txt"
 
 @hydra.main(config_name="main", config_path="config")
 def main_except(cfg):
+    # TMP avoid SIGTERM
+    # import os
+    # del os.environ["SLURM_NTASKS"]
+    # del os.environ["SLURM_JOB_NAME"]
+    ######
+
     if cfg.is_nlp_cluster:
         with nlp_cluster(cfg):
             main(cfg)
@@ -71,6 +78,9 @@ def main(cfg):
     components_same_train = {"train_train": ["train_test"],
                              "train-cmplmnt-ntest_train-sbst-ntest": ["train-cmplmnt-ntest_test"],
                              }
+
+    if cfg.predictor.is_tune_hyperparam:
+        tune_hyperparam_(datamodule, cfg)
 
     if cfg.is_run_in_dist:
 
@@ -113,6 +123,7 @@ def begin(cfg: Container) -> None:
     cfg.paths.work = str(Path.cwd())
 
     if cfg.is_log_wandb:
+        cfg.wandb_kwargs.id = "" + cfg.wandb_kwargs.id
         try:
             init_wandb(**cfg.wandb_kwargs)
         except Exception:
@@ -244,11 +255,11 @@ def fit_(
 
 def evaluate(
     trainer: pl.Trainer,
-    datamodule : pl.LightningDataModule,
+    datamodule: pl.LightningDataModule,
     cfg: NamespaceMap,
     component: str,
-    model : torch.nn.Module,
-    is_per_task_results = False
+    model: torch.nn.Module,
+    is_per_task_results=False
 ) -> pd.Series:
     """Evaluate the trainer by logging all the metrics from the test set from the best model."""
     cfg = copy.deepcopy(cfg)
@@ -319,6 +330,7 @@ if __name__ == "__main__":
     try:
         main_except()
     except:
+        logger.exception("Failed this error:")
         # exit gracefully, so wandb logs the problem
         print(traceback.print_exc(), file=sys.stderr)
         exit(1)

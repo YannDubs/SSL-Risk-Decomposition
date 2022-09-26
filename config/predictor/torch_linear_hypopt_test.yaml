@@ -1,0 +1,57 @@
+defaults:
+  - pytorch
+
+name: torch_linear_hypopt
+is_tune_hyperparam: True
+arch_kwargs:
+  architecture: linear
+  is_normalize: False
+
+hypopt:
+  search_space:
+    to_tune: [lr, weight_decay, batch_size, is_batchnorm, optim, scheduler]
+    is_batchnorm: [ true, false ]
+  to_eval_first:
+    # those are standard linear eval hparam => tuning should consider those
+    basic_sgd:
+      lr: 0.3
+      optim: sgd
+      scheduler: warmcosine
+      weight_decay: 1e-6
+      batch_size: 11
+      is_batchnorm: false
+    basic_adam:
+      lr: 0.1 # 1e-3 adam
+      optim: adam
+      scheduler: multistep
+      weight_decay: 1e-6
+      batch_size: 9
+      is_batchnorm: false
+#    vissl:
+#      lr: 0.01
+#      optim: sgd
+#      scheduler: multistep # multi step is a little different because they use only 28 epochs (but same decrease)
+#      weight_decay: 1e-4 # actually 5e-4 but use 1e-4 to make smaller search space
+#      batch_size: 9 # it's actually 8 (256) but I want quicker
+#      is_batchnorm: true
+#    simsiam:
+#      lr: 0.02
+#      optim: lars
+#      scheduler: cosine
+#      weight_decay: 2e-8 # usually it's 0 but can't because not in loguniform space => uses 2e-8
+#      batch_size: 12
+#      is_batchnorm: false
+#    moco:
+#      lr: 0.1
+#      optim: sgd
+#      scheduler: cosine
+#      weight_decay: 2e-8 # usually it's 0 but can't because not in loguniform space => uses 2e-8
+#      batch_size: 10
+#      is_batchnorm: false
+#    dino:
+#      lr: 0.001
+#      optim: sgd
+#      scheduler: cosine
+#      weight_decay: 2.1e-8 # usually it's 0 but can't because not in loguniform space => uses 2e-8
+#      batch_size: 10
+#      is_batchnorm: false

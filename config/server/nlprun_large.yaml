@@ -17,4 +17,4 @@ hydra:
 
     max_num_timeout: 30 # allow resume from checkpointing
     additional_parameters:
-      gres: gpu:${trainer.gpus}
+      gres: gpu:${trainer.devices}

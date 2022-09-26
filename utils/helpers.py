@@ -1,15 +1,18 @@
 from __future__ import annotations
 
-
+import contextlib
 import json
 import logging
 import numbers
+import os
+import random
 import shutil
 from copy import deepcopy
 from functools import  wraps
 import pytorch_lightning as pl
 import math
 import torch
+from pytorch_lightning.plugins.environments import SLURMEnvironment
 from torch import nn
 from pathlib import Path
 from typing import Optional, Union
@@ -17,7 +20,7 @@ import sys
 from joblib import dump, load
 from sklearn.metrics import log_loss, accuracy_score
 from pytorch_lightning.loggers import WandbLogger
-from pytorch_lightning.callbacks import LearningRateMonitor
+from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 import numpy as np
 from torchvision.transforms import functional as F_trnsf
 from torchvision.transforms import InterpolationMode
@@ -216,13 +219,9 @@ def get_torch_trainer(cfg: NamespaceMap) -> pl.Trainer:
     trainer = pl.Trainer(
         logger=pl_logger,
         callbacks=callbacks,
+        plugins=[SLURMEnvironment(auto_requeue=False)],  # see lightning #6389. very annoying but it already tries to requeue
         **cfg.trainer,
     )
-
-    # lightning automatically detects slurm and tries to handle checkpointing but we want outside
-    # so simply remove hpc save until  #6204 #5225 #6389
-    # TODO change when #6389
-    trainer.checkpoint_connector.hpc_save = lambda *args, **kwargs: None
 
     return trainer
 
@@ -237,6 +236,11 @@ def log_dict(trainer: pl.Trainer, to_log: dict, is_param: bool) -> None:
     except:
         pass
 
+def int_or_ratio(alpha, n):
+    """Return an integer for alpha. If float, it's seen as ratio of `n`."""
+    if isinstance(alpha, int):
+        return alpha
+    return int(alpha * n)
 
 # taken from https://github.com/rwightman/pytorch-image-models/blob/d5ed58d623be27aada78035d2a19e2854f8b6437/timm/models/layers/weight_init.py
 def variance_scaling_(tensor, scale=1.0, mode='fan_in', distribution='truncated_normal'):
@@ -325,16 +329,6 @@ def weights_init(module: nn.Module, nonlinearity: str = "relu") -> None:
         else:
             weights_init(m, nonlinearity=nonlinearity)  # go to grand children
 
-class ModelCheckpoint(pl.callbacks.ModelCheckpoint):
-    def on_load_checkpoint(self, *args, **kwargs):
-        super().on_load_checkpoint(*args, **kwargs)
-
-        # trick to keep only one model because pytorch lightning by default doesn't save
-        # best k_models, so when preempting they stack up. Open issue. This is only correct for k=1
-        self.best_k_models = {}
-        self.best_k_models[self.best_model_path] = self.best_model_score
-        self.kth_best_model_path = self.best_model_path
-
 # modified from https://github.com/skorch-dev/skorch/blob/92ae54b/skorch/utils.py#L106
 def to_numpy(X) -> np.array:
     """Convert tensors,list,tuples,dataframes to numpy arrays."""
@@ -371,3 +365,42 @@ class LightningWrapper(pl.LightningModule):
     def predict_step(self, batch, batch_idx):
         x, y = batch
         return self(x).cpu(), y.cpu()
+
+
+def set_seed(seed: Optional[int]) -> None:
+    """Set the random seed."""
+    if seed is not None:
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed(seed)
+        random.seed(seed)
+        np.random.seed(seed)
+
+
+@contextlib.contextmanager
+def tmp_seed(seed: Optional[int], is_cuda: bool = torch.cuda.is_available()):
+    """Context manager to use a temporary random seed with `with` statement."""
+    np_state = np.random.get_state()
+    torch_state = torch.get_rng_state()
+    random_state = random.getstate()
+    if is_cuda:
+        torch_cuda_state = torch.cuda.get_rng_state()
+
+    set_seed(seed)
+    try:
+        yield
+    finally:
+        if seed is not None:
+            # if seed is None do as if no tmp_seed
+            np.random.set_state(np_state)
+            torch.set_rng_state(torch_state)
+            random.setstate(random_state)
+            if is_cuda:
+                torch.cuda.set_rng_state(torch_cuda_state)
+
+def max_num_workers():
+    """Return the maximum number of workers on a machine."""
+    try:
+        max_num_workers = len(os.sched_getaffinity(0))
+    except:
+        max_num_workers = os.cpu_count()
+    return max_num_workers

@@ -16,7 +16,7 @@ timeout=$time
 kwargs_multi="
 representor=relativeloc_rn50_70ep_mmselfsup,odc_rn50_440ep_mmselfsup,densecl_rn50_200ep_mmselfsup,simsiam_rn50_bs256_ep200_mmselfsup,simclr_rn50_bs256_ep200_mmselfsup,deepcluster_rn50_bs512_ep200_mmselfsup
 seed=123
-predictor=torch_linear
+predictor=torch_linear_hypopt
 "
 
 if [ "$is_plot_only" = false ] ; then

@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import ast
 import os
+import time
 from os import path
 import math
 import abc
@@ -14,6 +15,8 @@ import torch
 from pathlib import Path
 from typing import Any, Optional, Union
 from collections.abc import Callable
+
+from pytorch_lightning.plugins.environments import SLURMEnvironment
 from torch.utils.data import Dataset, Subset, DataLoader, ConcatDataset
 from sklearn.model_selection import train_test_split
 import numpy as np
@@ -26,7 +29,7 @@ from PIL import Image
 
 from torchvision.datasets import ImageNet, ImageFolder
 
-from utils.helpers import check_import, file_cache, npimg_resize, remove_rf
+from utils.helpers import check_import, file_cache, int_or_ratio, max_num_workers, npimg_resize, remove_rf, tmp_seed
 
 try:
     # useful to avoid "too many open files" error. See : https://github.com/tensorflow/datasets/issues/1441
@@ -217,7 +220,7 @@ class ImgDataModule(LightningDataModule):
         Directory for saving/loading the dataset.
 
     num_workers : int, optional
-        How many workers to use for loading data
+        How many workers to use for loading data. If -1 uses all but one.
 
     batch_size : int, optional
         Number of example per batch for training.
@@ -244,7 +247,7 @@ class ImgDataModule(LightningDataModule):
         representor_name : str,
         data_dir: Union[Path, str] = DIR,
         features_basedir: Union[Path, str] = DIR,
-        num_workers: int = 6,
+        num_workers: int = -1,
         batch_size: int = 128,
         is_save_features: bool = True,
         seed: int = 123,
@@ -258,7 +261,8 @@ class ImgDataModule(LightningDataModule):
 
         self.data_dir = data_dir
         self.features_basedir = features_basedir
-        self.num_workers = num_workers
+        self.num_workers = (max_num_workers()-2) if num_workers == -1 else num_workers
+        logger.info(f"Using num_workers={self.num_workers}")
         self.batch_size = batch_size
         self.is_save_features = is_save_features
         self.seed = seed
@@ -270,7 +274,12 @@ class ImgDataModule(LightningDataModule):
         self.is_add_idx = is_add_idx
         self.is_predict_on_test = is_predict_on_test
         logger.info(f"Representing data with {representor_name}")
-        self.reset()
+
+        # see #9943 pytorch lightning now calls setup each time
+        self._already_setup = {}
+        for stage in ("fit", "validate", "test", "predict"):
+            self._already_setup[stage] = False
+
         self.setup()
 
         self.z_dim = self.train_dataset.X.shape[1]
@@ -279,23 +288,40 @@ class ImgDataModule(LightningDataModule):
         if self.is_add_idx:
             Y_train = Y_train[:, 0]
 
-        self.n_labels = len(np.unique(Y_train))
+        self.label_set = np.unique(Y_train)
+        self.n_labels = len(self.label_set)
 
         logger.info(f"z_dim={self.z_dim}")
+        self.reset()
 
-    def reset(self, is_train_on = "train", is_test_on= "test"):
+    def reset(self, is_train_on="train", is_test_on="test", label_size=None):
         self.is_train_on = is_train_on
         self.is_test_on = is_test_on
-        logger.info(f"Set model to use is_train_on={self.is_train_on} and is_test_on={self.is_test_on}.")
+
+        if label_size is not None:
+            n_selected_labels = int_or_ratio(label_size, len(self.label_set))
+            with tmp_seed(self.seed):
+                self.labels_to_keep = np.random.permutation(self.label_set)[:n_selected_labels]
+        else:
+            n_selected_labels = len(self.label_set)
+            self.labels_to_keep = None
+
+        logger.info(f"Set data to use is_train_on={self.is_train_on} and is_test_on={self.is_test_on} and label_size={n_selected_labels}.")
 
     def setup(self, stage: Optional[str] = None) -> None:
+
+
+
+        if stage and self._already_setup[stage]:
+            return
 
         if stage == "test" or stage is None:
             logger.info("Representing the test set.")
             test_dataset = self.Dataset(
                 self.data_dir, curr_split="test", download=True, **self.dataset_kwargs
             )
-            self.test_dataset = SklearnDataset(*self.represent(test_dataset, "test"), is_add_idx=self.is_add_idx)
+            self.test_dataset = SklearnDataset(*self.represent(test_dataset, "test"),
+                                               is_add_idx=self.is_add_idx)
 
         if stage == "fit" or stage is None:
             if self.train_dataset is None:
@@ -304,8 +330,13 @@ class ImgDataModule(LightningDataModule):
                     self.train_dataset = self.test_dataset
                 else:
                     logger.info("Representing the train set.")
-                    train_dataset = self.Dataset( self.data_dir, curr_split="train", download=True, **self.dataset_kwargs )
-                    self.train_dataset = SklearnDataset(*self.represent(train_dataset, "train"), is_add_idx=self.is_add_idx)
+                    train_dataset = self.Dataset(
+                        self.data_dir, curr_split="train", download=True, **self.dataset_kwargs
+                    )
+                    self.train_dataset = SklearnDataset(*self.represent(train_dataset, "train"),
+                                                        is_add_idx=self.is_add_idx)
+
+        self._already_setup[stage] = True
 
     def get_dataset(self, name):
         """Given a string of the form 'data-split-size' or 'data' return the correct dataset."""
@@ -313,14 +344,6 @@ class ImgDataModule(LightningDataModule):
         separator_data_split = "-"
         if separator_data_split in name:
             data, split, sizestr = name.split(separator_data_split)
-
-            if split == "sbst":
-                is_complement = False
-            elif split == "cmplmnt":
-                is_complement = True
-            else:
-                raise ValueError(f"Unknown split={split}.")
-
         else:
             data = name
             split = "all"
@@ -333,6 +356,10 @@ class ImgDataModule(LightningDataModule):
             dataset = SklearnConcatDataset([self.train_dataset, self.test_dataset])
         else:
             raise ValueError(f"Unknown data={data}")
+
+        if self.labels_to_keep is not None:
+            # subset labels if necessary
+            dataset = LabelSubset(dataset, labels_to_keep=self.labels_to_keep)
 
         if split == "all":
             pass
@@ -347,7 +374,7 @@ class ImgDataModule(LightningDataModule):
             else:
                 size = ast.literal_eval(sizestr)
 
-            dataset = BalancedSubset(dataset, stratify=Y, size=size, seed=self.seed, is_complement=is_complement)
+            dataset = BalancedSubset(dataset, stratify=Y, size=size, seed=self.seed, split=split)
 
         return dataset
 
@@ -395,7 +422,7 @@ class ImgDataModule(LightningDataModule):
     def features_path(self):
         return Path(self.features_basedir) / f"{self.Dataset.__name__}_{self.representor_name}"
 
-    def represent(self, dataset, split, max_chunk_size = 20000):
+    def represent(self, dataset, split, max_chunk_size=20000):
         batch_size = get_max_batchsize(dataset, self.representor)
         torch.cuda.empty_cache()
         logger.info(f"Selected max batch size for inference: {batch_size}")
@@ -432,12 +459,16 @@ class ImgDataModule(LightningDataModule):
     def represent_chunk(self, dataset, batch_size):
 
         if torch.cuda.is_available():
-            gpus, precision = 1, 16
+            accelerator, precision = "gpu", 16
         else:
-            gpus, precision = 0, 32
+            accelerator, precision = "cpu", 32
 
-        trainer = pl.Trainer(gpus=gpus, precision=precision,
-                             logger=False, callbacks=TQDMProgressBar(refresh_rate=20))
+        trainer = pl.Trainer(accelerator=accelerator,
+                            devices=1,
+                             precision=precision,
+                             logger=False,
+                             plugins=[SLURMEnvironment(auto_requeue=False)],   # see lightning #6389. very annoying but it already tries to requeue
+                            callbacks=TQDMProgressBar(refresh_rate=20))
         dataloader = DataLoader(
             dataset,
             batch_size=batch_size,
@@ -465,11 +496,16 @@ def get_max_batchsize(batchsize, dataset, representor):
     # cannot use multiple workers with toma batch size
     dataloader = DataLoader(dataset, batch_size=batchsize, pin_memory=True)
     if torch.cuda.is_available():
-        gpus, precision = 1, 16
+        accelerator, precision = "gpu", 16
     else:
-        gpus, precision = 0, 32
-    trainer = pl.Trainer(gpus=gpus, precision=precision,
-                         logger=False, limit_predict_batches=2)
+        accelerator, precision = "cpu", 32
+
+    trainer = pl.Trainer(accelerator=accelerator,
+                         devices=1,
+                         precision=precision,
+                         logger=False,
+                         plugins=[SLURMEnvironment(auto_requeue=False)],   # see lightning #6389. very annoying but it already tries to requeue
+                         limit_predict_batches=2)
     _ = trainer.predict(model=representor, ckpt_path=None,  dataloaders=[dataloader])
     return batchsize
 
@@ -525,8 +561,11 @@ class BalancedSubset(Subset):
     seed : int, optional
         Random seed.
 
-    is_complement : bool, optional
-        Whether to use the complement of the data rather than the selected data.
+    split : {"sbst","cmplmnt","sbstcmplmnt", "sbstY"}, optional
+        Which split of the subsetted data to use. If "sbst" sues the subset, if "cmplment"
+        uses the complement of the subset, if "sbstcmplmnt" uses a subset of the complement of size
+        `size`.
+
     """
 
     def __init__(
@@ -535,13 +574,29 @@ class BalancedSubset(Subset):
         size: float = 0.1,
         stratify: Any = None,
         seed: Optional[int] = 123,
-        is_complement: bool=False
+        split: str="sbst",
     ):
+
+        # subset by indices
         complement_idcs, subset_idcs = train_test_split(
             range(len(dataset)), stratify=stratify, test_size=size, random_state=seed
         )
-        idcs = complement_idcs if is_complement else subset_idcs
+
+        if split == "sbst":
+            idcs = subset_idcs
+        elif split == "cmplmnt":
+            idcs = complement_idcs
+        elif split == "sbstcmplmnt":
+            # further splits the complement
+            _, idcs = train_test_split(complement_idcs, stratify=stratify, test_size=size, random_state=seed)
+        else:
+            raise ValueError(f"Unknown split={split}.")
+
         super().__init__(dataset, idcs)
+
+    @property
+    def is_add_idx(self):
+        return self.dataset.is_add_idx
 
     @property
     def X(self):
@@ -552,13 +607,59 @@ class BalancedSubset(Subset):
         return self.dataset.Y[self.indices]
 
     def __getitem__(self, idx):
-        if self.dataset.is_add_idx:
+        if self.is_add_idx:
             X, Y = self.dataset[self.indices[idx]]
             Y[1] = idx
             return X, Y
         else:
             return self.dataset[self.indices[idx]]
 
+
+class LabelSubset(Subset):
+    """Split the dataset based on label set. Currently assumes not multilabel.
+
+    Parameters
+    ----------
+    dataset : Dataset
+        Dataset to subset.
+
+    labels_to_keep : array like
+        Which labels to keep
+    """
+
+    def __init__(
+            self,
+            dataset: Dataset,
+            labels_to_keep
+    ):
+
+        Y = dataset.Y
+        if dataset.is_add_idx:
+            Y = dataset.Y[:, 0]  # for subseting use real label
+
+        idcs = np.isin(Y, labels_to_keep).nonzero()[0]
+
+        super().__init__(dataset, idcs)
+
+    @property
+    def is_add_idx(self):
+        return self.dataset.is_add_idx
+
+    @property
+    def X(self):
+        return self.dataset.X[self.indices]
+
+    @property
+    def Y(self):
+        return self.dataset.Y[self.indices]
+
+    def __getitem__(self, idx):
+        if self.is_add_idx:
+            X, Y = self.dataset[self.indices[idx]]
+            Y[1] = idx
+            return X, Y
+        else:
+            return self.dataset[self.indices[idx]]
 
 ### DATA ###
 

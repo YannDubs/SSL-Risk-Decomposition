@@ -9,7 +9,6 @@ defaults:
   - predictor: torch_linear
 
 ########## GENERAL ##########
-n_runs: 1
 is_debug: False
 is_log_wandb: True
 experiment: ???
@@ -38,6 +37,7 @@ paths: #! the best practice is not to modify those paths but to symlink them to 
   logs: ${paths.tmp_dir}/logs/${long_name_component}/jid_${job_id}
   checkpoint: ${paths.tmp_dir}/checkpoints/${long_name_component}/jid_${job_id} # checkpoint to use during training
   results: ${paths.base_dir}/results/${long_name}/
+  tuning: ${paths.base_dir}/tuning/${long_name}/
 
 data:
   name: ???
@@ -48,8 +48,8 @@ data:
     seed: ${seed}
     data_dir: ${paths.data}
     features_basedir: ${paths.features}
-    batch_size: 256
-    num_workers: 6
+    batch_size: 2048
+    num_workers: -1
     is_add_idx: False
     is_debug: ${is_debug}
     dataset_kwargs:
@@ -58,19 +58,24 @@ data:
 
 representor: ???
 
-
 wandb_kwargs:
   project: risk_dec
   entity: ${wandb_entity}
-  group: ${experiment}
-  id: ${job_id}
+  group: ${representor}
+  id: ${representor}_${predictor.name}_seed${seed}_${job_id}
   reinit: True # ensure that same wandb after preemption
+
+predictor:
+  is_tune_hyperparam: False
+  name: ???
+  hypopt: {}
 
 ########## HYDRA ##########
 hydra:
   job:
     env_set:
       NCCL_DEBUG: INFO
+      CUDA_LAUNCH_BLOCKING: "1"
 
   run:
     dir: ${paths.work}

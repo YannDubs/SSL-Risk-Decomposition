@@ -1,3 +1,4 @@
+
 import torch
 from torch.nn import functional as F
 import pytorch_lightning as pl
@@ -6,6 +7,7 @@ from torchmetrics.functional import accuracy
 
 
 from utils.architectures import get_Architecture
+from utils.optim import LARS, LinearWarmupCosineAnnealingLR
 
 
 class Predictor(pl.LightningModule):
@@ -77,14 +79,63 @@ class Predictor(pl.LightningModule):
         return self.shared_step(batch, "train", *args, **kwargs)
 
     def configure_optimizers(self):
+
         cfgo = self.hparams.predictor.opt_kwargs
+        # linear warmup depending on batch size
+        linear_lr = cfgo.lr * self.hparams.data.kwargs.batch_size / 256
 
-        optimizer = torch.optim.SGD(self.predictor.parameters(), cfgo.lr,
-                                momentum=cfgo.momentum,
-                                weight_decay=cfgo.weight_decay)
+        if cfgo.optim == "sgd":
+            optimizer = torch.optim.SGD(
+                self.predictor.parameters(),
+                linear_lr,
+                momentum=0.9,
+                weight_decay=cfgo.weight_decay
+            )
 
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-            optimizer, self.hparams.trainer.max_epochs, eta_min=0
-        )
+        elif cfgo.optim == "adam":
+            # makes adam and sgd lr more similar: SGD(0.1) ~ Adam(1e-3).
+            # less dependence between params simplifies hyperparameter tuning
+            linear_lr = linear_lr / 100
+            optimizer = torch.optim.Adam(
+                self.predictor.parameters(),
+                lr=linear_lr,
+                weight_decay=cfgo.weight_decay,
+                eps=1e-4,  # can give issues due to fp16
+            )
 
-        return {"optimizer": optimizer, "lr_scheduler":scheduler}
+        elif cfgo.optim == "lars":
+            optimizer = LARS(
+                self.predictor.parameters(),
+                linear_lr,
+                momentum=0.9,
+                weight_decay=cfgo.weight_decay
+            )
+        else:
+            raise ValueError(f"Unknown optimizer={cfgo.optim}.")
+
+
+        if cfgo.scheduler == "warmcosine":
+            scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+                optimizer,
+                self.hparams.trainer.max_epochs,
+                eta_min=0
+            )
+
+        elif cfgo.scheduler == "cosine":
+            scheduler = LinearWarmupCosineAnnealingLR(
+                optimizer,
+                warmup_epochs=round(self.hparams.trainer.max_epochs / 10),  # 10%
+                max_epochs=self.hparams.trainer.max_epochs,
+                eta_min=0
+            )
+        elif cfgo.scheduler == "multistep":
+            scheduler = torch.optim.lr_scheduler.MultiStepLR(
+                optimizer,
+                milestones=[60, 80, 95],
+                gamma=0.1,
+            )
+        else:
+            raise ValueError(f"Unknown scheduler={cfgo.optim}.")
+
+        return {"optimizer": optimizer, "lr_scheduler": scheduler}
+

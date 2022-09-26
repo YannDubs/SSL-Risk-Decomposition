@@ -16,15 +16,9 @@ timeout=$time
 kwargs_multi="
 representor=swav_rn50,swav_rn50_ep100,swav_rn50_ep200,swav_rn50_ep200_bs256,swav_rn50_ep400,swav_rn50_ep400_2x224,swav_rn50_ep400_bs256,dc2_rn50_ep400_2x224,dc2_rn50_ep400_2x160_4x96,dc2_rn50_ep800_2x224_6x96,selav2_rn50_ep400_2x224,selav2_rn50_ep400_2x160_4x96,swav_rn50w2,swav_rn50w4,swav_rn50w5
 seed=123
-predictor=torch_linear
+predictor=torch_linear_hypopt
 "
 
-# to run
-kwargs_multi="
-representor=swav_rn50w4
-seed=123
-predictor=torch_linear
-"
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

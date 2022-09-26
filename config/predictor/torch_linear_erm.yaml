@@ -1,0 +1,61 @@
+defaults:
+  - pytorch
+
+name: torch_linear_erm
+is_tune_hyperparam: True
+arch_kwargs:
+  architecture: linear
+  is_normalize: False
+opt_kwargs:
+  weight_decay: 0 # no weight decay for ERM
+hypopt:
+  is_tune_on_train: True # you want ERM => tune on train
+  search_space:
+    to_tune: [lr, batch_size, is_batchnorm, optim, scheduler]
+    lr: # loguniform. Note: for adam we divide lr by 100. Note that multiplied by batch_size/256.
+      min: 1e-3
+      max: 1
+    batch_size: # randint in power of 2
+      min: 9 # 512
+      max: 12 # 4096
+    is_batchnorm: [ true, false ]
+    optim: [ adam, sgd, lars ]
+    scheduler: [ multistep, cosine, warmcosine ]
+  to_eval_first:
+    # those are standard linear eval hparam => tuning should consider those
+    basic_sgd:
+      lr: 0.3
+      optim: sgd
+      scheduler: warmcosine
+      batch_size: 11
+      is_batchnorm: false
+    basic_adam:
+      lr: 0.1 # 1e-3 adam
+      optim: adam
+      scheduler: multistep
+      batch_size: 9
+      is_batchnorm: false
+    vissl:
+      lr: 0.01
+      optim: sgd
+      scheduler: multistep # multi step is a little different because they use only 28 epochs (but same decrease)
+      batch_size: 9 # it's actually 8 (256) but I want quicker
+      is_batchnorm: true
+    simsiam:
+      lr: 0.02
+      optim: lars
+      scheduler: cosine
+      batch_size: 12
+      is_batchnorm: false
+    moco:
+      lr: 0.1
+      optim: sgd
+      scheduler: cosine
+      batch_size: 10
+      is_batchnorm: false
+    dino:
+      lr: 0.001
+      optim: sgd
+      scheduler: cosine
+      batch_size: 10
+      is_batchnorm: false
