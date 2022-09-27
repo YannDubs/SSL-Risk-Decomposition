@@ -52,7 +52,7 @@ class Predictor(pl.LightningModule):
 
         logs = dict()
         logs["acc"] = accuracy(Y_hat.argmax(dim=-1), y)
-        logs["err"] = 1- logs["acc"]
+        logs["err"] = 1 - logs["acc"]
         logs["loss"] = loss
 
         return loss, logs, dict()
@@ -129,9 +129,10 @@ class Predictor(pl.LightningModule):
                 eta_min=0
             )
         elif cfgo.scheduler == "multistep":
+            e = self.hparams.trainer.max_epochs
             scheduler = torch.optim.lr_scheduler.MultiStepLR(
                 optimizer,
-                milestones=[60, 80, 95],
+                milestones=[int(0.6*e), int(0.8*e), int(0.95*e)],
                 gamma=0.1,
             )
         else:

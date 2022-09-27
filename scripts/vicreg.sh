@@ -16,7 +16,7 @@ timeout=$time
 kwargs_multi="
 representor=vicreg_rn50,vicreg_rn50w2
 seed=123
-predictor=torch_linear_hypopt
+predictor=torch_linear_hypopt,torch_linear_erm
 "
 
 if [ "$is_plot_only" = false ] ; then

@@ -17,7 +17,7 @@ timeout=$time
 kwargs_multi="
 representor=simclr_resnet50_d8192_e100_m2,dissl_resnet50_d4096_e100_m2
 seed=123
-predictor=torch_linear_hypopt
+predictor=torch_linear_hypopt,torch_linear_erm
 "
 # torch_linear_erm
 # need to run seed=124,125

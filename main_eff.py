@@ -46,12 +46,6 @@ FILE_END = "end.txt"
 
 @hydra.main(config_name="main", config_path="config")
 def main_except(cfg):
-    # TMP avoid SIGTERM
-    # import os
-    # del os.environ["SLURM_NTASKS"]
-    # del os.environ["SLURM_JOB_NAME"]
-    ######
-
     if cfg.is_nlp_cluster:
         with nlp_cluster(cfg):
             main(cfg)
@@ -71,48 +65,32 @@ def main(cfg):
     representor = LightningWrapper(representor)
     datamodule = instantiate_datamodule_(cfg, representor, preprocess)
 
+    N = 3
+    cfg.data.name = f"{cfg.data.name}-N{N}"  # for saving you want to know how many samples you were using
+
     ############## DOWNSTREAM PREDICTOR ##############
     results = dict()
 
     # those components have the same training setup so don't retrain
-    components_same_train = {"train_train": ["train_test"],
-                             "train-cmplmnt-ntest_train-sbst-ntest": ["train-cmplmnt-ntest_test"],
-                             "train-sbst-ntest-1_train-sbst-ntest-1": ["train-sbst-ntest-1_test",
-                                                                        "train-sbst-ntest-1_train-sbst-ntest-11"],
-                             "train-sbst-ntest-2_train-sbst-ntest-2": ["train-sbst-ntest-2_test",
-                                                                       "train-sbst-ntest-2_train-sbst-ntest-12"],
-                             "train-sbst-ntest-3_train-sbst-ntest-3": ["train-sbst-ntest_3_test",
-                                                                       "train-sbst-ntest-3_train-sbst-ntest-13"]
+    components_same_train = {f"train-nperclass-{N}_train-nperclass-{N}": [f"train-nperclass-{N}_test",
+                                                                         f"train-nperclass-{N}_train-sbst-ntest"],
                              }
 
     if cfg.predictor.is_tune_hyperparam:
-        # train on half of the data per class. Uses 20% of classes for hyperparameter tuning
-        # => in total compute is divided by 10. For linear probing fewer classes should not change anything as
-        # each class has its own weight matrix (no parameter sharing). + ImageNet has a lot of classes
-        train = "train-sbst-0.5"
-        # validate on complement besides if asked to do train (ERM)
-        valid = train if cfg.predictor.hypopt.is_tune_on_train else "train-cmplmnt-0.5"
-        tune_hyperparam_(datamodule, cfg, train_on=train, validate_on=valid, label_size=0.2)
+        # should be sklearn
+        #TODO data nperclass
+        train = f"train-nperclass-{N}_train-nperclass-{N}"
+        valid = f"train-nperclass-{N}_train-sbst-ntest-11"
+        tune_hyperparam_(datamodule, cfg, train_on=train, validate_on=valid)
 
     if cfg.is_run_in_dist:
 
         if cfg.is_supervised:
             # only need train on train for supervised baselines (i.e. approx error) and train on test (agg risk)
-            components = ["train_train",
-                          "train-cmplmnt-ntest_train-sbst-ntest",
-                          "train-sbst-ntest-1_train-sbst-ntest-1",
-                          "train-sbst-ntest-2_train-sbst-ntest-2",
-                          "train-sbst-ntest-3_train-sbst-ntest-3",
-                          ]
+            components = [f"train-nperclass-{N}_train-nperclass-{N}"]
         else:
-            components = ["train_train",
-                          "train-cmplmnt-ntest_train-sbst-ntest",
-                          "union_test",
-                          "train-sbst-ntest-1_train-sbst-ntest-1",
-                          "test_test",
-                          "train-sbst-ntest-2_train-sbst-ntest-2",
-                          "train-sbst-ntest-3_train-sbst-ntest-3",
-                        ]
+            components = [f"train-nperclass-{N}_train-nperclass-{N}",
+                          f"test-nperclass-{N}_test-nperclass-{N}"]
 
         for component in components:
             results = run_component_(component, datamodule, cfg, results, components_same_train)
@@ -121,13 +99,10 @@ def main(cfg):
         results = pd.DataFrame.from_dict(results)
 
         if not cfg.is_supervised:
-            # cannot compute decodability at theis point because need to estimate approximation error
-            # which is easier by checking simply online train supervised performance
-            results["pred_gen"] = results["train-cmplmnt-ntest_train-sbst-ntest"] - results["train_train"]
-            results["enc_gen"] = results["train-cmplmnt-ntest_test"] - results["train-cmplmnt-ntest_train-sbst-ntest"]
-            # this is for the other decomposition that nearly equivalent to the above. Choice is ~arbitrary.
-            results["pred_gen_switched"] = results["union_test"] - results["train_train"]
-            results["enc_gen_switched"] = results["train-cmplmnt-ntest_test"] - results["union_test"]
+            results[f"pred_gen_{N}"] = results[f"train-nperclass-{N}_train-nperclass-{N}-11"] - results[f"train-nperclass-{N}_train-nperclass-{N}"]
+            results[f"enc_gen_{N}"] = results[f"train-nperclass-{N}_test-nperclass-{N}"] - results[f"train-nperclass-{N}_train-nperclass-{N}-11"]
+            results[f"pred_gen_{N}_switched"] = results[f"test-nperclass-{N}_test-nperclass-{N}"] - results[f"train-nperclass-{N}_train-nperclass-{N}"]
+            results[f"enc_gen_{N}_switched"] = results[f"train-nperclass-{N}_test-nperclass-{N}"] - results[f"test-nperclass-{N}_test-nperclass-{N}"]
 
         save_results(cfg, results, "all")
 

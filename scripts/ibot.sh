@@ -16,7 +16,7 @@ timeout=$time
 kwargs_multi="
 representor=ibot_vitB16,ibot_vitS16,ibot_vitL16,ibot_vitB16_extractB,ibot_vitS16_extractS
 seed=123
-predictor=torch_linear_hypopt
+predictor=torch_linear_hypopt,torch_linear_erm
 "
 
 if [ "$is_plot_only" = false ] ; then

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-experiment="sigterm"
-notes="**Goal**: debug script."
+experiment="dissl"
+notes="**Goal**: evaluate all the models we pretrained."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -16,18 +16,17 @@ timeout=$time
 kwargs_multi="
 representor=dissl_resnet50_dNone_e100_m2
 seed=123
-predictor=torch_linear_hypopt_test
-predictor.hypopt.n_hyper=3
-predictor.hypopt.kwargs_sampler.n_startup_trials=2
-trainer.max_epochs=3
+predictor=torch_linear_erm
 "
-#torch_linear_hypopt
+
+# need to run seed=124,125
+# torch_linear_erm
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
   do
 
-    python sigterm.py +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m
+    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs
 
   done
 fi

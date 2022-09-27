@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import ast
 import os
+import random
 import time
 from os import path
 import math
@@ -310,8 +311,6 @@ class ImgDataModule(LightningDataModule):
 
     def setup(self, stage: Optional[str] = None) -> None:
 
-
-
         if stage and self._already_setup[stage]:
             return
 
@@ -343,7 +342,14 @@ class ImgDataModule(LightningDataModule):
 
         separator_data_split = "-"
         if separator_data_split in name:
-            data, split, sizestr = name.split(separator_data_split)
+            if name.count("-") == 3:
+                data, split, sizestr, seed = name.split(separator_data_split)
+                with tmp_seed(int(seed)):
+                    # sample some seed increment to be able to change subsets in a reproducible way
+                    seed_add = random.randint(10, int(1e4))
+            else:
+                seed_add = 0
+                data, split, sizestr = name.split(separator_data_split)
         else:
             data = name
             split = "all"
@@ -367,14 +373,15 @@ class ImgDataModule(LightningDataModule):
             Y = dataset.Y
 
             if self.is_add_idx:
-                Y = Y[:,0]  # for subseting use real label
+                Y = Y[:, 0]  # for subseting use real label
 
             if sizestr == "ntest":
                 size = len(self.test_dataset)  # use exactly same number as test
             else:
                 size = ast.literal_eval(sizestr)
 
-            dataset = BalancedSubset(dataset, stratify=Y, size=size, seed=self.seed, split=split)
+            dataset = BalancedSubset(dataset, stratify=Y, size=size,
+                                     seed=self.seed+seed_add, split=split)
 
         return dataset
 

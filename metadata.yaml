@@ -3786,7 +3786,7 @@ simclr_resnet50_dNone_e100_m2_headTNoneSNone:
     architecture: resnet50
     family: resnet
     patch_size: null
-    projection_arch: null
+    projection_arch: identity
     n_parameters: 23508032
     projection_nparameters: 0
   representation:
@@ -3843,7 +3843,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSMlp:
     architecture: resnet50
     family: resnet
     patch_size: null
-    projection_arch: linear
+    projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 9e6
   representation:
@@ -3900,7 +3900,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSLin:
     architecture: resnet50
     family: resnet
     patch_size: null
-    projection_arch: linear
+    projection_arch: mlp
     n_parameters: 23508032
     projection_nparameters: 9e6
   representation:

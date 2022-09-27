@@ -16,7 +16,7 @@ timeout=$time
 kwargs_multi="
 representor=byol_rn50_augCrop,byol_rn50_augCropBlur,byol_rn50_augCropColor,byol_rn50_augNocolor,byol_rn50_augNogray,byol_rn50_bs64,byol_rn50_bs128,byol_rn50_bs256,byol_rn50_bs512,byol_rn50_bs1024,byol_rn50_bs2048,byol_rn50_bs4096
 seed=123
-predictor=torch_linear_hypopt
+predictor=torch_linear_hypopt,torch_linear_erm
 "
 
 if [ "$is_plot_only" = false ] ; then

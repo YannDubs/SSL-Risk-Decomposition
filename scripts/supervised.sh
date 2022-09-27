@@ -16,7 +16,7 @@ timeout=$time
 kwargs_multi="
 representor=sup_rn101,sup_rn50w2,sup_rn50,sup_vitS16_dino_extractB,sup_vitS16_dino,sup_vitS16,sup_vitB8,sup_vitB8_dino,sup_vitB16,sup_vitB16_dino,sup_vitB16_dino_extractS,sup_vitB32,sup_vitL16
 seed=123
-predictor=torch_linear_hypopt
+predictor=torch_linear_hypopt,torch_linear_erm
 is_supervised=True
 "
 

@@ -247,13 +247,13 @@ def format_approx_results(results, metadata, f_replace_arch=None):
     results["arch"] = arch
 
     is_supervised = np.array([metadata.loc[i, "ssl_mode"] for i in results.index.get_level_values(0)]) == "supervised"
-    results_sup = results[is_supervised]
-    results_ssl = results[~is_supervised]
+    results_sup = results[is_supervised].copy()
+    results_ssl = results[~is_supervised].copy()
 
     results_sup = results_sup.set_index("arch", append=True)
     if f_replace_arch is not None:
         # replaces architectures if needed for the supervised models (in the case where couldn't find correct one)
-        results_ssl["arch"] = results_ssl["arch"].apply(f_replace_arch)
+        results_ssl.loc[:, "arch"] = results_ssl.loc[:, "arch"].apply(f_replace_arch)
     results_ssl = results_ssl.set_index("arch", append=True)
 
     add_approximation_results_(results_ssl, results_sup)
@@ -455,6 +455,9 @@ def prepare_sklearn(results,
     for c in X.columns:
         if X[c].dtype == "string":
             X[c] = X[c].astype("category")
+
+    date_col = X.select_dtypes(include=['datetime64']).columns
+    X = X.drop(date_col, axis="columns")
 
     return X, y
 

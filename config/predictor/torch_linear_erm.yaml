@@ -8,7 +8,9 @@ arch_kwargs:
   is_normalize: False
 opt_kwargs:
   weight_decay: 0 # no weight decay for ERM
+
 hypopt:
+  metric: loss # uses loss because that gives you max margin classifier => best ERM
   is_tune_on_train: True # you want ERM => tune on train
   search_space:
     to_tune: [lr, batch_size, is_batchnorm, optim, scheduler]

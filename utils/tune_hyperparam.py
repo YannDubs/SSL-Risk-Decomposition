@@ -28,7 +28,7 @@ except ImportError:
 logger = logging.getLogger(__name__)
 BEST_HPARAMS = "best_hparams.json"
 
-def tune_hyperparam_(datamodule, cfg):
+def tune_hyperparam_(datamodule, cfg, train_on="train-sbst-0.5", validate_on="train-cmplmnt-0.5", label_size=None):
     """Tune the hyperparameters for the probe and then loads them."""
 
     logger.info(f"Hyperparameter tuning")
@@ -46,14 +46,7 @@ def tune_hyperparam_(datamodule, cfg):
         logger.info("Finished tuning")
         return
 
-    # train on half of the data per class. Uses 20% of classes for hyperparameter tuning
-    # => in total compute is divided by 10. For linear probing fewer classes should not change anything as
-    # each class has its own weight matrix (no parameter sharing). + ImageNet has a lot of classes
-    is_train_on = "train-sbst-0.5"
-    # validate on complement besides if asked to do train (ERM)
-    is_test_on = is_train_on if cfg.predictor.hypopt.is_tune_on_train else "train-cmplmnt-0.5"
-
-    datamodule.reset(is_train_on=is_train_on, is_test_on=is_test_on, label_size=0.2)
+    datamodule.reset(is_train_on=train_on, is_test_on=validate_on, label_size=label_size)
     cfg.data.n_train = len(datamodule.get_train_dataset())
 
     cfgh = cfg.predictor.hypopt

@@ -16,7 +16,7 @@ timeout=$time
 kwargs_multi="
 representor=mocov3_rn50_ep100,mocov3_rn50_ep300,mocov3_rn50_ep1000,mocov3_vitS_ep300,mocov3_vitB_ep300,mocov1_rn50_ep200,mocov2_rn50_ep200,mocov2_rn50_ep800
 seed=123
-predictor=torch_linear_hypopt
+predictor=torch_linear_hypopt,torch_linear_erm
 "
 
 

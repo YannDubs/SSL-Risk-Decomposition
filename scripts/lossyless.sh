@@ -17,7 +17,7 @@ timeout=$time
 kwargs_multi="
 representor=lossyless_b001,lossyless_b005,lossyless_b01
 seed=123
-predictor=torch_linear_hypopt
+predictor=torch_linear_hypopt,torch_linear_erm
 "
 
 if [ "$is_plot_only" = false ] ; then
