@@ -57,8 +57,14 @@ sleep 5
 scripts/swav.sh -s nlprun
 sleep 5
 
+scripts/swav_large.sh -s nlprun_large
+sleep 5
+
 scripts/vicreg.sh -s nlprun
 sleep 5
 
 scripts/vissl.sh -s nlprun
+sleep 5
+
+scripts/vissl_large.sh -s nlprun_large
 sleep 5

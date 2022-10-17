@@ -14,7 +14,7 @@ predictor:
     scheduler: cosine
 
   hypopt:
-    n_hyper: 50
+    n_hyper: 40
     sampler: TPESampler
     metric: err
     is_tune_on_train: False
@@ -47,7 +47,7 @@ trainer:
 
   # ENGINEERING / SPEED #
   accelerator: 'gpu'
-  devices: 1
+  devices: -1
   num_nodes: 1  # number gpu nodes
   precision: 16 # use 16 bit for speed # TODO use "b16" once it is not experiemntal (maybe lightning 1.6)
 

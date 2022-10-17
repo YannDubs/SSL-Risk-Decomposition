@@ -1,5 +1,8 @@
 
 import torch
+from hydra.utils import instantiate
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
 from torch.nn import functional as F
 import pytorch_lightning as pl
 from typing import Any, Optional
@@ -7,6 +10,7 @@ from torchmetrics.functional import accuracy
 
 
 from utils.architectures import get_Architecture
+from utils.helpers import namespace2dict
 from utils.optim import LARS, LinearWarmupCosineAnnealingLR
 
 
@@ -140,3 +144,10 @@ class Predictor(pl.LightningModule):
 
         return {"optimizer": optimizer, "lr_scheduler": scheduler}
 
+def get_sklearn_predictor(cfg):
+    """Return the desired sklearn predictor."""
+    dict_cfgp = namespace2dict(cfg.predictor)
+    predictor = instantiate(dict_cfgp["model"])
+    if cfg.predictor.is_scale_features:
+        predictor = Pipeline([("scaler", MinMaxScaler()), ("clf", predictor)])
+    return predictor

@@ -1,5 +1,5 @@
 defaults:
-  - pytorch
+  - base_pytorch
 
 name: torch_linear_erm
 is_tune_hyperparam: True

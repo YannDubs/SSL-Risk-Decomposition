@@ -13,6 +13,7 @@ hydra:
     array_parallelism: 30
 
     max_num_timeout: 30 # allow resume from checkpointing
+    gpus_per_node: 1
     additional_parameters:
       qos: normal # normal, high, deadline, nopreemption (this is the stream of execution )
 

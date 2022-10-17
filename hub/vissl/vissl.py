@@ -11,8 +11,10 @@ from .resnext_vissl import ResNeXt
 
 __all__ = ["get_vissl_models"]
 
-VISSL_MODELS = {"barlow_rn50": "https://dl.fbaipublicfiles.com/vissl/model_zoo/barlow_twins/barlow_twins_32gpus_4node_imagenet1k_1000ep_resnet50.torch",
-                "barlow_rn50_ep300": "https://dl.fbaipublicfiles.com/vissl/model_zoo/barlow_twins/barlow_twins_32gpus_4node_imagenet1k_300ep_resnet50.torch",
+# NB: The barlow models are actually from VISSL but because they were saved with pickly they need vissl for loading
+# to aviod dependencies on vissl I simply resaved it properly so that everyone can load without VISSL
+VISSL_MODELS = {"barlow_rn50": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/barlow_rn50.torch",
+                "barlow_rn50_ep300": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/barlow_rn50_ep300.torch",
                 "mocov2_rn50_vissl": "https://dl.fbaipublicfiles.com/vissl/model_zoo/moco_v2_1node_lr.03_step_b32_zero_init/model_final_checkpoint_phase199.torch",
                 "rotnet_rn50_in1k": "https://dl.fbaipublicfiles.com/vissl/model_zoo/rotnet_rn50_in1k_ep105_rotnet_8gpu_resnet_17_07_20.46bada9f/model_final_checkpoint_phase125.torch",
                 "rotnet_rn50_in22k": "https://dl.fbaipublicfiles.com/vissl/model_zoo/converted_vissl_rn50_rotnet_in22k_ep105.torch",
@@ -44,9 +46,11 @@ VISSL_MODELS = {"barlow_rn50": "https://dl.fbaipublicfiles.com/vissl/model_zoo/b
 
 def get_vissl_models(name, architecture= "resnet50", width_multiplier= 1):
 
+
     state_dict = load_state_dict_from_url(url=VISSL_MODELS[name],
                                           map_location="cpu",
                                           file_name=name)
+
 
     if "classy_state_dict" in state_dict.keys():
         state_dict = state_dict["classy_state_dict"]["base_model"]["model"]["trunk"]

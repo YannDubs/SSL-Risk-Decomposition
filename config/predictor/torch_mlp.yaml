@@ -1,5 +1,5 @@
 defaults:
-  - pytorch
+  - base_pytorch
 
 architecture: ${.arch_kwargs.architecture}D${.arch_kwargs.n_hid_layers}W${.arch_kwargs.hid_dim}
 arch_kwargs:

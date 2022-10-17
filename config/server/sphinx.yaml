@@ -17,6 +17,7 @@ hydra:
     cpus_per_task: 8
 
     max_num_timeout: 10 # allow resume from checkpointing
-    gres: gpu:${trainer.devices}
+    gpus_per_node: 1
     additional_parameters:
       nodelist: sphinx6 #
+      account: nlp

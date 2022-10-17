@@ -7,6 +7,13 @@ the file `config/main.yaml` for details about the configs. or use `python main.p
 
 from __future__ import annotations
 
+try:
+    from sklearnex import patch_sklearn
+
+    patch_sklearn(["LogisticRegression"])
+except:
+    # tries to speedup sklearn if possible (has to be before import sklearn)
+    pass
 
 import copy
 import logging
@@ -24,6 +31,8 @@ from hydra.utils import instantiate
 import pytorch_lightning as pl
 import omegaconf
 from omegaconf import Container
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
 
 from utils.cluster import nlp_cluster
 from utils.data import get_Datamodule
@@ -31,7 +40,7 @@ from utils.helpers import (LightningWrapper, SklearnTrainer, check_import, get_t
                            omegaconf2namespace,
                            NamespaceMap)
 import hubconf
-from utils.predictor import Predictor
+from utils.predictor import Predictor, get_sklearn_predictor
 from utils.tune_hyperparam import tune_hyperparam_
 
 try:
@@ -46,11 +55,6 @@ FILE_END = "end.txt"
 
 @hydra.main(config_name="main", config_path="config")
 def main_except(cfg):
-    # TMP avoid SIGTERM
-    # import os
-    # del os.environ["SLURM_NTASKS"]
-    # del os.environ["SLURM_JOB_NAME"]
-    ######
 
     if cfg.is_nlp_cluster:
         with nlp_cluster(cfg):
@@ -81,7 +85,7 @@ def main(cfg):
                                                                         "train-sbst-ntest-1_train-sbst-ntest-11"],
                              "train-sbst-ntest-2_train-sbst-ntest-2": ["train-sbst-ntest-2_test",
                                                                        "train-sbst-ntest-2_train-sbst-ntest-12"],
-                             "train-sbst-ntest-3_train-sbst-ntest-3": ["train-sbst-ntest_3_test",
+                             "train-sbst-ntest-3_train-sbst-ntest-3": ["train-sbst-ntest-3_test",
                                                                        "train-sbst-ntest-3_train-sbst-ntest-13"]
                              }
 
@@ -175,9 +179,8 @@ def instantiate_datamodule_(cfg: Container, representor : Callable, preprocess: 
     datamodule = Datamodule(representor=representor, representor_name=cfg.representor, **data_kwargs, **kwargs)
 
     if cfg.data.check_length is not None:
-        actual_length = len(datamodule.get_train_dataset())
         check_length = cfg.data.check_length
-        assert actual_length > check_length, f"Training set supposed to be at least {check_length} long but it is {actual_length} long."
+        assert datamodule.len_train > check_length, f"Training set supposed to be at least {check_length} long but it is {datamodule.len_train} long."
 
     return datamodule
 
@@ -187,8 +190,7 @@ def run_component_(component : str, datamodule : pl.LightningDataModule, cfg : C
     cfg_comp, datamodule = set_component_(datamodule, cfg, component)
 
     if cfg.predictor.is_sklearn:
-        dict_cfgp = namespace2dict(cfg_comp.predictor)
-        predictor = instantiate(dict_cfgp["model"])
+        predictor = get_sklearn_predictor(cfg_comp)
         trainer = SklearnTrainer(cfg_comp)
     else:
         predictor = Predictor(cfg_comp, datamodule.z_dim, datamodule.n_labels)
@@ -228,7 +230,9 @@ def set_component_(datamodule : pl.LightningDataModule, cfg: Container, componen
         logger.info(f"Skipping most of {component} as {file_end} exists.")
 
     # make sure all paths exist
-    for _, path in cfg.paths.items():
+    for name, path in cfg.paths.items():
+        if name == "data" and cfg.data.kwargs.is_avoid_raw_dataset:
+            continue
         Path(path).mkdir(parents=True, exist_ok=True)
 
     separator_tr_te = "_"

@@ -5715,7 +5715,7 @@ swav_rn50:
 ### VICREG ###
 vicreg_rn50w2:
   ssl:
-    objective: deepcluster
+    objective: vicreg
     ssl_mode: clustering
     version: 1
     n_negatives: 4096
@@ -5773,7 +5773,7 @@ vicreg_rn50w2:
 
 vicreg_rn50:
   ssl:
-    objective: deepcluster
+    objective: vicreg
     ssl_mode: clustering
     version: 1
     n_negatives: 4096

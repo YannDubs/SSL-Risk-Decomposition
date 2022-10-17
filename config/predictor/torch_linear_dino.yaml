@@ -1,5 +1,5 @@
 defaults:
-  - torch_linear
+  - base_pytorch
 
 # using param like https://github.com/facebookresearch/dino/issues/31
 opt_kwargs:

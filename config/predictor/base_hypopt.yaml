@@ -1,0 +1,5 @@
+is_tune_hyperparam: True
+hypopt:
+  n_hyper: 40
+  metric: err
+  is_tune_on_train: False

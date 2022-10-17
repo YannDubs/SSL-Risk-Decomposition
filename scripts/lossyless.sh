@@ -17,14 +17,20 @@ timeout=$time
 kwargs_multi="
 representor=lossyless_b001,lossyless_b005,lossyless_b01
 seed=123
-predictor=torch_linear_hypopt,torch_linear_erm
+predictor=torch_linear_hypopt
+"
+
+kwargs_multi="
+representor=lossyless_b001,lossyless_b005,lossyless_b01
+seed=123
+predictor=torch_linear_lr
 "
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
   do
 
-    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m >> logs/"$experiment".log 2>&1 &
+    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m >> logs/torch_"$experiment".log 2>&1 &
 
     sleep 10
 

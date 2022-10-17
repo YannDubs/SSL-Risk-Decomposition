@@ -1,5 +1,5 @@
 defaults:
-  - pytorch
+  - base_pytorch
 
 arch_kwargs:
   architecture: linear

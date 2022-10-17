@@ -40,6 +40,7 @@ BYOL_MODELS = {
 def get_byol_models(name, model, architecture= "resnet50"):
     """Loads the BYOL encoder and preprocessor."""
     ckpt_path = CURR_DIR / "pretrained_models" / f"{name}.pth"
+    ckpt_path.parent.mkdir(parents=True, exist_ok=True)
 
     if not ckpt_path.exists():
         is_already_converted = ".pkl" not in BYOL_MODELS[model]

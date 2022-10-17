@@ -1,0 +1,5 @@
+defaults:
+  - sk_logistic
+  - base_hypopt
+
+name: sk_logistic_hypopt

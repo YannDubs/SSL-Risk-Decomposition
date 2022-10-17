@@ -162,7 +162,7 @@ class SklearnTrainer:
         model.fit(data.X, data.Y)
         self.model = model
 
-    def save_checkpoint(self, ckpt_path: Union[str, Path], weights_only: bool = False):
+    def save_checkpoint(self, ckpt_path: Union[str, Path], *args, **kwargs):
         dump(self.model, ckpt_path)
 
     def test(
@@ -404,3 +404,7 @@ def max_num_workers():
     except:
         max_num_workers = os.cpu_count()
     return max_num_workers
+
+def min_max_scale(col):
+    """Scale a column to [0, 1]."""
+    return (col - col.min()) / (col.max() - col.min())

@@ -1,16 +1,32 @@
+try:
+    from sklearnex import patch_sklearn
+
+    patch_sklearn(["LogisticRegression"])
+except:
+    # tries to speedup sklearn if possible (has to be before import sklearn)
+    pass
+
+
 import copy
 from functools import partial
 from pathlib import Path
 import json
 
+import numpy as np
 import pytorch_lightning as pl
 import logging
 
+from hydra.utils import instantiate
 from matplotlib import pyplot as plt
 from pytorch_lightning.plugins.environments import SLURMEnvironment
+from scipy.stats import loguniform
+from sklearn.metrics import accuracy_score, make_scorer
+from sklearn.model_selection import PredefinedSplit, RandomizedSearchCV
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
 
-from utils.helpers import omegaconf2namespace
-from utils.predictor import Predictor
+from utils.helpers import namespace2dict, omegaconf2namespace
+from utils.predictor import Predictor, get_sklearn_predictor
 from utils.plotting import save_fig
 
 
@@ -29,10 +45,7 @@ logger = logging.getLogger(__name__)
 BEST_HPARAMS = "best_hparams.json"
 
 def tune_hyperparam_(datamodule, cfg, train_on="train-sbst-0.5", validate_on="train-cmplmnt-0.5", label_size=None):
-    """Tune the hyperparameters for the probe and then loads them."""
-
     logger.info(f"Hyperparameter tuning")
-    assert not cfg.predictor.is_sklearn, "Currently hyperparameter tuning only works without sklearn"
 
     path_hypopt = Path(cfg.paths.tuning)
     path_hypopt.mkdir(parents=True, exist_ok=True)
@@ -49,6 +62,69 @@ def tune_hyperparam_(datamodule, cfg, train_on="train-sbst-0.5", validate_on="tr
     datamodule.reset(is_train_on=train_on, is_test_on=validate_on, label_size=label_size)
     cfg.data.n_train = len(datamodule.get_train_dataset())
 
+    if cfg.predictor.is_sklearn:
+        hparams = tune_hyperparam_sklearn_(datamodule, cfg, path_hypopt)
+    else:
+        hparams = tune_hyperparam_torch_(datamodule, cfg, path_hypopt)
+
+    # reset to default splits
+    datamodule.reset()
+    cfg.data.n_train = len(datamodule.get_train_dataset())
+
+    set_hparams_(cfg, datamodule, hparams)
+
+    logger.info(f"Saving best hparams at {path_best_hparams}")
+    with open(path_best_hparams, 'w') as f:
+        json.dump(hparams, f)
+
+    logger.info("Finished tuning")
+
+
+def tune_hyperparam_sklearn_(datamodule, cfg, path_hypopt):
+    """Tune the hyperparameters for the sklearn probe and then loads them."""
+
+
+    assert cfg.predictor.hypopt.metric == "err"
+
+    cfgh = cfg.predictor.hypopt
+    predictor = get_sklearn_predictor(cfg)
+
+    # when pipeline (feature scaling) needs to change params to `clf__*`
+    prfx = "clf__" if cfg.predictor.is_scale_features else ""
+
+    param_space = dict()
+    param_space[f"{prfx}C"] = loguniform(1e-6, 100)  # same param for svm and logistic
+
+    train_dataset = datamodule.get_train_dataset()
+    val_dataset = datamodule.get_test_dataset()
+
+    X = np.concatenate((train_dataset.X, val_dataset.X))
+    Y = np.concatenate((train_dataset.Y, val_dataset.Y))
+
+    clf = RandomizedSearchCV(
+        predictor,
+        param_space,
+        scoring=make_scorer(accuracy_score),
+        n_jobs=None,  # avoids huge memory cost
+        cv=PredefinedSplit(
+            [-1] * len(train_dataset.X) + [0] * len(val_dataset.X)
+        ),
+        n_iter=cfgh.n_hyper,
+        verbose=1,
+        random_state=cfg.seed,
+        refit=False
+    )
+
+    logging.info(f"Fitting sklearn on {len(X)} examples. Clf={clf}.")
+    clf = clf.fit(X, Y)
+    return clf.best_params_
+
+
+
+def tune_hyperparam_torch_(datamodule, cfg, path_hypopt):
+    """Tune the hyperparameters for the torch probe and then loads them."""
+
+
     cfgh = cfg.predictor.hypopt
     Sampler = optuna.samplers.__dict__[cfgh.sampler]
     sampler = Sampler(**cfgh.kwargs_sampler)
@@ -57,7 +133,8 @@ def tune_hyperparam_(datamodule, cfg, train_on="train-sbst-0.5", validate_on="tr
     study = optuna.create_study(sampler=sampler,
                                 direction="minimize",
                                 storage=f"sqlite:///{(path_hypopt/ 'optuna.db').resolve()}",
-                                study_name="main")
+                                study_name="main",
+                                load_if_exists=True)
 
     for _, trial in cfgh.to_eval_first.items():
         # runs standard hparam to start with
@@ -69,22 +146,12 @@ def tune_hyperparam_(datamodule, cfg, train_on="train-sbst-0.5", validate_on="tr
 
     logger.info(f"Tuning duration: {study.trials_dataframe().duration.astype('timedelta64[m]').sum()} minutes")
 
-    # reset to default splits
-    datamodule.reset()
-    cfg.data.n_train = len(datamodule.get_train_dataset())
-
-    set_hparams_(cfg, datamodule, study.best_trial.params)
-
-    logger.info(f"Saving best hparams at {path_best_hparams}")
-    with open(path_best_hparams, 'w') as f:
-        json.dump(study.best_trial.params, f)
-
     try:
         summarize_study(study, path_hypopt, is_wandb=cfg.is_log_wandb)
     except:
         logger.exception("Couldn't summarize study due to this error:")
 
-    logger.info("Finished tuning")
+    return study.best_trial.params
 
 
 def objective(trial, cfg, datamodule):
@@ -126,22 +193,30 @@ def objective(trial, cfg, datamodule):
 def set_hparams_(cfg, datamodule, hparams):
     """Set the hyperparameters."""
 
-    cfgo = cfg.predictor.opt_kwargs
-    cfga = cfg.predictor.arch_kwargs
+    if cfg.predictor.is_sklearn:
+        for k, v in hparams.items():
+            k = k.replace("clf__", "")  # in case you had a Pipeline
+            if isinstance(v, np.float64):
+                v = float(v)
+            cfg.predictor.model[k] = v
 
-    if "batch_size" in hparams:
-        datamodule.batch_size = 2 ** hparams["batch_size"]
-        cfg.data.kwargs.batch_size = datamodule.batch_size
-    if "lr" in hparams:
-        cfgo.lr = hparams["lr"]
-    if "weight_decay" in hparams:
-        cfgo.weight_decay = hparams["weight_decay"]
-    if "optim" in hparams:
-        cfgo.optim = hparams["optim"]
-    if "scheduler" in hparams:
-        cfgo.scheduler = hparams["scheduler"]
-    if "is_batchnorm" in hparams:
-        cfga.is_normalize = hparams["is_batchnorm"]
+    else:
+        cfgo = cfg.predictor.opt_kwargs
+        cfga = cfg.predictor.arch_kwargs
+
+        if "batch_size" in hparams:
+            datamodule.batch_size = 2 ** hparams["batch_size"]
+            cfg.data.kwargs.batch_size = datamodule.batch_size
+        if "lr" in hparams:
+            cfgo.lr = hparams["lr"]
+        if "weight_decay" in hparams:
+            cfgo.weight_decay = hparams["weight_decay"]
+        if "optim" in hparams:
+            cfgo.optim = hparams["optim"]
+        if "scheduler" in hparams:
+            cfgo.scheduler = hparams["scheduler"]
+        if "is_batchnorm" in hparams:
+            cfga.is_normalize = hparams["is_batchnorm"]
 
 
 def summarize_study(study, path, is_wandb=False):

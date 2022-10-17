@@ -17,7 +17,10 @@ import warnings
 from matplotlib.cbook import MatplotlibDeprecationWarning
 import seaborn as sns
 
-from utils.helpers import to_numpy
+from utils.collect_results import COMPONENTS
+from utils.helpers import to_numpy, min_max_scale
+import math
+
 
 
 @contextlib.contextmanager
@@ -102,9 +105,6 @@ def plot_config(
             warnings.filterwarnings("ignore", category=MatplotlibDeprecationWarning)
             # reset defaults
             plt.rcParams.update(defaults)
-
-
-
 
 def radar_factory(num_vars, frame='circle'):
     """Create a radar chart with `num_vars` axes.
@@ -230,3 +230,111 @@ def save_fig(
         plt.close(fig)
     else:
         raise ValueError(f"Unknown figure type {type(fig)}")
+
+
+
+
+def get_radar_data(results,
+                   min_max="pre_select",
+                   models=slice(None),
+                   components=COMPONENTS,
+                   decimals=2,
+                   pretty_renamer={}):
+    """Prepares the data for the radar chart by min max scaling and prettifying."""
+
+    assert min_max in ["pre_select", "post_select", None]
+
+    radar_data = results[components]
+
+    if min_max == "pre_select":
+        radar_data = radar_data.apply(min_max_scale, axis=0)
+
+    radar_data = radar_data.loc[models, :].round(decimals=decimals).sort_values("agg_risk", ascending=True)
+
+    radar_data = radar_data.rename(columns=pretty_renamer).rename(index=pretty_renamer)
+
+    if min_max == "post_select":
+        radar_data = radar_data.apply(min_max_scale, axis=0)
+
+    return radar_data
+
+
+def plot_radar(ax, theta, metrics, title=None, rgrids=[0, 1 / 3, 2 / 3, 1], ylim=(0, 1),
+               is_ticks_label=False, labels=None, color=None):
+    """Plot a single radar plot"""
+
+    if title is not None:
+        ax.set_title(title, position=(0.5, 1.1), ha='center')
+
+    ax.set_ylim(*ylim)
+    if is_ticks_label:
+        ax.set_rgrids(rgrids)
+    else:
+        ax.set_rgrids(rgrids, labels="")
+
+    line = ax.plot(theta, 1 - metrics, color=color)
+    ax.fill(theta, 1 - metrics, alpha=0.25, color=color)
+
+    if labels is not None:
+        ax.set_varlabels(labels)
+
+        angles = np.linspace(0, 2 * np.pi, len(ax.get_xticklabels()) + 1)
+        angles[np.cos(angles) < 0] = angles[np.cos(angles) < 0] + np.pi
+        angles = np.rad2deg(angles)
+        labels = []
+
+        for i, (label, angle) in enumerate(zip(ax.get_xticklabels(), angles)):
+
+            x, y = label.get_position()
+            lab = ax.text(x, y, label.get_text(), transform=label.get_transform(),
+                          ha=label.get_ha(), va=label.get_va())
+            if i not in [2, 3]:  # don't rotate bottom
+                lab.set_rotation(angle)
+            labels.append(lab)
+        ax.set_xticklabels([])
+
+    else:
+        ax.set_xticklabels([])
+        pass
+
+
+def plot_radar_grid(results, ncols=1, save_path=None, config_kwargs=dict(font_scale=1), **kwargs):
+    """Plots a grid of radar plots"""
+    with plot_config(**config_kwargs):
+        results = results.copy()
+
+        radar_data = get_radar_data(results, **kwargs)
+
+        columns = radar_data.columns
+        theta = radar_factory(len(columns), frame='polygon')
+
+        if len(radar_data) == 1:
+            first_data = radar_data.iloc[0, :]
+            rest_data = radar_data.iloc[1:, :]  # will be empty
+            n_plots = 1
+        else:
+            first_data = radar_data.mean(axis=0)
+            rest_data = radar_data
+            n_plots = 1 + len(radar_data)  # add the avg
+
+        colors = sns.color_palette("colorblind", n_colors=n_plots)
+        nrows = math.ceil(n_plots / ncols)
+        fig, axes = plt.subplots(nrows=nrows, ncols=ncols,
+                                 figsize=(ncols * 3.3, nrows * 2.3),
+                                 subplot_kw=dict(projection='radar'),
+                                 squeeze=False)
+        flat_axes = axes.reshape(-1)
+
+        # first plot
+        plot_radar(flat_axes[0], theta, first_data, title=None, is_ticks_label=False,
+                   labels=columns, color=colors[0])
+
+        for i, (model, row) in enumerate(rest_data.iterrows(), start=1):
+            plot_radar(flat_axes[i], theta, row, title=model, is_ticks_label=False, color=colors[i])
+
+        plt.tight_layout()
+
+    if save_path is None:
+        plt.show()
+    else:
+        plt.savefig(save_path, bbox_inches='tight', pad_inches=0)

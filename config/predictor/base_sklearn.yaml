@@ -1,0 +1,6 @@
+name: ???
+is_sklearn: True
+metrics: [accuracy_score]
+is_scale_features: True
+model:
+  _target_: ???

@@ -1,0 +1,11 @@
+defaults:
+  - base_sklearn
+
+name: sk_svm
+model:
+  _target_: sklearn.svm.LinearSVC
+  penalty: "l2"
+  C: 1 #smaller regularizes more (should tune it)
+  random_state: ${seed}
+  verbose: 1
+  dual: false

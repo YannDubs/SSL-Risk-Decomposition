@@ -2,7 +2,7 @@
 config/user.yaml
 
 # directories
-results
+results*
 outputs*
 tensorboard
 multirun

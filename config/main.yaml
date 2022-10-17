@@ -40,11 +40,14 @@ paths: #! the best practice is not to modify those paths but to symlink them to 
   tuning: ${paths.base_dir}/tuning/${long_name}/
 
 data:
+  subset: null
+  n_per_class: null
   name: ???
   n_classes: ???
   n_train: ???
   check_length: 1200000 # min length
   kwargs:
+    is_avoid_raw_dataset: False
     seed: ${seed}
     data_dir: ${paths.data}
     features_basedir: ${paths.features}
@@ -52,6 +55,7 @@ data:
     num_workers: -1
     is_add_idx: False
     is_debug: ${is_debug}
+    subset_raw_dataset: null
     dataset_kwargs:
       seed: ${seed}
       transform: null
@@ -59,7 +63,7 @@ data:
 representor: ???
 
 wandb_kwargs:
-  project: risk_dec
+  project: riskdec_opensource
   entity: ${wandb_entity}
   group: ${representor}
   id: ${representor}_${predictor.name}_seed${seed}_${job_id}

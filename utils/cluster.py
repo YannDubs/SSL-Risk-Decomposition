@@ -13,7 +13,11 @@ def nlp_cluster(cfg: Container):
     """Set the cluster for NLP stanford."""
 
     user_path = Path(f"/scr/biggest/{cfg.user}")
-    user_path.mkdir(exist_ok=True)
+    try:
+        user_path.mkdir(exist_ok=True)
+    except:
+        user_path = Path(f"/scr/{cfg.user}")
+        user_path.mkdir(exist_ok=True)
 
     # project path on current machine
     proj_path = user_path / cfg.project_name

@@ -1,5 +1,7 @@
+defaults:
+  - base_sklearn
+
 name: sk_logistic
-is_sklearn: True
 metrics: [accuracy_score,log_loss]
 model:
   _target_: sklearn.linear_model.LogisticRegression
@@ -7,6 +9,7 @@ model:
   C: 1 #smaller regularizes more (should tune it)
   random_state: ${seed}
   solver: "lbfgs" # should probably use "saga" for large datasets (but might need to normalize)
-  n_jobs: -1
-  max_iter: 500
+  n_jobs: -1  # won't work with sklearnex
+  max_iter: 1000
   verbose: 1
+  warm_start: true # when hyperparameter tuning this should make things much quicker

@@ -1,0 +1,23 @@
+# @package _global_
+defaults:
+  - base_submitit
+  - override /hydra/launcher: submitit_slurm
+
+is_nlp_cluster: True
+
+hydra:
+  launcher:
+    # slurm partition to use on the cluster
+    partition: john # jag-hi, jag-important, jag-standard, john (CPU)
+    comment: null
+    constraint: null # 12G,11G,24G,pascal,ampere,maxwell,turing,volta # TODO test if works if not will have to use gres
+    exclude: john8,john9,john10,john11,john12,john13,john14,john15 # give space to others
+    array_parallelism: 30 # max number of parallel tasks
+    cpus_per_task: 2
+    mem_gb: 36
+    nodes: 1
+
+    max_num_timeout: 30 # allow resume from checkpointing
+    gpus_per_node: 0
+    additional_parameters:
+      account: nlp

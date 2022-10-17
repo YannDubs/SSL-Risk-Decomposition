@@ -1,3 +1,4 @@
+import pdb
 import warnings
 
 import numpy as np
@@ -20,6 +21,8 @@ import optuna
 from optuna.samplers import TPESampler
 from optuna.visualization.matplotlib import plot_param_importances, plot_optimization_history, plot_parallel_coordinate
 
+COMPONENTS_ONLY = ["usability", "enc_gen", "probe_gen", "approx"]
+COMPONENTS = COMPONENTS_ONLY + ["agg_risk"]
 
 def tune_std_xgb(X, y, seed=123, n_trials=50, verbose=False, **kwargs):
     """Tune standard xgboost and return final model + study"""
@@ -34,7 +37,8 @@ def tune_std_xgb(X, y, seed=123, n_trials=50, verbose=False, **kwargs):
     else:
         optuna.logging.set_verbosity(optuna.logging.WARNING)
 
-    study = optuna.create_study(sampler=sampler, direction="minimize")
+    study = optuna.create_study(sampler=sampler, direction="minimize",
+                                load_if_exists=True)  # continues from previous if exist
 
     study.optimize(lambda t: std_xgb_objective(t, X, y, seed=seed, **kwargs),
                    n_trials=n_trials, gc_after_trial=True, show_progress_bar=True)  # ensures memory not adding
@@ -83,7 +87,8 @@ def tune_sk_xgb(X, y, seed=123, n_trials=50, verbose=False, **kwargs):
     else:
         optuna.logging.set_verbosity(optuna.logging.WARNING)
 
-    study = optuna.create_study(sampler=sampler, direction="minimize")
+    study = optuna.create_study(sampler=sampler, direction="minimize",
+                                load_if_exists=True)
 
     study.optimize(lambda t: sk_xgb_objective(t, X, y, seed=seed, **kwargs),
                    n_trials=n_trials, gc_after_trial=True, show_progress_bar=True)  # ensures memory not adding
@@ -185,8 +190,11 @@ def load_single_file(f, skip_ifin=dict(), skip_ifneq=dict(), metric="err"):
 
 
 def load_all_results(results_dir=Path() / "results/",
-                     pattern="**/data_imagenet/**/results_all.csv",
-                     metric="err"):
+                     pattern="**/results_all.csv",
+                     metric="err",
+                     skip_ifin=dict(exp=["dev", "inv", "shat"], ssl=["colorization"]),
+                     skip_ifneq=dict(data="imagenet")
+                     ):
     """Load all ssl and supervised results."""
     files = list(results_dir.glob(pattern))
     print(f"Found {len(files)} result files to load.")
@@ -196,9 +204,8 @@ def load_all_results(results_dir=Path() / "results/",
     for f in files:
 
         key, metrics = load_single_file(f,
-                                        skip_ifneq=dict(data="imagenet"),
-                                        skip_ifin=dict(exp=["dev", "inv", "shat"],
-                                                       ssl=["colorization"]),
+                                        skip_ifin=skip_ifin,
+                                        skip_ifneq=skip_ifneq,
                                         metric=metric)
 
         if metrics is None:
@@ -215,8 +222,14 @@ def load_all_results(results_dir=Path() / "results/",
     return df_results
 
 
-def add_approximation_results_(ssl, sup, is_allow_nan=True):
+def add_approximation_results_(ssl, sup, is_allow_nan=True, **sbst_kwargs):
     """Uses the supervised results to add approximation error to the SSL models."""
+
+    sffx = get_sffx_data(**sbst_kwargs)
+    if sffx == "":
+        tr_tr_sffx = ""
+    else:
+        tr_tr_sffx = "-balsbst-62811"
 
     ind_sup = sup.index.droplevel("enc")
     dupli = sup[ind_sup.duplicated()]
@@ -233,14 +246,14 @@ def add_approximation_results_(ssl, sup, is_allow_nan=True):
         assert is_allow_nan
         warnings.warn(f"Found missing supervised models for:")
         display(ssl_to_sup[missing].to_frame(index=False))
-        ssl["sup_train_train"] = np.nan
-        ssl["sup_train_test"] = np.nan
+        ssl[f"sup_train{tr_tr_sffx}_train{tr_tr_sffx}"] = np.nan
+        ssl[f"sup_train{sffx}_test"] = np.nan
 
-    ssl.loc[~missing, "sup_train_train"] = sup.loc[ssl_to_sup[~missing], "train_train"].values
-    ssl.loc[~missing, "sup_train_test"] = sup.loc[ssl_to_sup[~missing], "train_test"].values
+    ssl.loc[~missing, f"sup_train{tr_tr_sffx}_train{tr_tr_sffx}"] = sup.loc[ssl_to_sup[~missing], f"train{tr_tr_sffx}_train{tr_tr_sffx}"].values
+    ssl.loc[~missing, f"sup_train{sffx}_test"] = sup.loc[ssl_to_sup[~missing], f"train{sffx}_test"].values
 
 
-def format_approx_results(results, metadata, f_replace_arch=None):
+def format_approx_results(results, metadata, f_replace_arch=None, **kwargs):
     """Separates the supervised results into the approximation error column."""
 
     arch = np.array([metadata.loc[i, "architecture_exact"] for i in results.index.get_level_values(0)])
@@ -256,7 +269,7 @@ def format_approx_results(results, metadata, f_replace_arch=None):
         results_ssl.loc[:, "arch"] = results_ssl.loc[:, "arch"].apply(f_replace_arch)
     results_ssl = results_ssl.set_index("arch", append=True)
 
-    add_approximation_results_(results_ssl, results_sup)
+    add_approximation_results_(results_ssl, results_sup, **kwargs)
 
     results_ssl.index = results_ssl.index.droplevel(["arch"])
 
@@ -298,24 +311,45 @@ def f_replace_arch(arch):
 
     return arch
 
+def get_sffx_data(subset=None, n_per_class=None):
+    """Return the suffix for the data."""
+    if subset is not None:
+        sffx = f"-balsbst-ntrain{subset}"
+    elif n_per_class is not None:
+        sffx = f"-nperclass-{n_per_class}"
+    else:
+        sffx=""
+    return sffx
 
-def make_risk_decomposition(results, traverse_path=["down", "right", "down"], is_print=False):
+def make_risk_decomposition(results, traverse_path=["down", "right", "down"],
+                            is_print=False, **sbst_kwargs):
     """
-    Make the risk decomposition depending on how you wannt to traverse the decomposition table.
+    Make the risk decomposition depending on how you want to traverse the decomposition table.
     traverse_path=`None` returns decomposition table.
     """
+    sffx = get_sffx_data(**sbst_kwargs)
+
+    if sffx == "":  # no subsetting
+        enc_gen = 'union_test'
+        probe_gen = 'train-cmplmnt-ntest_train-sbst-ntest'
+        tr_tr_sffx = ""
+    else:
+        enc_gen = f"test{sffx}_test{sffx}"
+        probe_gen = f"train{sffx}_train-balsbst-ntest"
+        tr_tr_sffx = "-balsbst-62811"
+
     # all the values from the decomposition table
-    dec_table = np.array([['sup_train_train', 'sup_train_test'],
-                          ['train_train', 'train-cmplmnt-ntest_train-sbst-ntest'],
-                          ['union_test', 'train_test']])
-    results["agg_risk"] = results['train_test']
+    dec_table = np.array([[f'sup_train{tr_tr_sffx}_train{tr_tr_sffx}', f'sup_train{sffx}_test'],
+                          [f'train{tr_tr_sffx}_train{tr_tr_sffx}', probe_gen],
+                          [enc_gen, f'train{sffx}_test']])
+    results["agg_risk"] = results[f'train{sffx}_test']
 
     if traverse_path is None:
         selected_columns = list(dec_table.flatten()) + ["agg_risk"]
 
     else:
-        results["approx"] = results['sup_train_train']
-        selected_columns = ["agg_risk", "usability", "enc_gen", "probe_gen", "approx", 'train_train']
+        results["approx"] = results[f'sup_train{tr_tr_sffx}_train{tr_tr_sffx}']
+        selected_columns = COMPONENTS
 
         # traverses the decomposition table
         ind = [0, 0]
@@ -544,3 +578,21 @@ def report_xgboost(reg, X, y, is_std_featimp=True, is_shap_interactive=False,
         if is_shap_interactive:
             display(shap.plots.force(explainer.expected_value, shap_values, feature_names=X.columns))
 
+
+def get_only_vary(df, varying_keys, all_keys, drop_cols=[]):
+    """Return all results that only vary on some given features."""
+    non_vary = [k for k in all_keys if k not in varying_keys]
+    nunique = df[all_keys].reset_index().groupby(non_vary, dropna=False).nunique()
+    indices = nunique.loc[(nunique[varying_keys] > 1).values].index
+    selected = df.set_index(non_vary).loc[indices].reset_index()
+    non_vary = [c for c in non_vary if selected[c].nunique() > 1 and c not in drop_cols]
+    selected["non_vary"] = selected[non_vary].astype(pd.StringDtype()).fillna("NA").agg(' '.join, axis=1)
+    return selected
+
+
+def melt(df, components=COMPONENTS):
+    """Melts components"""
+    return pd.melt(df,
+                   value_vars=components,
+                   id_vars=[c for c in df.columns if c not in components],
+                   var_name="component")

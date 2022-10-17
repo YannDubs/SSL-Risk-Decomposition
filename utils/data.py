@@ -8,6 +8,8 @@ import ast
 import os
 import random
 import time
+import warnings
+from functools import partial
 from os import path
 import math
 import abc
@@ -240,6 +242,10 @@ class ImgDataModule(LightningDataModule):
 
     dataset_kwargs : dict, optional
         Additional arguments for the dataset.
+
+    is_avoid_raw_dataset : bool, optional
+        Avoids using the raw dataset by only relying on the saved features.
+        This is useful if the eaw dataset is not available anymore.
     """
 
     def __init__(
@@ -256,13 +262,15 @@ class ImgDataModule(LightningDataModule):
         train_dataset: Optional[Dataset] = None,
         is_predict_on_test: bool = True,
         is_add_idx: bool=False,
-        dataset_kwargs: dict = {}
+        dataset_kwargs: dict = {},
+        is_avoid_raw_dataset: bool=False,
+        subset_raw_dataset: Optional[float]=None
     ) -> None:
         super().__init__()
 
         self.data_dir = data_dir
         self.features_basedir = features_basedir
-        self.num_workers = (max_num_workers()-2) if num_workers == -1 else num_workers
+        self.num_workers = (max_num_workers()-1) if num_workers == -1 else num_workers
         logger.info(f"Using num_workers={self.num_workers}")
         self.batch_size = batch_size
         self.is_save_features = is_save_features
@@ -274,6 +282,8 @@ class ImgDataModule(LightningDataModule):
         self.train_dataset = train_dataset
         self.is_add_idx = is_add_idx
         self.is_predict_on_test = is_predict_on_test
+        self.is_avoid_raw_dataset = is_avoid_raw_dataset
+        self.subset_raw_dataset = subset_raw_dataset
         logger.info(f"Representing data with {representor_name}")
 
         # see #9943 pytorch lightning now calls setup each time
@@ -294,6 +304,12 @@ class ImgDataModule(LightningDataModule):
 
         logger.info(f"z_dim={self.z_dim}")
         self.reset()
+
+    @property
+    def len_train(self):
+        if hasattr(self, "total_train_size"):
+            return self.total_train_size
+        return len(self.train_dataset)
 
     def reset(self, is_train_on="train", is_test_on="test", label_size=None):
         self.is_train_on = is_train_on
@@ -316,9 +332,12 @@ class ImgDataModule(LightningDataModule):
 
         if stage == "test" or stage is None:
             logger.info("Representing the test set.")
-            test_dataset = self.Dataset(
-                self.data_dir, curr_split="test", download=True, **self.dataset_kwargs
-            )
+            if self.is_avoid_raw_dataset:
+                test_dataset = None  # will be unused
+            else:
+                test_dataset = self.Dataset(
+                    self.data_dir, curr_split="test", download=True, **self.dataset_kwargs
+                )
             self.test_dataset = SklearnDataset(*self.represent(test_dataset, "test"),
                                                is_add_idx=self.is_add_idx)
 
@@ -329,11 +348,29 @@ class ImgDataModule(LightningDataModule):
                     self.train_dataset = self.test_dataset
                 else:
                     logger.info("Representing the train set.")
-                    train_dataset = self.Dataset(
-                        self.data_dir, curr_split="train", download=True, **self.dataset_kwargs
-                    )
-                    self.train_dataset = SklearnDataset(*self.represent(train_dataset, "train"),
-                                                        is_add_idx=self.is_add_idx)
+                    if self.is_avoid_raw_dataset:
+                        train_dataset = None  # will be unused
+                    else:
+                        train_dataset = self.Dataset(
+                            self.data_dir, curr_split="train", download=True, **self.dataset_kwargs
+                        )
+
+
+                    Z, Y = self.represent(train_dataset, "train")
+                    if self.subset_raw_dataset is not None:
+                        self.total_train_size = len(Z)
+
+                        # if the trainset huge and not using most of it => subset for memory efficiency
+                        n_select = int_or_ratio(self.subset_raw_dataset, len(Z))
+                        _, subset_idcs = train_test_split(
+                            range(self.len_train),
+                            stratify=Y, test_size=n_select, random_state=self.seed
+                        )
+
+                        Z = Z[subset_idcs]
+                        Y = Y[subset_idcs]
+
+                    self.train_dataset = SklearnDataset(Z, Y)
 
         self._already_setup[stage] = True
 
@@ -342,14 +379,16 @@ class ImgDataModule(LightningDataModule):
 
         separator_data_split = "-"
         if separator_data_split in name:
-            if name.count("-") == 3:
+            if name.count(separator_data_split) == 3:
                 data, split, sizestr, seed = name.split(separator_data_split)
                 with tmp_seed(int(seed)):
                     # sample some seed increment to be able to change subsets in a reproducible way
                     seed_add = random.randint(10, int(1e4))
-            else:
+            elif name.count(separator_data_split) == 2:
                 seed_add = 0
                 data, split, sizestr = name.split(separator_data_split)
+            else:
+                raise ValueError(f"Cannot split {name} using {separator_data_split}")
         else:
             data = name
             split = "all"
@@ -370,18 +409,27 @@ class ImgDataModule(LightningDataModule):
         if split == "all":
             pass
         else:
-            Y = dataset.Y
-
-            if self.is_add_idx:
-                Y = Y[:, 0]  # for subseting use real label
-
             if sizestr == "ntest":
                 size = len(self.test_dataset)  # use exactly same number as test
+            elif "ntrain" in sizestr and "." in sizestr:
+                # uses percentage of ntrain regardless
+                sffx = sizestr.replace("ntrain", "")
+                size = int(ast.literal_eval(sffx) * self.len_train)
             else:
                 size = ast.literal_eval(sizestr)
 
-            dataset = BalancedSubset(dataset, stratify=Y, size=size,
-                                     seed=self.seed+seed_add, split=split)
+            if split == "balsbst":
+                CurrSubset = BalancedSubset
+            elif split == "nperclass":
+                CurrSubset = partial(BalancedSubset, is_n_per_class=True)
+            else:
+                CurrSubset = partial(StratifiedSubset, split=split)
+
+            if data == "train" and self.subset_raw_dataset is not None:
+                # you still want subsets to be computed on real size
+                size = int_or_ratio(size, self.len_train)
+
+            dataset = CurrSubset(dataset, size=size, seed=self.seed+seed_add)
 
         return dataset
 
@@ -430,12 +478,16 @@ class ImgDataModule(LightningDataModule):
         return Path(self.features_basedir) / f"{self.Dataset.__name__}_{self.representor_name}"
 
     def represent(self, dataset, split, max_chunk_size=20000):
-        batch_size = get_max_batchsize(dataset, self.representor)
-        torch.cuda.empty_cache()
-        logger.info(f"Selected max batch size for inference: {batch_size}")
+        if not self.is_avoid_raw_dataset:
+            batch_size = get_max_batchsize(dataset, self.representor)
+            torch.cuda.empty_cache()
+            logger.info(f"Selected max batch size for inference: {batch_size}")
 
         if self.is_save_features:
-            N = len(dataset)
+            if self.is_avoid_raw_dataset:
+                N = self.Dataset.split_lengths[split]
+            else:
+                N = len(dataset)
             n_chunks = math.ceil(N / max_chunk_size)
             Z_files, Y_files = [], []
             data_path = self.features_path / split
@@ -449,6 +501,8 @@ class ImgDataModule(LightningDataModule):
                 if Z_file.exists() and Y_file.exists():
                     logger.info(f"Skipping chunk representation: found existing {Z_file}.")
                     continue
+
+                assert not self.is_avoid_raw_dataset
 
                 chunk = Subset(dataset, indices=idcs)
                 Z_i, Y_i = self.represent_chunk(chunk, batch_size)
@@ -550,57 +604,7 @@ class SklearnConcatDataset(ConcatDataset):
     def Y(self):
         return np.concatenate([d.Y for d in self.datasets], axis=0)
 
-class BalancedSubset(Subset):
-    """Split the dataset into a subset with possibility of stratifying.
-
-    Parameters
-    ----------
-    dataset : Dataset
-        Dataset to subset.
-
-    size : float or int, optional
-            If float, should be between 0.0 and 1.0 and represent the proportion of
-            the dataset to retain. If int, represents the absolute number or examples.
-
-    stratify : array-like, optional
-        What to stratify on.
-
-    seed : int, optional
-        Random seed.
-
-    split : {"sbst","cmplmnt","sbstcmplmnt", "sbstY"}, optional
-        Which split of the subsetted data to use. If "sbst" sues the subset, if "cmplment"
-        uses the complement of the subset, if "sbstcmplmnt" uses a subset of the complement of size
-        `size`.
-
-    """
-
-    def __init__(
-        self,
-        dataset: Dataset,
-        size: float = 0.1,
-        stratify: Any = None,
-        seed: Optional[int] = 123,
-        split: str="sbst",
-    ):
-
-        # subset by indices
-        complement_idcs, subset_idcs = train_test_split(
-            range(len(dataset)), stratify=stratify, test_size=size, random_state=seed
-        )
-
-        if split == "sbst":
-            idcs = subset_idcs
-        elif split == "cmplmnt":
-            idcs = complement_idcs
-        elif split == "sbstcmplmnt":
-            # further splits the complement
-            _, idcs = train_test_split(complement_idcs, stratify=stratify, test_size=size, random_state=seed)
-        else:
-            raise ValueError(f"Unknown split={split}.")
-
-        super().__init__(dataset, idcs)
-
+class BaseSubset(Subset):
     @property
     def is_add_idx(self):
         return self.dataset.is_add_idx
@@ -622,7 +626,95 @@ class BalancedSubset(Subset):
             return self.dataset[self.indices[idx]]
 
 
-class LabelSubset(Subset):
+class StratifiedSubset(BaseSubset):
+    """Split the dataset into a subset with possibility of stratifying.
+
+    Parameters
+    ----------
+    dataset : Dataset
+        Dataset to subset.
+
+    size : float or int, optional
+            If float, should be between 0.0 and 1.0 and represent the proportion of
+            the dataset to retain. If int, represents the absolute number or examples.
+
+    seed : int, optional
+        Random seed.
+
+    split : {"sbst","cmplmnt","sbstcmplmnt", "sbstY"}, optional
+        Which split of the subsetted data to use. If "sbst" sues the subset, if "cmplment"
+        uses the complement of the subset, if "sbstcmplmnt" uses a subset of the complement of size
+        `size`.
+
+    """
+
+    def __init__(
+        self,
+        dataset: Dataset,
+        size: float = 0.1,
+        seed: Optional[int] = 123,
+        split: str="sbst",
+    ):
+        Y = dataset.Y
+        if dataset.is_add_idx:
+            Y = Y[:, 0]  # for subseting use real label
+
+        # subset by indices
+        complement_idcs, subset_idcs = train_test_split(
+            range(len(dataset)), stratify=Y, test_size=size, random_state=seed
+        )
+
+        if split == "sbst":
+            idcs = subset_idcs
+        elif split == "cmplmnt":
+            idcs = complement_idcs
+        elif split == "sbstcmplmnt":
+            # further splits the complement
+            _, idcs = train_test_split(complement_idcs, stratify=Y, test_size=size, random_state=seed)
+        else:
+            raise ValueError(f"Unknown split={split}.")
+
+        super().__init__(dataset, idcs)
+
+
+class BalancedSubset(BaseSubset):
+    def __init__(self,
+                 dataset,
+                 size: float = 0.1,
+                 seed: Optional[int] = 123,
+                 is_n_per_class: bool = False):
+
+        Y = dataset.Y
+        if dataset.is_add_idx:
+            Y = Y[:, 0]  # for subseting use real label
+
+        n_classes = len(np.unique(Y))
+        if is_n_per_class:
+            n_per_class = size
+            n_additional = 0
+        else:
+            size = int_or_ratio(size, len(dataset))
+            n_per_class = size // n_classes
+            n_additional = size % n_classes
+        idcs = np.arange(len(dataset))
+
+        with tmp_seed(seed):
+            additional = np.random.choice(range(n_classes), size=n_additional, replace=False)
+
+            selected = []
+            for y in range(n_classes):
+                i_y = (idcs[Y == y]).tolist()
+                random.shuffle(i_y)
+                is_add = int(y in additional)
+                selected += i_y[:n_per_class + is_add]
+
+            random.shuffle(selected)  # shouldn't be needed
+
+
+        super().__init__(dataset, selected)
+
+
+class LabelSubset(BaseSubset):
     """Split the dataset based on label set. Currently assumes not multilabel.
 
     Parameters
@@ -648,30 +740,11 @@ class LabelSubset(Subset):
 
         super().__init__(dataset, idcs)
 
-    @property
-    def is_add_idx(self):
-        return self.dataset.is_add_idx
-
-    @property
-    def X(self):
-        return self.dataset.X[self.indices]
-
-    @property
-    def Y(self):
-        return self.dataset.Y[self.indices]
-
-    def __getitem__(self, idx):
-        if self.is_add_idx:
-            X, Y = self.dataset[self.indices[idx]]
-            Y[1] = idx
-            return X, Y
-        else:
-            return self.dataset[self.indices[idx]]
-
 ### DATA ###
 
 # Imagenet #
 class ImageNetDataset(ImgDataset, ImageNet):
+    split_lengths = {"train": 1281167, "test": 50000}
 
     def __init__(
         self,
@@ -705,6 +778,9 @@ class ImageNetDataset(ImgDataset, ImageNet):
             transform=transform,
             **kwargs,
         )
+
+        if len(self) != self.split_lengths[curr_split]:
+            logger.info(f"The length of the dataset is different than expected {len(self)}!={self.split_lengths[curr_split]}")
 
     @file_cache(filename="cached_classes.json")
     def find_classes(self, directory: str, *args, **kwargs) -> tuple[list[str], dict[str, int]]:
