@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-experiment="clip"
-notes="**Goal**: evaluate all the clip models."
+experiment="supervised"
+notes="**Goal**: evaluate all the supervised models."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -15,16 +15,18 @@ timeout=$time
 
 
 
-
 kwargs_multi="
-representor=clip_rn50
+representor=sup_vitB8_dino
 seed=123
+is_supervised=True
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
 data.kwargs.subset_raw_dataset=0.3
 "
 
-
+#predictor=torch_bnlinear
+#seed=123,124,125
+#"predictor=torch_linear,torch_momlinear" #"predictor.opt_kwargs.lr=3e-3,3e-2" "predictor.opt_kwargs.weight_decay=0,1e-4" "trainer.max_epochs=33,300" "data.kwargs.batch_size=64,1024"
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
@@ -32,7 +34,7 @@ if [ "$is_plot_only" = false ] ; then
 
     python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs
 
-    #sleep 10
+    sleep 10
 
   done
 fi

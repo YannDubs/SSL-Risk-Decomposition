@@ -19,13 +19,7 @@ timeout=$time
 kwargs_multi="
 representor=simclr_rn50w4
 seed=123
-predictor=torch_linear_hypopt
-"
-
-kwargs_multi="
-representor=simclr_rn50w4
-seed=123
-predictor=torch_linear_lr
+predictor=torch_linear_delta_hypopt
 "
 
 # torch_linear_hypopt

@@ -24,7 +24,6 @@ representor=pirl_rn50w2_headMLP,simclr_rn50w2,simclr_rn50w2_ep100,simclr_rn50w4,
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
-data.subset=0.01
 data.kwargs.subset_raw_dataset=0.3
 "
 

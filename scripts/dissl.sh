@@ -17,13 +17,13 @@ timeout=$time
 kwargs_multi="
 representor=dissl_resnet50_dNone_e100_m2,dissl_resnet50_dNone_e400_m2,dissl_resnet50_dNone_e400_m6
 seed=123
-predictor=torch_linear_hypopt
+predictor=torch_linear_delta_hypopt
 "
 
 kwargs_multi="
-representor=dissl_resnet50_dNone_e100_m2,dissl_resnet50_dNone_e400_m2,dissl_resnet50_dNone_e400_m6
+representor=dissl_resnet50_dNone_e100_m2
 seed=123
-predictor=torch_linear_lr
+predictor=torch_linear_delta_hypopt
 "
 
 

@@ -19,7 +19,6 @@ representor=clip_rn50,clip_rn50x4,clip_rn50x16,clip_rn101,clip_vitB16,clip_vitB3
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
-data.subset=0.01
 data.kwargs.subset_raw_dataset=0.3
 "
 

@@ -184,22 +184,27 @@ def load_single_file(f, skip_ifin=dict(), skip_ifneq=dict(), metric="err"):
             return None, None
 
     metrics = pd.read_csv(f, index_col=0).T[metric]
-    key = (params["ssl"], params["pred"], params["seed"])
+    if "hyp" in params:
+        key = (params["ssl"], params["pred"], params["seed"], params["hyp"])
+    else:
+        key = (params["ssl"], params["pred"], params["seed"])
 
     return key, metrics
-
 
 def load_all_results(results_dir=Path() / "results/",
                      pattern="**/results_all.csv",
                      metric="err",
                      skip_ifin=dict(exp=["dev", "inv", "shat"], ssl=["colorization"]),
-                     skip_ifneq=dict(data="imagenet")
+                     skip_ifneq=dict(data="imagenet-N5")
                      ):
     """Load all ssl and supervised results."""
+    #
     files = list(results_dir.glob(pattern))
     print(f"Found {len(files)} result files to load.")
+    # files = [f for f in files if "imagenet-N5" in str(f)]
 
-    results = dict()
+    results = []
+    keys = []
 
     for f in files:
 
@@ -211,10 +216,14 @@ def load_all_results(results_dir=Path() / "results/",
         if metrics is None:
             continue
 
-        results[key] = metrics
+        results.append(metrics)
+        keys.append(key)
 
-    df_results = pd.concat(results, axis=1).T
-    df_results.index.set_names(["enc", "pred", "seed"], inplace=True)
+    df_results = pd.concat(results, keys=keys, axis=1).T
+    if len(df_results.index.names) == 4:
+        df_results.index.set_names(["enc", "pred", "seed", "hyp"], inplace=True)
+    else:
+        df_results.index.set_names(["enc", "pred", "seed"], inplace=True)
 
     if metric == "err":
         df_results = df_results * 100
@@ -327,6 +336,7 @@ def make_risk_decomposition(results, traverse_path=["down", "right", "down"],
     Make the risk decomposition depending on how you want to traverse the decomposition table.
     traverse_path=`None` returns decomposition table.
     """
+    results = results.copy()
     sffx = get_sffx_data(**sbst_kwargs)
 
     if sffx == "":  # no subsetting
@@ -390,7 +400,7 @@ def clean_results(results,
 
     if is_avg_seed:
         idcs_no_seed = [n for n in results.index.names if n != "seed"]
-        results = results.reset_index().groupby(idcs_no_seed).mean()
+        results = results.reset_index().groupby(idcs_no_seed).mean(numeric_only=True)
 
     metadata = metadata.loc[results.index.get_level_values("enc")]
 
@@ -460,30 +470,50 @@ def count_views(s):
         s = splitted[1]
     return max(count,1)
 
-def prepare_sklearn(results,
-                    metadata_df,
+def preprocess_features(df,
+                        round_dict=dict(n_parameters=int(1e7), n_classes=100, projection_nparameters=int(1e7), epochs=200),
+                        pow_dict=dict(batch_size=2, z_dim=2, patch_size=2,learning_rate=10,
+                                      weight_decay=10, pred_dim=2, img_size=2, n_negatives=2),
+                        len_cols=["augmentations"]):
+    """Preprocesses the features to make it more amenable for ML."""
+    for c, round_to in round_dict.items():
+        df[c] = df[c] // round_to * round_to
+
+    for c, base in pow_dict.items():
+        powered = base**(np.log(df[c])//np.log(base))
+        if df[c].dtype in [int, pd.Int64Dtype()]:
+            powered = powered.round().astype(df[c].dtype)
+        df[c] = powered
+
+    for c in len_cols:
+        df["n_"+c] = df[c].apply(lambda s: len(s))
+
+    return df
+
+
+def prepare_sklearn(df,
                     features_to_del=["notes", "where", "top1acc_in1k_official", "n_pus", "pu_type", "time_hours",
                                      "license", "month"],
                     features_to_keep=None,
-                    round_dict=dict(),
+                    components=COMPONENTS,
                     target="agg_risk"):
-    X = metadata_df.copy()
-    y = results[target].copy()
+    X = df.copy()
+    y = df[target].copy()
+
+    X = X.drop(components, axis=1)
 
     # binarize augmentations
-    binarizer = MultiLabelBinarizer().fit(X["augmentations"])
-    X = pd.concat([X, pd.DataFrame(binarizer.transform(X["augmentations"]),
-                                   columns=["aug_" + c for c in binarizer.classes_],
-                                   index=X.index)], axis=1
-                  ).drop("augmentations", axis=1)
+    if "augmentations" in X.columns:
+        binarizer = MultiLabelBinarizer().fit(X["augmentations"])
+        X = pd.concat([X, pd.DataFrame(binarizer.transform(X["augmentations"]),
+                                       columns=["aug_" + c for c in binarizer.classes_],
+                                       index=X.index)], axis=1
+                      ).drop("augmentations", axis=1)
 
     if features_to_keep is not None:
         features_to_del = [c for c in X.columns if c not in features_to_keep]
 
     X = X.drop(features_to_del, axis=1)
-
-    for c, round_to in round_dict.items():
-        X[c] = X[c] // round_to * round_to
 
     # convert categorical
     for c in X.columns:
@@ -569,10 +599,11 @@ def report_xgboost(reg, X, y, is_std_featimp=True, is_shap_interactive=False,
         plt.tight_layout()
         plt.show()
 
-        for i, c in enumerate(examples):
+        for c in examples:
             print(c)
-            display(shap.force_plot(explainer.expected_value, shap_values[X.index.get_loc(c.lower()), :],
-                                    feature_names=X.columns, matplotlib=True, figsize=(12, 3)))
+            shap.force_plot(explainer.expected_value, shap_values[X.index.get_loc(c.lower()), :],
+                            feature_names=X.columns, matplotlib=True)
+
             # plt.gca().set_title("c", fontsize=12)
 
         if is_shap_interactive:

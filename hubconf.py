@@ -1,3 +1,4 @@
+import pdb
 
 dependencies = [ "torch", "torchvision", "timm"]
 
@@ -60,13 +61,13 @@ def metadata_df(is_multiindex=False, is_lower=True, **kwargs):
 
     cols_to_types = _metadata_cols_to_types()
     assert set(cols_to_types.keys()) == set(df.columns.get_level_values(-1))
-    for c,dtype in cols_to_types.items():
+    for c, dtype in cols_to_types.items():
         i_col = df.columns.get_level_values(-1) == c
-        if dtype == pd.Int64Dtype():
+        if isinstance(dtype, pd.Int64Dtype):
             # for int needs to first convert to float if nan
-            df.iloc[:, i_col] = pd.to_numeric(df.iloc[:, i_col].squeeze(), errors='coerce').astype('Int64')
+            df[df.columns[i_col]] = pd.to_numeric(df.iloc[:, i_col].squeeze(), errors='coerce').astype('Int64').to_frame()
         else:
-            df.iloc[:, i_col] = df.iloc[:, i_col].astype(dtype)
+            df[df.columns[i_col]] = df.iloc[:, i_col].astype(dtype)
 
     return df
 
@@ -435,7 +436,7 @@ try:
     from hub.dino import get_dino_models as _get_dino_models
 
     def dino_rn50():
-        return _get_dino_models("dino_resnet50")
+        return _get_dino_models("dino_resnet50", family="resnet")
 
     def dino_vitS16_last():
         return _get_dino_models("dino_vits16")
@@ -743,6 +744,7 @@ def _metadata_cols_to_types():
             'version': pd.Int64Dtype(),  # version of ssl objective
             'is_stopgrad': "boolean",  # are you stopping gradients
             'is_ema': "boolean",  # are you using some exponential moving average
+            'other': pd.StringDtype(),  # additional parameters that you should use to distinguish models
             'architecture_exact': pd.StringDtype(),  # exact architercture (flags minor diff)
             'architecture': pd.StringDtype(),  # typical architecture: eg resnet50
             'family': pd.StringDtype(),  # coarse type of arch (eg cnn/vit)
@@ -767,6 +769,7 @@ def _metadata_cols_to_types():
             'year': pd.Int64Dtype(),  # publication year
             'license': pd.StringDtype(),  # license of pretraining weights / code
             'is_official': "boolean",  # whether official pretraining weights
+            'is_industry': "boolean",  # whether the hyper parameters were tuned in industry / big tech
             'n_pus': pd.Int64Dtype(),  # number of processors used for training
             'pu_type': pd.StringDtype(),  # type of processors used for training
             'time_hours': "float64",  # total training time
@@ -777,5 +780,7 @@ def _metadata_cols_to_types():
             'projection_arch': pd.StringDtype(),  # projection architecture
             'projection_nparameters': pd.Int64Dtype(),  # number of parameters of projection head
             'top1acc_in1k_official': "float64",  # accuracy that authors said they would achieve
+            'top1acc_in1k-1%_official': "float64",  # accuracy that authors said they achieved on 1% of supervised data
+            'top1acc_in1k-c5_official': "float64", # accuracy that authors said they would achieve on 5 classes per labels
             'n_negatives': pd.Int64Dtype(),  # number of negatives if applicable
             'finetuning_data': pd.StringDtype()}  # what data it was finetuned on

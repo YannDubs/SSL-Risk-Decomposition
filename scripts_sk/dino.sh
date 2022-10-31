@@ -14,17 +14,12 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=dino_rn50,dino_vitS16_last,dino_vitS8_last,dino_vitB16_last,dino_vitB8_last,dino_vitB16,dino_vitS16_extractB
+representor=dino_rn50,dino_vitS16_last,dino_vitS8_last,dino_vitB16_last,dino_vitB8_last,dino_vitS16_extractB
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
-data.subset=0.01
 data.kwargs.subset_raw_dataset=0.3
 "
-
-
-
-
 
 
 if [ "$is_plot_only" = false ] ; then

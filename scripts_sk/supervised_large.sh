@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-experiment="mmselfsup"
-notes="**Goal**: evaluate all the mmselfsup models."
+experiment="supervised"
+notes="**Goal**: evaluate all the supervised models."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -13,13 +13,29 @@ experiment=$experiment
 timeout=$time
 "
 
+
+
 kwargs_multi="
-representor=relativeloc_rn50_70ep_mmselfsup,odc_rn50_440ep_mmselfsup,densecl_rn50_200ep_mmselfsup,simsiam_rn50_bs256_ep200_mmselfsup,simclr_rn50_bs256_ep200_mmselfsup,deepcluster_rn50_bs512_ep200_mmselfsup
+representor=sup_vitB16_dino,sup_vitB8_dino,sup_vitS16_dino
 seed=123
+is_supervised=True
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
 data.kwargs.subset_raw_dataset=0.3
 "
+
+kwargs_multi="
+representor=sup_vitB8_dino,sup_vitS16_dino
+seed=123
+is_supervised=True
+predictor=sk_logistic_hypopt
+data.kwargs.is_avoid_raw_dataset=True
+data.kwargs.subset_raw_dataset=0.3
+"
+
+#predictor=torch_bnlinear
+#seed=123,124,125
+#"predictor=torch_linear,torch_momlinear" #"predictor.opt_kwargs.lr=3e-3,3e-2" "predictor.opt_kwargs.weight_decay=0,1e-4" "trainer.max_epochs=33,300" "data.kwargs.batch_size=64,1024"
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

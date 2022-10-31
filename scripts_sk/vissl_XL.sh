@@ -13,25 +13,15 @@ experiment=$experiment
 timeout=$time
 "
 
-# can run npidpp_rn50w2
-# once https://github.com/facebookresearch/vissl/issues/516
-
-
-
-
-
 # simclr_rn50w4 needs XL
 kwargs_multi="
 representor=simclr_rn50w4
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
-data.subset=0.01
 data.kwargs.subset_raw_dataset=0.3
 "
 
-
-# torch_linear_hypopt
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

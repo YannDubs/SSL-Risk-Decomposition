@@ -17,14 +17,14 @@ timeout=$time
 kwargs_multi="
 representor=clip_rn50,clip_rn50x4,clip_rn50x16,clip_rn50x64,clip_rn101,clip_vitB16,clip_vitB32,clip_vitL14,clip_vitL14_px336
 seed=123
-predictor=torch_linear_hypopt
+predictor=torch_linear_delta_hypopt
 "
 
 
 kwargs_multi="
-representor=clip_rn50,clip_rn50x4,clip_rn50x16,clip_rn50x64,clip_rn101,clip_vitB16,clip_vitB32,clip_vitL14,clip_vitL14_px336
+representor=clip_vitB32
 seed=123
-predictor=torch_linear_lr
+predictor=torch_linear_delta_hypopt
 "
 
 

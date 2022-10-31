@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-experiment="mmselfsup"
-notes="**Goal**: evaluate all the mmselfsup models."
+experiment="beit"
+notes="**Goal**: evaluate all the BEIT models."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -14,12 +14,13 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=relativeloc_rn50_70ep_mmselfsup,odc_rn50_440ep_mmselfsup,densecl_rn50_200ep_mmselfsup,simsiam_rn50_bs256_ep200_mmselfsup,simclr_rn50_bs256_ep200_mmselfsup,deepcluster_rn50_bs512_ep200_mmselfsup
+representor=beitv2_vitB16_pt1k_extractB
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
 data.kwargs.subset_raw_dataset=0.3
 "
+# not ideal that we don't use the same predictor (different tuning) for SSL and SUP. Maybe should use torch_lienar_erm
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

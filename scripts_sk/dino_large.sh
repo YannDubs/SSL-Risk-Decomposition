@@ -16,11 +16,18 @@ timeout=$time
 
 # large
 kwargs_multi="
-representor=dino_vitS16,dino_vitB8,dino_vitB16_extractS
+representor=dino_vitS16,dino_vitB8,dino_vitB16_extractS,dino_vitB16
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
-data.subset=0.01
+data.kwargs.subset_raw_dataset=0.3
+"
+
+kwargs_multi="
+representor=dino_vitB16
+seed=123
+predictor=sk_logistic_hypopt
+data.kwargs.is_avoid_raw_dataset=True
 data.kwargs.subset_raw_dataset=0.3
 "
 

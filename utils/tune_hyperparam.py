@@ -44,10 +44,13 @@ except ImportError:
 logger = logging.getLogger(__name__)
 BEST_HPARAMS = "best_hparams.json"
 
-def tune_hyperparam_(datamodule, cfg, train_on="train-sbst-0.5", validate_on="train-cmplmnt-0.5", label_size=None):
+def tune_hyperparam_(datamodule, cfg, train_on="train-sbst-0.5", validate_on="train-cmplmnt-0.5", label_size=None, tuning_path=None):
     logger.info(f"Hyperparameter tuning")
 
-    path_hypopt = Path(cfg.paths.tuning)
+    if tuning_path is None:
+        tuning_path = cfg.paths.tuning
+
+    path_hypopt = Path(tuning_path)
     path_hypopt.mkdir(parents=True, exist_ok=True)
     path_best_hparams = path_hypopt / BEST_HPARAMS
 
@@ -115,7 +118,7 @@ def tune_hyperparam_sklearn_(datamodule, cfg, path_hypopt):
         refit=False
     )
 
-    logging.info(f"Fitting sklearn on {len(X)} examples. Clf={clf}.")
+    logging.info(f"Fitting sklearn on {len(train_dataset.X)} examples, validating on .{len(val_dataset.X)}. Clf={clf}.")
     clf = clf.fit(X, Y)
     return clf.best_params_
 

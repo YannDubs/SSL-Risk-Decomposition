@@ -1,7 +1,7 @@
 defaults:
   - base_pytorch
 
-name: torch_linear_hypopt
+name: torch_linear_delta_hypopt
 is_tune_hyperparam: True
 arch_kwargs:
   architecture: linear

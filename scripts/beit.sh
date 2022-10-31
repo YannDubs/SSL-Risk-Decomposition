@@ -16,15 +16,8 @@ timeout=$time
 kwargs_multi="
 representor=beit_vitB16_pt22k,beit_vitL16_pt22k,beitv2_vitB16_pt1k,beitv2_vitL16_pt1k,beitv2_vitB16_pt1k_extractB,beitv2_vitB16_pt1k_ep300
 seed=123
-predictor=torch_linear_hypopt,torch_linear_lr
+predictor=torch_linear_delta_hypopt
 "
-
-kwargs_multi="
-representor=beit_vitB16_pt22k,beit_vitL16_pt22k,beitv2_vitB16_pt1k,beitv2_vitL16_pt1k,beitv2_vitB16_pt1k_extractB,beitv2_vitB16_pt1k_ep300
-seed=123
-predictor=torch_linear_lr
-"
-# not ideal that we don't use the same predictor (different tuning) for SSL and SUP. Maybe should use torch_lienar_erm
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

@@ -21,7 +21,6 @@ representor=mocov2_rn50_vissl,rotnet_rn50_in1k,rotnet_rn50_in22k,simclr_rn50,sim
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
-data.subset=0.01
 data.kwargs.subset_raw_dataset=0.3
 "
 

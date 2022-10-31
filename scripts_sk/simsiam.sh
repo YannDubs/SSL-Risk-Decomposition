@@ -18,7 +18,6 @@ representor=simsiam_rn50_bs512_ep100,simsiam_rn50_bs256_ep100
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
-data.subset=0.01
 data.kwargs.subset_raw_dataset=0.3
 "
 

@@ -18,7 +18,6 @@ representor=mae_vitB16,mae_vitL16,mae_vitH14
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
-data.subset=0.01
 data.kwargs.subset_raw_dataset=0.3
 "
 

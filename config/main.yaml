@@ -21,6 +21,7 @@ long_name: exp_${experiment}/data_${data.name}/ssl_${representor}/pred_${predict
 long_name_component: ${long_name}/comp_${component}
 is_nlp_cluster: False # should the working directory be used as main
 
+is_riskdec: True # whether to evaluate all the risk decomposition or just aggregated
 is_supervised: False # whether currently running supervised benchmark
 is_run_in_dist: True
 is_run_out_dist: False # whether to evaluate out of distribution

@@ -17,13 +17,7 @@ timeout=$time
 kwargs_multi="
 representor=simclr_resnet50_d8192_e100_m2,dissl_resnet50_d4096_e100_m2
 seed=123
-predictor=torch_linear_hypopt
-"
-
-kwargs_multi="
-representor=simclr_resnet50_d8192_e100_m2,dissl_resnet50_d4096_e100_m2
-seed=123
-predictor=torch_linear_lr
+predictor=torch_linear_delta_hypopt
 "
 
 # torch_linear_erm

@@ -185,8 +185,9 @@ def instantiate_datamodule_(cfg: Container, representor : Callable, preprocess: 
     return datamodule
 
 def run_component_(component : str, datamodule : pl.LightningDataModule, cfg : Container, results : dict,
-                   components_same_train : dict ={}, Predictor=Predictor, **kwargs):
+                   components_same_train : dict ={}, Predictor=Predictor, results_path=None, **kwargs):
     logger.info(f"Stage : {component}")
+
     cfg_comp, datamodule = set_component_(datamodule, cfg, component)
 
     if cfg.predictor.is_sklearn:
@@ -198,12 +199,18 @@ def run_component_(component : str, datamodule : pl.LightningDataModule, cfg : C
 
     try:
         # try to load in case already precomputed
-        results[component] = load_results(cfg_comp, component)
+        try:
+            results[component] = load_results(cfg_comp, component, results_path=results_path)
+        except:  # DEV TEMPORARY TO REMOVE! tries to load models before adding hyp
+            results[component] = load_results(cfg_comp, component, results_path=None)
+            save_results(cfg_comp, results[component], component, results_path=results_path)
+
         for other_comp in components_same_train.get(component, []):
-            results[other_comp] = load_results(cfg_comp, other_comp)
+            results[other_comp] = load_results(cfg_comp, other_comp, results_path=results_path)
         logger.info(f"Skipping {component} as already computed ...")
 
     except FileNotFoundError:
+
         fit_(trainer, predictor, datamodule, cfg_comp)
 
         logger.info(f"Evaluate predictor for {component} ...")
@@ -214,7 +221,7 @@ def run_component_(component : str, datamodule : pl.LightningDataModule, cfg : C
             logger.info(f"Evaluate predictor for {other_comp} without retraining ...")
             cfg_comp, datamodule = set_component_(datamodule, cfg, other_comp)
             trainer = set_component_trainer_(trainer, cfg_comp, other_comp, model=predictor)
-            results[other_comp] = evaluate(trainer, datamodule, cfg_comp, other_comp, model=predictor, **kwargs)
+            results[other_comp] = evaluate(trainer, datamodule, cfg_comp, other_comp, model=predictor, results_path=results_path, **kwargs)
 
     return results
 
@@ -286,7 +293,8 @@ def evaluate(
     cfg: NamespaceMap,
     component: str,
     model: torch.nn.Module,
-    is_per_task_results=False
+    is_per_task_results=False,
+    results_path=None,
 ) -> pd.Series:
     """Evaluate the trainer by logging all the metrics from the test set from the best model."""
     cfg = copy.deepcopy(cfg)
@@ -306,24 +314,31 @@ def evaluate(
             results[f"acc_{i}"] = per_task_results[i].item()
 
     results = pd.Series(results)
-    save_results(cfg, results, component)
+    save_results(cfg, results, component, results_path=results_path)
 
     return results
 
-def load_results(cfg: NamespaceMap, component: str) -> Union[pd.Series,pd.DataFrame]:
+def load_results(cfg: NamespaceMap, component: str, results_path=None) -> Union[pd.Series,pd.DataFrame]:
     cfg = copy.deepcopy(cfg)
     cfg.component = component
 
-    results_path = Path(cfg.paths.results)
+    if results_path is None:
+        results_path = cfg.paths.results
+
+    results_path = Path(results_path)
     filename = RESULTS_FILE.format(component=cfg.component)
     path = results_path / filename
+    logger.info(f"Trying to load results from {path}")
     return pd.read_csv(path, index_col=0).squeeze("columns")
 
-def save_results(cfg : NamespaceMap, results : Union[pd.Series,pd.DataFrame], component: str):
+def save_results(cfg : NamespaceMap, results : Union[pd.Series,pd.DataFrame], component: str, results_path=None):
     cfg = copy.deepcopy(cfg)
     cfg.component = component
 
-    results_path = Path(cfg.paths.results)
+    if results_path is None:
+        results_path = cfg.paths.results
+
+    results_path = Path(results_path)
     results_path.mkdir(parents=True, exist_ok=True)
     filename = RESULTS_FILE.format(component=cfg.component)
     path = results_path / filename

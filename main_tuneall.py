@@ -7,6 +7,8 @@ the file `config/main.yaml` for details about the configs. or use `python main.p
 
 from __future__ import annotations
 
+import pdb
+
 try:
     from sklearnex import patch_sklearn
 
@@ -41,6 +43,7 @@ FILE_END = "end.txt"
 
 @hydra.main(config_name="main", config_path="config")
 def main_except(cfg):
+
     if cfg.is_nlp_cluster:
         with nlp_cluster(cfg):
             main(cfg)
@@ -60,66 +63,53 @@ def main(cfg):
     representor = LightningWrapper(representor)
     datamodule = instantiate_datamodule_(cfg, representor, preprocess)
 
-    if cfg.data.subset is not None:
-        cfg.data.name = f"{cfg.data.name}-S{cfg.data.subset}"
-        sffx = f"balsbst-ntrain{cfg.data.subset}"  # use percentage of ntrain even for ntest
-
-    elif cfg.data.n_per_class is not None:
-        cfg.data.name = f"{cfg.data.name}-N{cfg.data.n_per_class}"
-        sffx = f"nperclass-{cfg.data.n_per_class}"
-
-    else:
-        raise ValueError("To use main_eff you should either set data.subset or data.n")
-
-    n_sbst = len(datamodule.get_dataset("train-" + sffx))
-    n_testUsbst = len(datamodule.test_dataset) + n_sbst
-
     ############## DOWNSTREAM PREDICTOR ##############
     results = dict()
 
-    # those components have the same training setup so don't retrain
-    if cfg.is_riskdec:
-        components_same_train = {f"train-{sffx}_train-{sffx}": [f"train-{sffx}_test",
-                                                                f"train-{sffx}_train-balsbst-ntest"],
-                                 }
-    else:
-        components_same_train = {f"train-{sffx}_train-{sffx}": [f"train-{sffx}_test"]}
+    assert cfg.predictor.is_tune_hyperparam
+    # those components can have the same hyperparameters
+    components2hypopt = {"train_train": dict(train_on="train-sbst-0.5",  validate_on="train-sbst-0.5", label_size=0.2),
+                         "train-cmplmnt-ntest_train-sbst-ntest": dict(train_on="train-sbst-0.5", validate_on="train-cmplmnt-0.5", label_size=0.2),
+                         "train-cmplmnt-ntest_test": dict(train_on="train-sbst-0.5", validate_on="test", label_size=0.2),  # validation should be done on test-sbst-0.1
+                         "train_test": dict(train_on="train-sbst-0.5", validate_on="test", label_size=0.2),   # valdiation should be done on test-sbst-0.1
+                         "train_test-cmplmnt-0.1": dict(train_on="train", validate_on="test-sbst-0.1"),
+                         "union_test": dict(train_on="train-sbst-0.5", validate_on="train-sbst-0.5", label_size=0.2),
+                         }
 
-    if cfg.predictor.is_tune_hyperparam:
-        # should be sklearn
-        train = f"train-{sffx}"
-        valid = train if cfg.predictor.hypopt.is_tune_on_train else f"train-balsbst-ntest-11"
-        tune_hyperparam_(datamodule, cfg, train_on=train, validate_on=valid)
+    # those components have the same training setup so don't retrain
+    components_same_train = {}
 
     if cfg.is_supervised:
-        if cfg.is_riskdec:
-            # only need train on train for supervised baselines (i.e. approx error) and train on test (agg risk)
-            components = [f"train-{sffx}_train-{sffx}",
-                          f"train-balsbst-{n_testUsbst}_train-balsbst-{n_testUsbst}"]
-        else:
-            components = [f"train-{sffx}_train-{sffx}"]
-
+        # only need train on train for supervised baselines (i.e. approx error) and train on test (agg risk)
+        components = ["train_train",
+                      "train_test"
+                      #"train_test-cmplmnt-0.1",
+                      ]
+        breakpoint()
     else:
-        if cfg.is_riskdec:
-            components = [f"train-balsbst-{n_testUsbst}_train-balsbst-{n_testUsbst}",
-                          f"train-{sffx}_train-{sffx}",
-                          f"test-{sffx}_test-{sffx}"]
-        else:
-            components = [f"train-{sffx}_train-{sffx}"]
+        # test should be replaced by test-cmplmnt-0.1
+        components = ["train-cmplmnt-ntest_train-sbst-ntest",
+                      "train_train",
+                      "train-cmplmnt-ntest_test",
+                      "train_test"
+                      #"train_test-cmplmnt-0.1",
+                      #"union_test",
+                    ]
 
     for component in components:
-        results = run_component_(component, datamodule, cfg, results, components_same_train)
+
+        sffx_hypopt = "hyp_{train_on}_{validate_on}_{label_size}".format(**components2hypopt[component])
+        tune_hyperparam_(datamodule, cfg,
+                         tuning_path=cfg.paths.tuning + sffx_hypopt,
+                         **components2hypopt[component])
+
+        results = run_component_(component, datamodule, cfg, results, components_same_train,
+                                 results_path=cfg.paths.results + sffx_hypopt)
 
     # save results
     results = pd.DataFrame.from_dict(results)
 
     save_results(cfg, results, "all")
-
-
-    # remove all saved features at the end
-    # remove_rf(datamodule.features_path, not_exist_ok=True)
-
-
 
 if __name__ == "__main__":
     try:

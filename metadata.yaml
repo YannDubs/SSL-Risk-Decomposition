@@ -52,6 +52,7 @@ beitv2_vitB16_pt1k_extractB:
     year: 2022
     license: MIT
     is_official: true
+    is_industry: True
   compute:
     n_pus: 16
     pu_type: V100
@@ -100,6 +101,8 @@ beitv2_vitL16_pt1k:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/microsoft/unilm/tree/master/beit2
     notes: the architecture is slightly different than vit because they use relative positional embeddings
@@ -107,6 +110,7 @@ beitv2_vitL16_pt1k:
     year: 2022
     license: MIT
     is_official: true
+    is_industry: True
   compute:
     n_pus: 16
     pu_type: V100
@@ -155,6 +159,8 @@ beitv2_vitB16_pt1k:
       - normalize
   metrics:
     top1acc_in1k_official: null # 80.1 is when using cls+avg and 300 epochs
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/microsoft/unilm/tree/master/beit2
     notes: the architecture is slightly different than vit because they use relative positional embeddings
@@ -162,6 +168,7 @@ beitv2_vitB16_pt1k:
     year: 2022
     license: MIT
     is_official: true
+    is_industry: True
   compute:
     n_pus: 16
     pu_type: V100
@@ -210,6 +217,8 @@ beitv2_vitB16_pt1k_ep300:
       - normalize
   metrics:
     top1acc_in1k_official: null # 80.1 is when using cls+avg and 300 epochs
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/microsoft/unilm/tree/master/beit2
     notes: the architecture is slightly different than vit because they use relative positional embeddings
@@ -217,6 +226,7 @@ beitv2_vitB16_pt1k_ep300:
     year: 2022
     license: MIT
     is_official: true
+    is_industry: True
   compute:
     n_pus: 16
     pu_type: V100
@@ -266,6 +276,8 @@ beit_vitL16_pt22k:
       - normalize
   metrics:
     top1acc_in1k_official: null # 73.5 is when using cls+avg
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/microsoft/unilm/tree/master/beit
     notes: the architecture is slightly different than vit because they use relative positional embeddings
@@ -273,6 +285,7 @@ beit_vitL16_pt22k:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: True
   compute:
     n_pus: 16
     pu_type: V100
@@ -322,6 +335,8 @@ beit_vitB16_pt22k:
       - normalize
   metrics:
     top1acc_in1k_official: null # 56.7 is for cls+avg
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/microsoft/unilm/tree/master/beit
     notes: the architecture is slightly different than vit because they use relative positional embeddings
@@ -329,6 +344,7 @@ beit_vitB16_pt22k:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: True
   compute:
     n_pus: 16
     pu_type: V100
@@ -381,6 +397,8 @@ deepcluster_rn50_bs512_ep200_mmselfsup:
       - normalize
   metrics:
     top1acc_in1k_official: 46.92
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/open-mmlab/mmselfsup
     notes: null
@@ -388,6 +406,7 @@ deepcluster_rn50_bs512_ep200_mmselfsup:
     year: 2018
     license: Apache 2.0
     is_official: false
+    is_industry: True
   compute:
     n_pus: 8
     pu_type: V100
@@ -437,6 +456,8 @@ simclr_rn50_bs256_ep200_mmselfsup:
       - normalize
   metrics:
     top1acc_in1k_official: 62.56
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/open-mmlab/mmselfsup
     notes: null
@@ -444,6 +465,7 @@ simclr_rn50_bs256_ep200_mmselfsup:
     year: 2020
     license: Apache 2.0
     is_official: false
+    is_industry: True
   compute:
     n_pus: 8
     pu_type: ???
@@ -452,7 +474,7 @@ simclr_rn50_bs256_ep200_mmselfsup:
 simsiam_rn50_bs256_ep200_mmselfsup:
   ssl:
     objective: simsiam
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -494,6 +516,8 @@ simsiam_rn50_bs256_ep200_mmselfsup:
       - normalize
   metrics:
     top1acc_in1k_official: 69.84
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/open-mmlab/mmselfsup
     notes: null
@@ -501,6 +525,7 @@ simsiam_rn50_bs256_ep200_mmselfsup:
     year: 2020
     license: Apache 2.0
     is_official: false
+    is_industry: True
   compute:
     n_pus: 8
     pu_type: ???
@@ -508,7 +533,7 @@ simsiam_rn50_bs256_ep200_mmselfsup:
 
 densecl_rn50_200ep_mmselfsup:
   ssl:
-    objective: odc
+    objective: densecl
     ssl_mode: hierarchical contrastive
     version: 1
     n_negatives: 512
@@ -551,6 +576,8 @@ densecl_rn50_200ep_mmselfsup:
       - normalize
   metrics:
     top1acc_in1k_official: 63.34
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/open-mmlab/mmselfsup
     notes: null
@@ -558,6 +585,7 @@ densecl_rn50_200ep_mmselfsup:
     year: 2020
     license: Apache 2.0
     is_official: false
+    is_industry: False
   compute:
     n_pus: 8
     pu_type: ???
@@ -608,6 +636,8 @@ odc_rn50_440ep_mmselfsup:
       - normalize
   metrics:
     top1acc_in1k_official: 53.42
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/open-mmlab/mmselfsup
     notes: null
@@ -615,6 +645,7 @@ odc_rn50_440ep_mmselfsup:
     year: 2020
     license: Apache 2.0
     is_official: false
+    is_industry: False
   compute:
     n_pus: 8
     pu_type: ???
@@ -662,6 +693,8 @@ relativeloc_rn50_70ep_mmselfsup:
       - normalize
   metrics:
     top1acc_in1k_official: 39.65
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/open-mmlab/mmselfsup
     notes: null
@@ -669,6 +702,7 @@ relativeloc_rn50_70ep_mmselfsup:
     year: 2015
     license: Apache 2.0
     is_official: false
+    is_industry: False
   compute:
     n_pus: 8
     pu_type: ???
@@ -724,6 +758,8 @@ infomin_rn50_800ep:
       - normalize
   metrics:
     top1acc_in1k_official: 73.0
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/HobbitLong/PyContrast
     notes: this is simply mocov2 with autoaugment and jigsaw augment
@@ -731,6 +767,7 @@ infomin_rn50_800ep:
     year: 2020
     license: BSD 3-Clause
     is_official: true
+    is_industry: False
   compute:
     n_pus: 8
     pu_type: ???
@@ -783,6 +820,8 @@ infomin_rn50_200ep:
       - normalize
   metrics:
     top1acc_in1k_official: 70.1
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/HobbitLong/PyContrast
     notes: this is simply mocov2 with autoaugment and jigsaw augment
@@ -790,6 +829,7 @@ infomin_rn50_200ep:
     year: 2020
     license: BSD 3-Clause
     is_official: true
+    is_industry: False
   compute:
     n_pus: 8
     pu_type: ???
@@ -800,7 +840,7 @@ mocov2_rn50_ep800:
   ssl:
     objective: moco
     ssl_mode: contrastive
-    version: 3
+    version: 2
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -841,6 +881,8 @@ mocov2_rn50_ep800:
       - normalize
   metrics:
     top1acc_in1k_official: 71.1
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/moco
     notes: null
@@ -848,6 +890,7 @@ mocov2_rn50_ep800:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 8
     pu_type: V100
@@ -857,7 +900,7 @@ mocov2_rn50_ep200:
   ssl:
     objective: moco
     ssl_mode: contrastive
-    version: 3
+    version: 2
     n_negatives: 65536
     n_classes: null
     is_stopgrad: true
@@ -898,6 +941,8 @@ mocov2_rn50_ep200:
       - normalize
   metrics:
     top1acc_in1k_official: 67.7
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/moco
     notes: null
@@ -905,6 +950,7 @@ mocov2_rn50_ep200:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 8
     pu_type: V100
@@ -954,6 +1000,8 @@ mocov1_rn50_ep200:
       - normalize
   metrics:
     top1acc_in1k_official: 60.6
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/moco
     notes: null
@@ -961,6 +1009,7 @@ mocov1_rn50_ep200:
     year: 2019
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 8
     pu_type: V100
@@ -1012,6 +1061,8 @@ mocov3_vitB_ep300:
       - normalize
   metrics:
     top1acc_in1k_official: 76.7
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/moco-v3
     notes: null
@@ -1019,6 +1070,7 @@ mocov3_vitB_ep300:
     year: 2021
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: Volta
@@ -1069,6 +1121,8 @@ mocov3_vitS_ep300:
       - normalize
   metrics:
     top1acc_in1k_official: 73.2
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/moco-v3
     notes: moco uses 12 heads instead of the standard 6
@@ -1076,6 +1130,7 @@ mocov3_vitS_ep300:
     year: 2021
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: Volta
@@ -1126,6 +1181,8 @@ mocov3_rn50_ep1000:
       - normalize
   metrics:
     top1acc_in1k_official: 74.6
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/moco-v3
     notes: null
@@ -1133,6 +1190,7 @@ mocov3_rn50_ep1000:
     year: 2021
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 16
     pu_type: Volta
@@ -1183,6 +1241,8 @@ mocov3_rn50_ep300:
       - normalize
   metrics:
     top1acc_in1k_official: 72.8
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/moco-v3
     notes: null
@@ -1190,6 +1250,7 @@ mocov3_rn50_ep300:
     year: 2021
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 16
     pu_type: Volta
@@ -1240,6 +1301,8 @@ mocov3_rn50_ep100:
       - normalize
   metrics:
     top1acc_in1k_official: 68.9
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/moco-v3
     notes: null
@@ -1247,6 +1310,7 @@ mocov3_rn50_ep100:
     year: 2021
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 16
     pu_type: Volta
@@ -1300,6 +1364,8 @@ msn_vitl7_ep200:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official:  75.1
+    top1acc_in1k-c5_official:  72.1
   meta:
     where: https://github.com/facebookresearch/msn
     notes: null
@@ -1307,6 +1373,7 @@ msn_vitl7_ep200:
     year: 2022
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: ???
     pu_type: ???
@@ -1358,6 +1425,8 @@ msn_vitl16_ep600:
       - normalize
   metrics:
     top1acc_in1k_official: 80.7
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/msn
     notes: null
@@ -1365,6 +1434,7 @@ msn_vitl16_ep600:
     year: 2022
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: ???
     pu_type: ???
@@ -1416,6 +1486,8 @@ msn_vitb4_ep300:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: 75.7
+    top1acc_in1k-c5_official: 72.4
   meta:
     where: https://github.com/facebookresearch/msn
     notes: null
@@ -1423,6 +1495,7 @@ msn_vitb4_ep300:
     year: 2022
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: ???
     pu_type: ???
@@ -1475,6 +1548,8 @@ msn_vitb16_ep600:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official:  65.5
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/msn
     notes: null
@@ -1482,6 +1557,7 @@ msn_vitb16_ep600:
     year: 2022
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 16
     pu_type: ???
@@ -1534,6 +1610,8 @@ msn_vits16_ep800:
       - normalize
   metrics:
     top1acc_in1k_official: 76.9
+    top1acc_in1k-1%_official: 67.2
+    top1acc_in1k-c5_official: 62.8
   meta:
     where: https://github.com/facebookresearch/msn
     notes: null
@@ -1541,6 +1619,7 @@ msn_vits16_ep800:
     year: 2022
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 16
     pu_type: ???
@@ -1590,6 +1669,8 @@ mae_vitH14:
       - normalize
   metrics:
     top1acc_in1k_official: 76.6
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/mae
     notes: null
@@ -1597,6 +1678,7 @@ mae_vitH14:
     year: 2021
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 128
     pu_type: TPU v3
@@ -1644,6 +1726,8 @@ mae_vitL16:
       - normalize
   metrics:
     top1acc_in1k_official: 75.8
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/mae
     notes: null
@@ -1651,6 +1735,7 @@ mae_vitL16:
     year: 2021
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 128
     pu_type: TPU v3
@@ -1698,6 +1783,8 @@ mae_vitB16:
       - normalize
   metrics:
     top1acc_in1k_official: 68.0
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/mae
     notes: null
@@ -1705,6 +1792,7 @@ mae_vitB16:
     year: 2021
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 128
     pu_type: TPU v3
@@ -1760,6 +1848,8 @@ mugs_vitb16_ep400_extractB:
       - normalize
   metrics:
     top1acc_in1k_official: 78.0
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/sail-sg/mugs
     notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
@@ -1767,6 +1857,7 @@ mugs_vitb16_ep400_extractB:
     year: 2022
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 24
     pu_type: A100
@@ -1821,6 +1912,8 @@ mugs_vits16_ep800_extractS:
       - normalize
   metrics:
     top1acc_in1k_official: 75.6
+    top1acc_in1k-1%_official: 66.9
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/sail-sg/mugs
     notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
@@ -1828,6 +1921,7 @@ mugs_vits16_ep800_extractS:
     year: 2022
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 16
     pu_type: A100
@@ -1882,6 +1976,8 @@ mugs_vitl16_ep250:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/sail-sg/mugs
     notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
@@ -1889,6 +1985,7 @@ mugs_vitl16_ep250:
     year: 2022
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 40
     pu_type: A100
@@ -1943,6 +2040,8 @@ mugs_vitb16_ep400:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/sail-sg/mugs
     notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
@@ -1950,6 +2049,7 @@ mugs_vitb16_ep400:
     year: 2022
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 24
     pu_type: A100
@@ -2004,6 +2104,8 @@ mugs_vits16_ep800:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/sail-sg/mugs
     notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
@@ -2011,6 +2113,7 @@ mugs_vits16_ep800:
     year: 2022
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 16
     pu_type: A100
@@ -2065,6 +2168,8 @@ mugs_vits16_ep300:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/sail-sg/mugs
     notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
@@ -2072,6 +2177,7 @@ mugs_vits16_ep300:
     year: 2022
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 16
     pu_type: A100
@@ -2126,6 +2232,8 @@ mugs_vits16_ep100:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/sail-sg/mugs
     notes: evaluation of the official model is unclear and eval code is not available but I think it's like DINO.
@@ -2133,6 +2241,7 @@ mugs_vits16_ep100:
     year: 2022
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 8
     pu_type: A100
@@ -2186,6 +2295,8 @@ ibot_vitS16_extractS:
       - normalize
   metrics:
     top1acc_in1k_official: 77.9
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/bytedance/ibot
     notes: prediction shape is block
@@ -2193,6 +2304,7 @@ ibot_vitS16_extractS:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 16
     pu_type: V100
@@ -2245,6 +2357,8 @@ ibot_vitB16_extractB:
       - normalize
   metrics:
     top1acc_in1k_official: 79.5
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/bytedance/ibot
     notes: null
@@ -2252,6 +2366,7 @@ ibot_vitB16_extractB:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 24
     pu_type: V100
@@ -2304,6 +2419,8 @@ ibot_vitL16:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/bytedance/ibot
     notes: prediction shape is block
@@ -2311,6 +2428,7 @@ ibot_vitL16:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: V100
@@ -2363,6 +2481,8 @@ ibot_vitS16:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/bytedance/ibot
     notes: prediction shape is block
@@ -2370,6 +2490,7 @@ ibot_vitS16:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 16
     pu_type: V100
@@ -2422,6 +2543,8 @@ ibot_vitB16:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/bytedance/ibot
     notes: null
@@ -2429,6 +2552,7 @@ ibot_vitB16:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 24
     pu_type: V100
@@ -2481,6 +2605,8 @@ dino_vitB16_extractS:
       - normalize
   metrics:
     top1acc_in1k_official: 78.2
+    top1acc_in1k-1%_official: 64.5
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -2488,6 +2614,7 @@ dino_vitB16_extractS:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: V100
@@ -2539,6 +2666,8 @@ dino_vitS16_extractB:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -2546,6 +2675,7 @@ dino_vitS16_extractB:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 16
     pu_type: V100
@@ -2597,6 +2727,8 @@ dino_vitB8:
       - normalize
   metrics:
     top1acc_in1k_official: 80.1
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -2604,6 +2736,7 @@ dino_vitB8:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 176
     pu_type: V100
@@ -2655,6 +2788,8 @@ dino_vitB16:
       - normalize
   metrics:
     top1acc_in1k_official: 78.2
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -2662,6 +2797,7 @@ dino_vitB16:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: V100
@@ -2713,6 +2849,8 @@ dino_vitS16:
       - normalize
   metrics:
     top1acc_in1k_official: 77.0
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -2720,6 +2858,7 @@ dino_vitS16:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 16
     pu_type: V100
@@ -2771,6 +2910,8 @@ dino_vitB8_last:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -2778,6 +2919,7 @@ dino_vitB8_last:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 176
     pu_type: V100
@@ -2836,6 +2978,7 @@ dino_vitB16_last:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: V100
@@ -2887,6 +3030,8 @@ dino_vitS8_last:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -2894,6 +3039,7 @@ dino_vitS8_last:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: V100
@@ -2945,6 +3091,8 @@ dino_vitS16_last:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -2952,6 +3100,7 @@ dino_vitS16_last:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 16
     pu_type: V100
@@ -3003,6 +3152,8 @@ dino_rn50:
       - normalize
   metrics:
     top1acc_in1k_official: 75.3
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -3010,6 +3161,7 @@ dino_rn50:
     year: 2021
     license: Apache License 2.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 80
     pu_type: V100
@@ -3058,6 +3210,8 @@ clip_vitL14_px336:
       - normalize
   metrics:
     top1acc_in1k_official: 85.4
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/openai/CLIP
     notes: null
@@ -3065,6 +3219,7 @@ clip_vitL14_px336:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: 256
     pu_type: V100
@@ -3111,6 +3266,8 @@ clip_vitL14:
       - normalize
   metrics:
     top1acc_in1k_official: 83.9
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/openai/CLIP
     notes: null
@@ -3118,6 +3275,7 @@ clip_vitL14:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: ???
     pu_type: V100
@@ -3164,6 +3322,8 @@ clip_vitB32:
       - normalize
   metrics:
     top1acc_in1k_official: 76.1
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/openai/CLIP
     notes: null
@@ -3171,6 +3331,7 @@ clip_vitB32:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: ???
     pu_type: V100
@@ -3217,6 +3378,8 @@ clip_vitB16:
       - normalize
   metrics:
     top1acc_in1k_official: 80.2
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/openai/CLIP
     notes: null
@@ -3224,6 +3387,7 @@ clip_vitB16:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: ???
     pu_type: V100
@@ -3270,6 +3434,8 @@ clip_rn101:
       - normalize
   metrics:
     top1acc_in1k_official: 75.7
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/openai/CLIP
     notes: unclear for resnet if CLIP uses features before or after the projection head. We use before
@@ -3277,6 +3443,7 @@ clip_rn101:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: ???
     pu_type: V100
@@ -3323,6 +3490,8 @@ clip_rn50x64:
       - normalize
   metrics:
     top1acc_in1k_official: 83.6
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/openai/CLIP
     notes: unclear for resnet if CLIP uses features before or after the projection head. We use before
@@ -3330,6 +3499,7 @@ clip_rn50x64:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: 592
     pu_type: V100
@@ -3376,6 +3546,8 @@ clip_rn50x16:
       - normalize
   metrics:
     top1acc_in1k_official: 81.5
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/openai/CLIP
     notes: unclear for resnet if CLIP uses features before or after the projection head. We use before
@@ -3383,6 +3555,7 @@ clip_rn50x16:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: ???
     pu_type: V100
@@ -3429,6 +3602,8 @@ clip_rn50x4:
       - normalize
   metrics:
     top1acc_in1k_official: 78.2
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/openai/CLIP
     notes: unclear for resnet if CLIP uses features before or after the projection head. We use before
@@ -3436,6 +3611,7 @@ clip_rn50x4:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: ???
     pu_type: V100
@@ -3482,6 +3658,8 @@ clip_rn50:
       - normalize
   metrics:
     top1acc_in1k_official: 73.3
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/openai/CLIP
     notes: unclear for resnet if CLIP uses features before or after the projection head. We use before
@@ -3489,6 +3667,7 @@ clip_rn50:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: ???
     pu_type: V100
@@ -3536,6 +3715,8 @@ lossyless_b01:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/lossyless
     notes: the only difference compared to clip is an invertible linear layer one top of representations that was trained on mscoco to compress the representations. b denotes `beta`, larger means more compression.
@@ -3543,6 +3724,7 @@ lossyless_b01:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: false
   compute:
     n_pus: ???
     pu_type: V100
@@ -3589,6 +3771,8 @@ lossyless_b005:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/lossyless
     notes: the only difference compared to clip is an invertible linear layer one top of representations that was trained on mscoco to compress the representations. b denotes `beta`, larger means more compression.
@@ -3596,6 +3780,7 @@ lossyless_b005:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: false
   compute:
     n_pus: ???
     pu_type: V100
@@ -3642,6 +3827,8 @@ lossyless_b001:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/lossyless
     notes: the only difference compared to clip is an invertible linear layer one top of representations that was trained on mscoco to compress the representations. b denotes `beta`, larger means more compression.
@@ -3649,6 +3836,7 @@ lossyless_b001:
     year: 2021
     license: MIT
     is_official: true
+    is_industry: false
   compute:
     n_pus: ???
     pu_type: V100
@@ -3700,13 +3888,16 @@ speccl_bs384_ep100:
       - normalize
   metrics:
     top1acc_in1k_official: 66.97
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: null
     month: 6
-    year: 2022
+    year: 2021
     license: MIT
     is_official: true
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: GTX 1080
@@ -3757,6 +3948,8 @@ simclr_resnet50_d8192_e100_m2:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: null
@@ -3764,6 +3957,7 @@ simclr_resnet50_d8192_e100_m2:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -3814,6 +4008,8 @@ simclr_resnet50_dNone_e100_m2_headTNoneSNone:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: no projection head
@@ -3821,6 +4017,7 @@ simclr_resnet50_dNone_e100_m2_headTNoneSNone:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -3835,6 +4032,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSMlp:
     n_classes: null
     is_stopgrad: false
     is_ema: false
+    other: headTMlpSMlp
   model:
     pred_dim: 128
     projection_hid_width: 2048
@@ -3871,6 +4069,8 @@ simclr_resnet50_dNone_e100_m2_headTMlpSMlp:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: both teacher and student have same mlp projection heads but weights are not shared
@@ -3878,6 +4078,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSMlp:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -3892,6 +4093,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSLin:
     n_classes: null
     is_stopgrad: false
     is_ema: false
+    other: headTMlpSLin
   model:
     pred_dim: 128
     projection_hid_width: 2048
@@ -3928,6 +4130,8 @@ simclr_resnet50_dNone_e100_m2_headTMlpSLin:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: student has linear head
@@ -3935,6 +4139,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSLin:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -3985,6 +4190,8 @@ simclr_resnet50_dNone_e100_m2_headTLinSLin:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: both teacher and student have linear projection heads
@@ -3992,6 +4199,7 @@ simclr_resnet50_dNone_e100_m2_headTLinSLin:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4042,6 +4250,8 @@ simclr_resnet50_dNone_e100_m2_data030:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes:  trains on 30% of imagenet but multiplies by 3 number of epochs to keep same steps.
@@ -4049,6 +4259,7 @@ simclr_resnet50_dNone_e100_m2_data030:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4099,6 +4310,8 @@ simclr_resnet50_dNone_e100_m2_data010:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes:  trains on 10% of imagenet but multiplies by 10 number of epochs to keep same steps.
@@ -4106,6 +4319,7 @@ simclr_resnet50_dNone_e100_m2_data010:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4156,13 +4370,16 @@ simclr_resnet50_dNone_e100_m2:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes:  null
     month: 6
-    year: 2022
+    year: 2020
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4213,6 +4430,8 @@ dissl_resnet50_d4096_e100_m2:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes:  null
@@ -4220,6 +4439,7 @@ dissl_resnet50_d4096_e100_m2:
     year: 2022
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4234,6 +4454,7 @@ dissl_resnet50_dNone_e100_m2_headTMlpSMlp:
     n_classes: 16384
     is_stopgrad: false
     is_ema: false
+    other: headTMlpSMlp
   model:
     pred_dim: 512
     projection_hid_width: 2048
@@ -4270,6 +4491,8 @@ dissl_resnet50_dNone_e100_m2_headTMlpSMlp:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes:  uses mlp projection head for teacher and student
@@ -4277,6 +4500,7 @@ dissl_resnet50_dNone_e100_m2_headTMlpSMlp:
     year: 2022
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4327,6 +4551,8 @@ dissl_resnet50_dNone_e100_m2_headTLinSLin:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes:  uses linear projection head for teacher and student
@@ -4334,6 +4560,7 @@ dissl_resnet50_dNone_e100_m2_headTLinSLin:
     year: 2022
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4348,6 +4575,7 @@ dissl_resnet50_dNone_e100_m2_augSmall:
     n_classes: 16384
     is_stopgrad: false
     is_ema: false
+    other: augSmall
   model:
     pred_dim: 512
     projection_hid_width: 2048
@@ -4384,6 +4612,8 @@ dissl_resnet50_dNone_e100_m2_augSmall:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: decreases strength of crop and color distortion
@@ -4391,6 +4621,7 @@ dissl_resnet50_dNone_e100_m2_augSmall:
     year: 2022
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4405,6 +4636,7 @@ dissl_resnet50_dNone_e100_m2_augLarge:
     n_classes: 16384
     is_stopgrad: false
     is_ema: false
+    other: augLarge
   model:
     pred_dim: 512
     projection_hid_width: 2048
@@ -4441,6 +4673,8 @@ dissl_resnet50_dNone_e100_m2_augLarge:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/SSL-Risk-Decomposition
     notes: increases strength of crop and color distortion
@@ -4448,6 +4682,7 @@ dissl_resnet50_dNone_e100_m2_augLarge:
     year: 2022
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4499,6 +4734,8 @@ dissl_resnet50_d8192_e800_m8:
       - normalize
   metrics:
     top1acc_in1k_official: 73.9
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/Invariant-Self-Supervised-Learning
     notes: null
@@ -4506,6 +4743,7 @@ dissl_resnet50_d8192_e800_m8:
     year: 2022
     license: MIT
     is_official: true
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4556,6 +4794,8 @@ dissl_resnet50_d8192_e400_m6:
       - normalize
   metrics:
     top1acc_in1k_official: 74.0
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/Invariant-Self-Supervised-Learning
     notes: null
@@ -4563,6 +4803,7 @@ dissl_resnet50_d8192_e400_m6:
     year: 2022
     license: MIT
     is_official: true
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4613,6 +4854,8 @@ dissl_resnet50_dNone_e400_m6:
       - normalize
   metrics:
     top1acc_in1k_official: 73.0
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/Invariant-Self-Supervised-Learning
     notes: null
@@ -4620,6 +4863,7 @@ dissl_resnet50_dNone_e400_m6:
     year: 2022
     license: MIT
     is_official: true
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4670,6 +4914,8 @@ dissl_resnet50_dNone_e400_m2:
       - normalize
   metrics:
     top1acc_in1k_official: 71.1
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/Invariant-Self-Supervised-Learning
     notes: null
@@ -4677,6 +4923,7 @@ dissl_resnet50_dNone_e400_m2:
     year: 2022
     license: MIT
     is_official: true
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4727,6 +4974,8 @@ dissl_resnet50_d8192_e100_m2:
       - normalize
   metrics:
     top1acc_in1k_official: 68.9
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/Invariant-Self-Supervised-Learning
     notes: null
@@ -4734,6 +4983,7 @@ dissl_resnet50_d8192_e100_m2:
     year: 2022
     license: MIT
     is_official: true
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4784,6 +5034,8 @@ dissl_resnet50_dNone_e100_m2:
       - normalize
   metrics:
     top1acc_in1k_official: 66.9
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/YannDubs/Invariant-Self-Supervised-Learning
     notes: null
@@ -4791,6 +5043,7 @@ dissl_resnet50_dNone_e100_m2:
     year: 2022
     license: MIT
     is_official: true
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4800,7 +5053,7 @@ dissl_resnet50_dNone_e100_m2:
 simsiam_rn50_bs256_ep100:
   ssl:
     objective: simsiam
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -4842,6 +5095,8 @@ simsiam_rn50_bs256_ep100:
       - normalize
   metrics:
     top1acc_in1k_official: 68.3
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/simsiam
     notes: null
@@ -4849,6 +5104,7 @@ simsiam_rn50_bs256_ep100:
     year: 2020
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: ???
     pu_type: ???
@@ -4857,7 +5113,7 @@ simsiam_rn50_bs256_ep100:
 simsiam_rn50_bs512_ep100:
   ssl:
     objective: simsiam
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -4899,6 +5155,8 @@ simsiam_rn50_bs512_ep100:
       - normalize
   metrics:
     top1acc_in1k_official: 68.1
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/simsiam
     notes: null
@@ -4906,69 +5164,73 @@ simsiam_rn50_bs512_ep100:
     year: 2020
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: ???
     pu_type: ???
     time_hours: ???
 
 ### SwAV ###
-selav2_rn50_ep400_2x160_4x96:
-  ssl:
-    objective: sela
-    ssl_mode: clustering
-    version: 2
-    # assuming the following information is same  as swav and dc2
-    n_negatives: 8192
-    n_classes: 3000
-    is_stopgrad: true
-    is_ema: false
-  model:
-    pred_dim: 128
-    projection_hid_width: 2048
-    projection_hid_depth: 1
-    architecture_exact: resnet50
-    architecture: resnet50
-    family: resnet
-    patch_size: null
-    projection_arch: mlp
-    n_parameters: 23508032
-    projection_nparameters: 5e6
-  representation:
-    z_dim: 2048
-    z_layer: avgpool
-  optimization:
-    epochs: 400
-    batch_size: 4096
-    optimizer: lars # larc
-    learning_rate: 0.3
-    weight_decay: 0.000001
-    scheduler: cosine
-  data:
-    pretraining_data: ImageNet-1K
-    finetuning_data: null
-    img_size: 224
-    views: 2x160+4x96
-    is_aug_invariant: true
-    augmentations:
-      - crop
-      - color
-      - blur
-      - gray
-      - flip
-      - normalize
-  metrics:
-    top1acc_in1k_official: 71.8
-  meta:
-    where: https://github.com/facebookresearch/swav
-    notes: null
-    month: 6
-    year: 2020
-    license: MIT
-    is_official: true
-  compute:
-    n_pus: ???
-    pu_type: V100
-    time_hours: ???
+#selav2_rn50_ep400_2x160_4x96:
+#  ssl:
+#    objective: sela
+#    ssl_mode: clustering
+#    version: 2
+#    # assuming the following information is same  as swav and dc2
+#    n_negatives: 8192
+#    n_classes: 3000
+#    is_stopgrad: true
+#    is_ema: false
+#  model:
+#    pred_dim: 128
+#    projection_hid_width: 2048
+#    projection_hid_depth: 1
+#    architecture_exact: resnet50
+#    architecture: resnet50
+#    family: resnet
+#    patch_size: null
+#    projection_arch: mlp
+#    n_parameters: 23508032
+#    projection_nparameters: 5e6
+#  representation:
+#    z_dim: 2048
+#    z_layer: avgpool
+#  optimization:
+#    epochs: 400
+#    batch_size: 4096
+#    optimizer: lars # larc
+#    learning_rate: 0.3
+#    weight_decay: 0.000001
+#    scheduler: cosine
+#  data:
+#    pretraining_data: ImageNet-1K
+#    finetuning_data: null
+#    img_size: 224
+#    views: 2x160+4x96
+#    is_aug_invariant: true
+#    augmentations:
+#      - crop
+#      - color
+#      - blur
+#      - gray
+#      - flip
+#      - normalize
+#  metrics:
+#    top1acc_in1k_official: 71.8
+#    top1acc_in1k-1%_official: null
+#    top1acc_in1k-c5_official: null
+#  meta:
+#    where: https://github.com/facebookresearch/swav
+#    notes: null
+#    month: 6
+#    year: 2020
+#    license: MIT
+#    is_official: true
+#    is_industry: true
+#  compute:
+#    n_pus: ???
+#    pu_type: V100
+#    time_hours: ???
 
 selav2_rn50_ep400_2x224:
   ssl:
@@ -5016,6 +5278,8 @@ selav2_rn50_ep400_2x224:
       - normalize
   metrics:
     top1acc_in1k_official: 67.2
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/swav
     notes: null
@@ -5023,6 +5287,7 @@ selav2_rn50_ep400_2x224:
     year: 2020
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: ???
     pu_type: V100
@@ -5073,6 +5338,8 @@ dc2_rn50_ep800_2x224_6x96:
       - normalize
   metrics:
     top1acc_in1k_official: 75.2
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/swav
     notes: null
@@ -5080,6 +5347,7 @@ dc2_rn50_ep800_2x224_6x96:
     year: 2020
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: V100
@@ -5130,6 +5398,8 @@ dc2_rn50_ep400_2x160_4x96:
       - normalize
   metrics:
     top1acc_in1k_official: 74.3
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/swav
     notes: null
@@ -5137,6 +5407,7 @@ dc2_rn50_ep400_2x160_4x96:
     year: 2020
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: V100
@@ -5187,6 +5458,8 @@ dc2_rn50_ep400_2x224:
       - normalize
   metrics:
     top1acc_in1k_official: 70.2
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/swav
     notes: null
@@ -5194,6 +5467,7 @@ dc2_rn50_ep400_2x224:
     year: 2020
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: V100
@@ -5244,6 +5518,8 @@ swav_rn50w4:
       - normalize
   metrics:
     top1acc_in1k_official: 77.3
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/swav
     notes: null
@@ -5251,6 +5527,7 @@ swav_rn50w4:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: V100
@@ -5301,6 +5578,8 @@ swav_rn50w2:
       - normalize
   metrics:
     top1acc_in1k_official: 77.3
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/swav
     notes: null
@@ -5308,6 +5587,7 @@ swav_rn50w2:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 128
     pu_type: V100
@@ -5358,6 +5638,8 @@ swav_rn50_ep400_bs256:
       - normalize
   metrics:
     top1acc_in1k_official: 74.3
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/swav
     notes: null
@@ -5365,6 +5647,7 @@ swav_rn50_ep400_bs256:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 4
     pu_type: V100
@@ -5415,6 +5698,8 @@ swav_rn50_ep400_2x224:
       - normalize
   metrics:
     top1acc_in1k_official: 70.1
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/swav
     notes: null
@@ -5422,6 +5707,7 @@ swav_rn50_ep400_2x224:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: V100
@@ -5472,6 +5758,8 @@ swav_rn50_ep400:
       - normalize
   metrics:
     top1acc_in1k_official: 74.6
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/swav
     notes: null
@@ -5479,6 +5767,7 @@ swav_rn50_ep400:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: V100
@@ -5529,6 +5818,8 @@ swav_rn50_ep200_bs256:
       - normalize
   metrics:
     top1acc_in1k_official: 72.7
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/swav
     notes: null
@@ -5536,6 +5827,7 @@ swav_rn50_ep200_bs256:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 4
     pu_type: V100
@@ -5586,6 +5878,8 @@ swav_rn50_ep200:
       - normalize
   metrics:
     top1acc_in1k_official: 73.9
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/swav
     notes: null
@@ -5593,6 +5887,7 @@ swav_rn50_ep200:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: V100
@@ -5643,6 +5938,8 @@ swav_rn50_ep100:
       - normalize
   metrics:
     top1acc_in1k_official: 72.1
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/swav
     notes: null
@@ -5650,6 +5947,7 @@ swav_rn50_ep100:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: V100
@@ -5700,6 +5998,8 @@ swav_rn50:
       - normalize
   metrics:
     top1acc_in1k_official: 75.3
+    top1acc_in1k-1%_official: 53.9
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/swav
     notes: null
@@ -5707,6 +6007,7 @@ swav_rn50:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: V100
@@ -5716,7 +6017,7 @@ swav_rn50:
 vicreg_rn50w2:
   ssl:
     objective: vicreg
-    ssl_mode: clustering
+    ssl_mode: siamese
     version: 1
     n_negatives: 4096
     n_classes: null
@@ -5759,6 +6060,8 @@ vicreg_rn50w2:
       - normalize
   metrics:
     top1acc_in1k_official: 75.5
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vicreg
     notes: null
@@ -5766,6 +6069,7 @@ vicreg_rn50w2:
     year: 2022
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: Tesla V100
@@ -5774,7 +6078,7 @@ vicreg_rn50w2:
 vicreg_rn50:
   ssl:
     objective: vicreg
-    ssl_mode: clustering
+    ssl_mode: siamese
     version: 1
     n_negatives: 4096
     n_classes: null
@@ -5817,6 +6121,8 @@ vicreg_rn50:
       - normalize
   metrics:
     top1acc_in1k_official: 73.2
+    top1acc_in1k-1%_official: 54.8
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vicreg
     notes: null
@@ -5824,6 +6130,7 @@ vicreg_rn50:
     year: 2022
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: Tesla V100
@@ -5878,6 +6185,8 @@ pirl_rn50w2_headMLP:
       - normalize
   metrics:
     top1acc_in1k_official: 70.9
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/projects/PIRL/README.md
     notes: null
@@ -5885,6 +6194,7 @@ pirl_rn50w2_headMLP:
     year: 2019
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: ???
@@ -5936,6 +6246,8 @@ pirl_rn50w2:
       - normalize
   metrics:
     top1acc_in1k_official: 69.3
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/projects/PIRL/README.md
     notes: null
@@ -5943,6 +6255,7 @@ pirl_rn50w2:
     year: 2019
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: ???
@@ -5994,6 +6307,8 @@ pirl_rn50_ep200_headMLP:
       - normalize
   metrics:
     top1acc_in1k_official: 65.8
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/projects/PIRL/README.md
     notes: null
@@ -6001,6 +6316,7 @@ pirl_rn50_ep200_headMLP:
     year: 2019
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: ???
@@ -6052,6 +6368,8 @@ pirl_rn50_headMLP:
       - normalize
   metrics:
     top1acc_in1k_official: 69.9
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/projects/PIRL/README.md
     notes: null
@@ -6059,6 +6377,7 @@ pirl_rn50_headMLP:
     year: 2019
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: ???
@@ -6110,6 +6429,8 @@ pirl_rn50_ep200:
       - normalize
   metrics:
     top1acc_in1k_official: 62.9
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/projects/PIRL/README.md
     notes: null
@@ -6117,6 +6438,7 @@ pirl_rn50_ep200:
     year: 2019
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: ???
@@ -6168,6 +6490,8 @@ pirl_rn50:
       - normalize
   metrics:
     top1acc_in1k_official: 64.29
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/projects/PIRL/README.md
     notes: null
@@ -6175,6 +6499,7 @@ pirl_rn50:
     year: 2019
     license: MIT
     is_official: true
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: ???
@@ -6278,6 +6603,8 @@ npidpp_rn50:
       - normalize
   metrics:
     top1acc_in1k_official: 56.68
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -6285,6 +6612,7 @@ npidpp_rn50:
     year: 2019
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: ???
@@ -6292,7 +6620,7 @@ npidpp_rn50:
 
 npid_rn50:
   ssl:
-    objective: clusterfit
+    objective: npid
     ssl_mode: contrastive
     version: 1
     n_negatives: 4096
@@ -6333,6 +6661,8 @@ npid_rn50:
       - normalize
   metrics:
     top1acc_in1k_official: 52.73
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -6340,6 +6670,7 @@ npid_rn50:
     year: 2018
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -6388,6 +6719,8 @@ clusterfit_rn50:
       - normalize
   metrics:
     top1acc_in1k_official: 53.63
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -6395,6 +6728,7 @@ clusterfit_rn50:
     year: 2019
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 8
     pu_type: ???
@@ -6443,6 +6777,8 @@ jigsaw_rn50:
       - normalize
   metrics:
     top1acc_in1k_official: 46.58
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -6450,6 +6786,7 @@ jigsaw_rn50:
     year: 2016
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -6498,6 +6835,8 @@ jigsaw_rn50_in22k:
       - normalize
   metrics:
     top1acc_in1k_official: 53.09
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -6505,6 +6844,7 @@ jigsaw_rn50_in22k:
     year: 2016
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -6554,6 +6894,8 @@ simclr_rn101_ep100:
       - normalize
   metrics:
     top1acc_in1k_official: 62.76
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -6561,6 +6903,7 @@ simclr_rn101_ep100:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: ???
@@ -6610,6 +6953,8 @@ simclr_rn101:
       - normalize
   metrics:
     top1acc_in1k_official: 71.56
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -6617,6 +6962,7 @@ simclr_rn101:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: ???
@@ -6666,6 +7012,8 @@ simclr_rn50w4:
       - normalize
   metrics:
     top1acc_in1k_official: 71.61
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -6673,6 +7021,7 @@ simclr_rn50w4:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: ???
@@ -6722,6 +7071,8 @@ simclr_rn50w2_ep100:
       - normalize
   metrics:
     top1acc_in1k_official: 69.82
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -6729,6 +7080,7 @@ simclr_rn50w2_ep100:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: ???
@@ -6778,6 +7130,8 @@ simclr_rn50w2:
       - normalize
   metrics:
     top1acc_in1k_official: 73.84
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -6785,6 +7139,7 @@ simclr_rn50w2:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: ???
@@ -6814,7 +7169,7 @@ simclr_rn50_bs4096_ep100:
     z_dim: 2048
     z_layer: avgpool
   optimization:
-    epochs: 800
+    epochs: 100
     batch_size: 4096
     optimizer: lars #larc
     learning_rate: 0.3
@@ -6834,6 +7189,8 @@ simclr_rn50_bs4096_ep100:
       - normalize
   metrics:
     top1acc_in1k_official: 64.4
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -6841,6 +7198,7 @@ simclr_rn50_bs4096_ep100:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: ???
@@ -6890,6 +7248,8 @@ simclr_rn50_ep800:
       - normalize
   metrics:
     top1acc_in1k_official: 69.68
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -6897,6 +7257,7 @@ simclr_rn50_ep800:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: ???
@@ -6946,6 +7307,8 @@ simclr_rn50_ep400:
       - normalize
   metrics:
     top1acc_in1k_official: 67.71
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -6953,6 +7316,7 @@ simclr_rn50_ep400:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: ???
@@ -7002,6 +7366,8 @@ simclr_rn50_ep200:
       - normalize
   metrics:
     top1acc_in1k_official: 66.61
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -7009,6 +7375,7 @@ simclr_rn50_ep200:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: ???
@@ -7058,6 +7425,8 @@ simclr_rn50:
       - normalize
   metrics:
     top1acc_in1k_official: 68.8
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -7065,6 +7434,7 @@ simclr_rn50:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 64
     pu_type: ???
@@ -7112,6 +7482,8 @@ rotnet_rn50_in22k:
       - normalize
   metrics:
     top1acc_in1k_official: 54.89
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -7119,6 +7491,7 @@ rotnet_rn50_in22k:
     year: 2018
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -7166,6 +7539,8 @@ rotnet_rn50_in1k:
       - normalize
   metrics:
     top1acc_in1k_official: 48.2
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -7173,6 +7548,7 @@ rotnet_rn50_in1k:
     year: 2018
     license: MIT
     is_official: false
+    is_industry: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -7223,6 +7599,8 @@ mocov2_rn50_vissl:
       - normalize
   metrics:
     top1acc_in1k_official: 66.4
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -7230,6 +7608,7 @@ mocov2_rn50_vissl:
     year: 2020
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 8
     pu_type: ???
@@ -7238,7 +7617,7 @@ mocov2_rn50_vissl:
 barlow_rn50_ep300:
   ssl:
     objective: barlow_twins
-    ssl_mode: contrastive
+    ssl_mode: siamese
     version: 1
     n_negatives: 4095
     n_classes: null
@@ -7281,6 +7660,8 @@ barlow_rn50_ep300:
       - normalize
   metrics:
     top1acc_in1k_official: 70.75
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -7288,6 +7669,7 @@ barlow_rn50_ep300:
     year: 2021
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: ???
@@ -7296,7 +7678,7 @@ barlow_rn50_ep300:
 barlow_rn50:
   ssl:
     objective: barlow_twins
-    ssl_mode: contrastive
+    ssl_mode: siamese
     version: 1
     n_negatives: 4095
     n_classes: null
@@ -7339,6 +7721,9 @@ barlow_rn50:
       - normalize
   metrics:
     top1acc_in1k_official: 71.8
+    top1acc_in1k-1%_official: 55.0
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/vissl/blob/main/MODEL_ZOO.md
     notes: null
@@ -7346,6 +7731,7 @@ barlow_rn50:
     year: 2021
     license: MIT
     is_official: false
+    is_industry: true
   compute:
     n_pus: 32
     pu_type: ???
@@ -7355,7 +7741,7 @@ barlow_rn50:
 byol_rn50_bs4096:
   ssl:
     objective: byol
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -7398,6 +7784,8 @@ byol_rn50_bs4096:
       - normalize
   metrics:
     top1acc_in1k_official: 74.4
+    top1acc_in1k-1%_official: 53.2
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/deepmind/deepmind-research/tree/master/byol
     notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
@@ -7405,6 +7793,7 @@ byol_rn50_bs4096:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -7413,7 +7802,7 @@ byol_rn50_bs4096:
 byol_rn50_bs2048:
   ssl:
     objective: byol
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -7456,6 +7845,8 @@ byol_rn50_bs2048:
       - normalize
   metrics:
     top1acc_in1k_official: 72.4
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/deepmind/deepmind-research/tree/master/byol
     notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
@@ -7463,6 +7854,7 @@ byol_rn50_bs2048:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -7471,7 +7863,7 @@ byol_rn50_bs2048:
 byol_rn50_bs1024:
   ssl:
     objective: byol
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -7514,6 +7906,8 @@ byol_rn50_bs1024:
       - normalize
   metrics:
     top1acc_in1k_official: 72.2
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/deepmind/deepmind-research/tree/master/byol
     notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
@@ -7521,6 +7915,7 @@ byol_rn50_bs1024:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -7529,7 +7924,7 @@ byol_rn50_bs1024:
 byol_rn50_bs512:
   ssl:
     objective: byol
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -7572,6 +7967,8 @@ byol_rn50_bs512:
       - normalize
   metrics:
     top1acc_in1k_official: 72.2
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/deepmind/deepmind-research/tree/master/byol
     notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
@@ -7579,6 +7976,7 @@ byol_rn50_bs512:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -7587,7 +7985,7 @@ byol_rn50_bs512:
 byol_rn50_bs256:
   ssl:
     objective: byol
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -7630,6 +8028,8 @@ byol_rn50_bs256:
       - normalize
   metrics:
     top1acc_in1k_official: 71.8
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/deepmind/deepmind-research/tree/master/byol
     notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
@@ -7637,6 +8037,7 @@ byol_rn50_bs256:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -7645,7 +8046,7 @@ byol_rn50_bs256:
 byol_rn50_bs128:
   ssl:
     objective: byol
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -7688,6 +8089,8 @@ byol_rn50_bs128:
       - normalize
   metrics:
     top1acc_in1k_official: 69.6
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/deepmind/deepmind-research/tree/master/byol
     notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
@@ -7695,6 +8098,7 @@ byol_rn50_bs128:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -7703,7 +8107,7 @@ byol_rn50_bs128:
 byol_rn50_bs64:
   ssl:
     objective: byol
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -7746,6 +8150,8 @@ byol_rn50_bs64:
       - normalize
   metrics:
     top1acc_in1k_official: 59.7
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/deepmind/deepmind-research/tree/master/byol
     notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
@@ -7753,6 +8159,7 @@ byol_rn50_bs64:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -7761,7 +8168,7 @@ byol_rn50_bs64:
 byol_rn50_augCropBlur:
   ssl:
     objective: byol
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -7800,6 +8207,8 @@ byol_rn50_augCropBlur:
       - normalize
   metrics:
     top1acc_in1k_official: 61.1
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/deepmind/deepmind-research/tree/master/byol
     notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
@@ -7807,6 +8216,7 @@ byol_rn50_augCropBlur:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -7815,7 +8225,7 @@ byol_rn50_augCropBlur:
 byol_rn50_augCropColor:
   ssl:
     objective: byol
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -7855,6 +8265,8 @@ byol_rn50_augCropColor:
       - normalize
   metrics:
     top1acc_in1k_official: 70.7
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/deepmind/deepmind-research/tree/master/byol
     notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
@@ -7862,6 +8274,7 @@ byol_rn50_augCropColor:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -7870,7 +8283,7 @@ byol_rn50_augCropColor:
 byol_rn50_augCrop:
   ssl:
     objective: byol
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -7908,6 +8321,8 @@ byol_rn50_augCrop:
       - normalize
   metrics:
     top1acc_in1k_official: 59.4
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/deepmind/deepmind-research/tree/master/byol
     notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
@@ -7915,6 +8330,7 @@ byol_rn50_augCrop:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -7923,7 +8339,7 @@ byol_rn50_augCrop:
 byol_rn50_augNocolor:
   ssl:
     objective: byol
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -7964,6 +8380,8 @@ byol_rn50_augNocolor:
       - normalize
   metrics:
     top1acc_in1k_official: 59.4
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/deepmind/deepmind-research/tree/master/byol
     notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
@@ -7971,6 +8389,7 @@ byol_rn50_augNocolor:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -7979,7 +8398,7 @@ byol_rn50_augNocolor:
 byol_rn50_augNogray:
   ssl:
     objective: byol
-    ssl_mode: distillation
+    ssl_mode: siamese
     version: 1
     n_negatives: null
     n_classes: null
@@ -8021,6 +8440,8 @@ byol_rn50_augNogray:
       - normalize
   metrics:
     top1acc_in1k_official: 70.3
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/deepmind/deepmind-research/tree/master/byol
     notes: the weights are from the official implementation but converted tf -> torch. The main difference in the resnet50 is how padding is done.
@@ -8028,6 +8449,7 @@ byol_rn50_augNogray:
     year: 2020
     license: CC BY-NC 4.0
     is_official: true
+    is_industry: true
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -8049,6 +8471,8 @@ sup_vitS16_dino_extractB:
     img_size: 224
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/rwightman/pytorch-image-models
     license: Apache 2.0
@@ -8068,6 +8492,8 @@ sup_vitS16_dino:
     img_size: 224
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/rwightman/pytorch-image-models
     license: Apache 2.0
@@ -8087,6 +8513,8 @@ sup_vitS16:
     img_size: 224
   metrics:
     top1acc_in1k_official: 81.396
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/rwightman/pytorch-image-models
     license: Apache 2.0
@@ -8106,6 +8534,8 @@ sup_vitL16:
     img_size: 224
   metrics:
     top1acc_in1k_official: 85.844
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/rwightman/pytorch-image-models
     license: Apache 2.0
@@ -8125,6 +8555,8 @@ sup_vitB32:
     img_size: 224
   metrics:
     top1acc_in1k_official: 80.724
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/rwightman/pytorch-image-models
     license: Apache 2.0
@@ -8144,6 +8576,8 @@ sup_vitB16_dino_extractS:
     img_size: 224
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/rwightman/pytorch-image-models
     license: Apache 2.0
@@ -8163,6 +8597,8 @@ sup_vitB16_dino:
     img_size: 224
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/rwightman/pytorch-image-models
     license: Apache 2.0
@@ -8182,6 +8618,8 @@ sup_vitB16:
     img_size: 224
   metrics:
     top1acc_in1k_official: 84.530
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/rwightman/pytorch-image-models
     license: Apache 2.0
@@ -8201,6 +8639,8 @@ sup_vitB8_dino:
     img_size: 224
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/rwightman/pytorch-image-models
     license: Apache 2.0
@@ -8220,6 +8660,8 @@ sup_vitB8:
     img_size: 224
   metrics:
     top1acc_in1k_official: 85.790
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/rwightman/pytorch-image-models
     license: Apache 2.0
@@ -8240,6 +8682,8 @@ sup_rn50:
     img_size: 224
   metrics:
     top1acc_in1k_official: 76.13
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/pytorch/vision
     license: BSD 3-Clause
@@ -8259,6 +8703,8 @@ sup_rn50w2:
     img_size: 224
   metrics:
     top1acc_in1k_official: 78.468
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/pytorch/vision
     license: BSD 3-Clause
@@ -8279,6 +8725,8 @@ sup_rn101:
     img_size: 224
   metrics:
     top1acc_in1k_official: 78.312
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/pytorch/vision
     license: BSD 3-Clause

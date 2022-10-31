@@ -408,3 +408,71 @@ def max_num_workers():
 def min_max_scale(col):
     """Scale a column to [0, 1]."""
     return (col - col.min()) / (col.max() - col.min())
+
+
+def update_prepending(to_update, new):
+    """Update a dictionary with another. the difference with .update, is that it puts the new keys
+    before the old ones (prepending)."""
+    # makes sure don't update arguments
+    to_update = to_update.copy()
+    new = new.copy()
+
+    # updated with the new values appended
+    to_update.update(new)
+
+    # remove all the new values => just updated old values
+    to_update = {k: v for k, v in to_update.items() if k not in new}
+
+    # keep only values that ought to be prepended
+    new = {k: v for k, v in new.items() if k not in to_update}
+
+    # update the new dict with old one => new values are at the beginning (prepended)
+    new.update(to_update)
+
+    return new
+
+
+class StrFormatter:
+    """String formatter that acts like some default dictionary `"formatted" == StrFormatter()["to_format"]`.
+
+    Parameters
+    ----------
+    exact_match : dict, optional
+        dictionary of strings that will be replaced by exact match.
+
+    substring_replace : dict, optional
+        dictionary of substring that will be replaced if no exact_match. Order matters.
+        Everything is title case at this point.
+
+    to_upper : list, optional
+        Words that should be upper cased.
+    """
+
+    def __init__(self, exact_match={}, substring_replace={}, to_upper=[]):
+        self.exact_match = exact_match
+        self.substring_replace = substring_replace
+        self.to_upper = to_upper
+
+    def __getitem__(self, key):
+        if not isinstance(key, str):
+            return key
+
+        if key in self.exact_match:
+            return self.exact_match[key]
+
+        key = key.title()
+
+        for match, replace in self.substring_replace.items():
+            key = key.replace(match, replace)
+
+        for w in self.to_upper:
+            key = key.replace(w, w.upper())
+
+        return key
+
+    def __call__(self, x):
+        return self[x]
+
+    def update(self, new_dict):
+        """Update the substring replacer dictionary with a new one (missing keys will be prepended)."""
+        self.substring_replace = update_prepending(self.substring_replace, new_dict)

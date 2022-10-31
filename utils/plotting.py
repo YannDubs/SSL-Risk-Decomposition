@@ -1,4 +1,5 @@
 import os
+import pdb
 from typing import Any, Union
 
 import numpy as np
@@ -21,7 +22,8 @@ from utils.collect_results import COMPONENTS
 from utils.helpers import to_numpy, min_max_scale
 import math
 
-
+from utils.pretty_renamer import PRETTY_RENAMER
+#plt.rcParams['text.usetex'] = True
 
 @contextlib.contextmanager
 def plot_config(
@@ -33,7 +35,9 @@ def plot_config(
         is_ax_off=False,
         is_rm_xticks=False,
         is_rm_yticks=False,
+        is_despine=True,
         rc={"lines.linewidth": 2},
+        is_use_tex=False,
         set_kwargs=dict(),
         despine_kwargs=dict(),
         # pretty_renamer=dict(), #TODO
@@ -68,6 +72,9 @@ def plot_config(
         Parameter mappings to override the values in the preset seaborn
         style dictionaries.
 
+    is_use_tex : bool, optional
+        Whether to use tex for the labels.
+
     set_kwargs : dict, optional
         kwargs for matplotlib axes. Such as xlim, ylim, ...
 
@@ -78,6 +85,8 @@ def plot_config(
 
     try:
         rc["font.family"] = font
+        if is_use_tex:
+            rc["text.usetex"] = True
         plt.rcParams.update(rc)
 
         with sns.axes_style(style=style, rc=rc), sns.plotting_context(
@@ -97,7 +106,9 @@ def plot_config(
                 if is_rm_xticks:
                     ax.axes.xaxis.set_ticks([])
 
-        sns.despine(**despine_kwargs)
+
+        if is_despine:
+            sns.despine(**despine_kwargs)
 
     finally:
         with warnings.catch_warnings():
@@ -298,7 +309,11 @@ def plot_radar(ax, theta, metrics, title=None, rgrids=[0, 1 / 3, 2 / 3, 1], ylim
         pass
 
 
-def plot_radar_grid(results, ncols=1, save_path=None, config_kwargs=dict(font_scale=1), **kwargs):
+def plot_radar_grid(results, ncols=1,
+                    save_path=None,
+                    config_kwargs=dict(font_scale=1),
+                    pretty_renamer=PRETTY_RENAMER,
+                    **kwargs):
     """Plots a grid of radar plots"""
     with plot_config(**config_kwargs):
         results = results.copy()
@@ -319,18 +334,36 @@ def plot_radar_grid(results, ncols=1, save_path=None, config_kwargs=dict(font_sc
 
         colors = sns.color_palette("colorblind", n_colors=n_plots)
         nrows = math.ceil(n_plots / ncols)
-        fig, axes = plt.subplots(nrows=nrows, ncols=ncols,
+        fig, axes = plt.subplots(nrows=nrows,
+                                 ncols=ncols,
                                  figsize=(ncols * 3.3, nrows * 2.3),
                                  subplot_kw=dict(projection='radar'),
                                  squeeze=False)
         flat_axes = axes.reshape(-1)
 
         # first plot
-        plot_radar(flat_axes[0], theta, first_data, title=None, is_ticks_label=False,
-                   labels=columns, color=colors[0])
+        plot_radar(flat_axes[0], theta, first_data,
+                   title=None,
+                   is_ticks_label=False,
+                   labels=[rf"\LARGE{{{pretty_renamer[c]}}}" for c in columns],
+                   color=colors[0])
 
         for i, (model, row) in enumerate(rest_data.iterrows(), start=1):
-            plot_radar(flat_axes[i], theta, row, title=model, is_ticks_label=False, color=colors[i])
+            model = model.replace(" ", "_")
+            if model.count("_") >= 2:
+                *model_arch, rest = model.split("_", 2)
+                model_arch = "_".join(model_arch)
+            else:
+                model_arch = model
+                rest = ""
+            model_arch = pretty_renamer[model_arch]
+            #rest = pretty_renamer[rest]
+            title = (rf"\Large{{{model_arch}}}"
+                     "\n"
+                     rf"\normalsize{{{rest}}}")
+            plot_radar(flat_axes[i], theta, row, title=title, is_ticks_label=False, color=colors[i])
+        for j in range(i+1, len(flat_axes)):
+            flat_axes[j].axis("off")
 
         plt.tight_layout()
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-experiment="dissl"
-notes="**Goal**: evaluate all the models we pretrained."
+experiment="dino"
+notes="**Goal**: evaluate all the dino models."
 
 # parses special mode for running the script
 source `dirname $0`/utils.sh
@@ -13,20 +13,21 @@ experiment=$experiment
 timeout=$time
 "
 
-kwargs_multi="
-representor=dissl_resnet50_dNone_e100_m2
-seed=123
-predictor=torch_linear_hypopt
-"
 
-# need to run seed=124,125
-# torch_linear_erm
+
+kwargs_multi="
+representor=dino_rn50
+seed=123
+predictor=torch_linear_delta_hypopt
+"
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
   do
 
-    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs
+    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs #-m #>> logs/torch_"$experiment".log 2>&1 &
+
+    sleep 10
 
   done
 fi

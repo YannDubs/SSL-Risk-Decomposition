@@ -17,3 +17,12 @@ clip @ git+https://github.com/openai/CLIP.git@40f5484c1c74edd83cb9cf687c6ab92b28
 timm
 pyaml
 pytorch-lightning
+xgboost
+ipywidgets
+shap
+optuna
+statsmodels
+dill
+jupyterlab
+ipympl
+graphviz

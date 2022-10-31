@@ -14,14 +14,20 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=mugs_vits16_ep100,mugs_vits16_ep300,mugs_vits16_ep800,mugs_vitb16_ep400,mugs_vitl16_ep250,mugs_vits16_ep800_extractS,mugs_vitb16_ep400_extractB
+representor=mugs_vits16_ep100,mugs_vits16_ep300,mugs_vits16_ep800,mugs_vitb16_ep400,mugs_vitl16_ep250,mugs_vits16_ep800_extractS
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
-data.subset=0.01
 data.kwargs.subset_raw_dataset=0.3
 "
 
+kwargs_multi="
+representor=mugs_vits16_ep800_extractS
+seed=123
+predictor=sk_logistic_hypopt
+data.kwargs.is_avoid_raw_dataset=True
+data.kwargs.subset_raw_dataset=0.3
+"
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

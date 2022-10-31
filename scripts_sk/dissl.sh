@@ -19,7 +19,6 @@ representor=dissl_resnet50_dNone_e100_m2,dissl_resnet50_dNone_e400_m2,dissl_resn
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
-data.subset=0.01
 data.kwargs.subset_raw_dataset=0.3
 "
 

@@ -14,13 +14,13 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=ibot_vitB16,ibot_vitS16,ibot_vitL16,ibot_vitB16_extractB,ibot_vitS16_extractS
+representor=ibot_vitB16,ibot_vitS16,ibot_vitL16,ibot_vitS16_extractS
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
-data.subset=0.01
 data.kwargs.subset_raw_dataset=0.3
 "
+
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

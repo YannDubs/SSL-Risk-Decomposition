@@ -14,7 +14,7 @@ predictor:
     scheduler: cosine
 
   hypopt:
-    n_hyper: 40
+    n_hyper: 30
     sampler: TPESampler
     metric: err
     is_tune_on_train: False

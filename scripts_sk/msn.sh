@@ -18,7 +18,6 @@ representor=msn_vits16_ep800,msn_vitb16_ep600,msn_vitl16_ep600,msn_vitl7_ep200,m
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
-data.subset=0.01
 data.kwargs.subset_raw_dataset=0.3
 "
 

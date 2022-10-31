@@ -16,13 +16,13 @@ timeout=$time
 kwargs_multi="
 representor=dino_rn50,dino_vitS16_last,dino_vitS8_last,dino_vitB16_last,dino_vitB8_last,dino_vitS16,dino_vitB16,dino_vitB8,dino_vitS16_extractB,dino_vitB16_extractS
 seed=123
-predictor=torch_linear_hypopt
+predictor=torch_linear_delta_hypopt
 "
 
 kwargs_multi="
-representor=dino_rn50,dino_vitS16_last,dino_vitS8_last,dino_vitB16_last,dino_vitB8_last,dino_vitS16,dino_vitB16,dino_vitB8,dino_vitS16_extractB,dino_vitB16_extractS
+representor=dino_vitB8_last,dino_vitB8,dino_vitS8_last
 seed=123
-predictor=torch_linear_lr
+predictor=torch_linear_delta_hypopt
 "
 
 if [ "$is_plot_only" = false ] ; then

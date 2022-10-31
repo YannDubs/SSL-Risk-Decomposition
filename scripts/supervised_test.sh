@@ -14,13 +14,7 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=sup_rn101,sup_rn50w2,sup_rn50,sup_vitS16_dino_extractB,sup_vitS16_dino,sup_vitS16,sup_vitB8,sup_vitB8_dino,sup_vitB16,sup_vitB16_dino,sup_vitB16_dino_extractS,sup_vitB32,sup_vitL16
-seed=123
-predictor=torch_linear_delta_hypopt
-"
-
-kwargs_multi="
-representor=sup_vitB8_dino
+representor=sup_rn50
 seed=123
 predictor=torch_linear_delta_hypopt
 "
@@ -34,7 +28,7 @@ if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
   do
 
-    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargs -m >> logs/torch_"$experiment".log 2>&1 &
+    python "$main" +hydra.job.env_set.WANDB_NOTES="\"${notes}\"" $kwargs $kwargs_multi $kwargs_dep $add_kwargspirl_rn50_ep200
 
     sleep 10
 
