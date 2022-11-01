@@ -60,15 +60,22 @@ def ols_summary(df,
             for delta in list(np.linspace(1,
                                           curr_df[outcome].min(),
                                           num=n_tune - len(add_deltas))) + add_deltas:
-                delta_df = curr_df.copy()
-                delta_df[outcome] = delta_df[outcome] - delta
-                with np.errstate(divide='ignore', invalid='ignore'):
-                    model = smf.ols(formula=formula, data=delta_df).fit()
-                curr_rmse = rmse(delta_df[outcome], f(model.predict(delta_df)))
-                if curr_rmse < best_rmse:
-                    best_model = model
-                    best_rmse = curr_rmse
-                    best_delta = delta
+                try:
+                    delta_df = curr_df.copy()
+                    delta_df[outcome] = delta_df[outcome] - delta
+                    with np.errstate(divide='ignore', invalid='ignore'):
+                        model = smf.ols(formula=formula, data=delta_df).fit()
+                    curr_rmse = rmse(delta_df[outcome], f(model.predict(delta_df)))
+                    if curr_rmse < best_rmse:
+                        best_model = model
+                        best_rmse = curr_rmse
+                        best_delta = delta
+                except:
+                    pass
+
+        if best_model is None:
+            print(f"Could not find a model for {o}")
+            continue
 
         p_values = best_model.summary2().tables[1]["P>|t|"]
         treat_cols = [i for i in p_values.index if treatment in i]

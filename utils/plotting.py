@@ -1,3 +1,4 @@
+import copy
 import os
 import pdb
 from typing import Any, Union
@@ -292,7 +293,7 @@ def plot_radar(ax, theta, metrics, title=None, rgrids=[0, 1 / 3, 2 / 3, 1], ylim
         angles = np.linspace(0, 2 * np.pi, len(ax.get_xticklabels()) + 1)
         angles[np.cos(angles) < 0] = angles[np.cos(angles) < 0] + np.pi
         angles = np.rad2deg(angles)
-        labels = []
+        #labels = []
 
         for i, (label, angle) in enumerate(zip(ax.get_xticklabels(), angles)):
 
@@ -301,7 +302,7 @@ def plot_radar(ax, theta, metrics, title=None, rgrids=[0, 1 / 3, 2 / 3, 1], ylim
                           ha=label.get_ha(), va=label.get_va())
             if i not in [2, 3]:  # don't rotate bottom
                 lab.set_rotation(angle)
-            labels.append(lab)
+            #labels.append(lab)
         ax.set_xticklabels([])
 
     else:
@@ -309,10 +310,18 @@ def plot_radar(ax, theta, metrics, title=None, rgrids=[0, 1 / 3, 2 / 3, 1], ylim
         pass
 
 
-def plot_radar_grid(results, ncols=1,
+
+
+def plot_radar_grid(results,
+                    ncols=1,
                     save_path=None,
                     config_kwargs=dict(font_scale=1),
                     pretty_renamer=PRETTY_RENAMER,
+                    is_plot_avg=True,
+                    is_label_first: bool = True,
+                    is_tex: bool = True,
+                    space_per_col=3,
+                    space_per_row=2.3,
                     **kwargs):
     """Plots a grid of radar plots"""
     with plot_config(**config_kwargs):
@@ -323,29 +332,40 @@ def plot_radar_grid(results, ncols=1,
         columns = radar_data.columns
         theta = radar_factory(len(columns), frame='polygon')
 
-        if len(radar_data) == 1:
+        n_plots = len(radar_data)
+        if is_plot_avg:
+            n_plots += 1
+            rest_data = radar_data
+            mean_kwargs = copy.deepcopy(kwargs)
+            mean_kwargs["models"] = slice(None)
+            all_radar_data = get_radar_data(results, **mean_kwargs)
+            first_data = all_radar_data.mean(axis=0)
+        else:
             first_data = radar_data.iloc[0, :]
             rest_data = radar_data.iloc[1:, :]  # will be empty
-            n_plots = 1
-        else:
-            first_data = radar_data.mean(axis=0)
-            rest_data = radar_data
-            n_plots = 1 + len(radar_data)  # add the avg
 
         colors = sns.color_palette("colorblind", n_colors=n_plots)
         nrows = math.ceil(n_plots / ncols)
         fig, axes = plt.subplots(nrows=nrows,
                                  ncols=ncols,
-                                 figsize=(ncols * 3.3, nrows * 2.3),
+                                 figsize=(ncols * space_per_col, nrows * space_per_row),
                                  subplot_kw=dict(projection='radar'),
                                  squeeze=False)
         flat_axes = axes.reshape(-1)
 
         # first plot
+        if is_label_first:
+            if is_tex:
+                labels = [rf"\LARGE{{{pretty_renamer[c]}}}" for c in columns]
+            else:
+                labels = [pretty_renamer[c] for c in columns]
+        else:
+            labels = None
+
         plot_radar(flat_axes[0], theta, first_data,
                    title=None,
                    is_ticks_label=False,
-                   labels=[rf"\LARGE{{{pretty_renamer[c]}}}" for c in columns],
+                   labels=labels,
                    color=colors[0])
 
         for i, (model, row) in enumerate(rest_data.iterrows(), start=1):
@@ -360,14 +380,16 @@ def plot_radar_grid(results, ncols=1,
             #rest = pretty_renamer[rest]
             title = (rf"\Large{{{model_arch}}}"
                      "\n"
-                     rf"\normalsize{{{rest}}}")
+                     rf"\large{{{rest}}}")
             plot_radar(flat_axes[i], theta, row, title=title, is_ticks_label=False, color=colors[i])
-        for j in range(i+1, len(flat_axes)):
-            flat_axes[j].axis("off")
+
+        if len(rest_data) > 0:
+            for j in range(i+1, len(flat_axes)):
+                flat_axes[j].axis("off")
 
         plt.tight_layout()
 
     if save_path is None:
         plt.show()
     else:
-        plt.savefig(save_path, bbox_inches='tight', pad_inches=0)
+        plt.savefig(save_path, bbox_inches='tight', pad_inches=0.2)

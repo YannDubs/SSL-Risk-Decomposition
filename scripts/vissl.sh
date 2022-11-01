@@ -23,10 +23,11 @@ predictor=torch_linear_delta_hypopt
 "
 
 kwargs_multi="
-representor=jigsaw_rn50_in22k,pirl_rn50,simclr_rn101,simclr_rn101_ep100
+representor=barlow_rn50_ep300
 seed=123
 predictor=torch_linear_delta_hypopt
 "
+
 
 # torch_linear_hypopt
 

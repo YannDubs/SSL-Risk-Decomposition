@@ -2,7 +2,7 @@
 
 add_kwargs=""
 prfx=""
-time="2880" # 2 days
+time="4200" # 3 days
 is_plot_only=false
 server=""
 mode=""

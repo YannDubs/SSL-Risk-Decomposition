@@ -19,7 +19,7 @@ PRETTY_RENAMER = StrFormatter(
         # General
         "Enc_Gen": "Enc. Gen.",
         "Probe_Gen": "Probe Gen.",
-        "Approx ": "Approx. ",
+        "Approx": "Approx.",
         "Agg_": "Agg. ",
         # Post underscore
         "_": " ",
@@ -27,6 +27,7 @@ PRETTY_RENAMER = StrFormatter(
         "Vitb": "ViT-B",
         "Vith": "ViT-H",
         "Vitl": "ViT-L",
+        "Resnet": "RN",
         # losses name
         "Locnet": "LocNet",
         "Rotnet": "RotNet",

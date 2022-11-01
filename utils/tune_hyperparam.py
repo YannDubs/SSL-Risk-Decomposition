@@ -1,3 +1,6 @@
+from optuna._callbacks import MaxTrialsCallback
+from optuna.trial import TrialState
+
 try:
     from sklearnex import patch_sklearn
 
@@ -144,7 +147,8 @@ def tune_hyperparam_torch_(datamodule, cfg, path_hypopt):
         study.enqueue_trial(dict(**trial))  # need to be a dict
 
     study.optimize(partial(objective, cfg=cfg, datamodule=datamodule),
-                   n_trials=cfgh.n_hyper,
+                   #n_trials=cfgh.n_hyper,
+                   callbacks=[MaxTrialsCallback(cfgh.n_hyper, states=(TrialState.COMPLETE,))],
                    gc_after_trial=True)  # ensures memory not adding
 
     logger.info(f"Tuning duration: {study.trials_dataframe().duration.astype('timedelta64[m]').sum()} minutes")

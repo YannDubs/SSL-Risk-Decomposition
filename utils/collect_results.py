@@ -21,8 +21,10 @@ import optuna
 from optuna.samplers import TPESampler
 from optuna.visualization.matplotlib import plot_param_importances, plot_optimization_history, plot_parallel_coordinate
 
-COMPONENTS_ONLY = ["usability", "enc_gen", "probe_gen", "approx"]
+COMPONENTS_ONLY = ["approx", "usability", "probe_gen", "enc_gen"]
+COMPONENTS_ONLY_IMP = [ "usability", "probe_gen", "enc_gen", "approx"]
 COMPONENTS = COMPONENTS_ONLY + ["agg_risk"]
+
 
 def tune_std_xgb(X, y, seed=123, n_trials=50, verbose=False, **kwargs):
     """Tune standard xgboost and return final model + study"""
