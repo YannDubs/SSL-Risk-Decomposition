@@ -151,3 +151,37 @@ def get_sklearn_predictor(cfg):
     if cfg.predictor.is_scale_features:
         predictor = Pipeline([("scaler", MinMaxScaler()), ("clf", predictor)])
     return predictor
+
+class RepresentorPredictor(Predictor):
+    def __init__(self, *args, representor, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # ensure not saved in checkpoint and frozen
+        self.set_represent_mode(representor)
+        self.representor = representor
+
+    def set_represent_mode(self, representor):
+        """Set as a representor."""
+
+        # this ensures that nothing is persistent, i.e. will not be saved in checkpoint when
+        # part of predictor
+        for model in representor.modules():
+            params = dict(model.named_parameters(recurse=False))
+            buffers = dict(model.named_buffers(recurse=False))
+            for name, param in params.items():
+                del model._parameters[name]
+                model.register_buffer(name, param.data, persistent=False)
+
+            for name, param in buffers.items():
+                del model._buffers[name]
+                model.register_buffer(name, param, persistent=False)
+
+        for param in representor.parameters():
+            param.requires_grad = False
+        representor.eval()
+
+    def forward(self, x):
+        with torch.no_grad():
+            z = self.representor(x)
+        z = z.detach()  # shouldn't be needed
+        return super().forward(z)

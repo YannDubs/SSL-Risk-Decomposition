@@ -9,7 +9,6 @@ defaults:
   - predictor: torch_linear
 
 ########## GENERAL ##########
-is_debug: False
 is_log_wandb: True
 experiment: ???
 job_id: ??? # unique identifier
@@ -20,12 +19,11 @@ time: ${hydra:job.num}_${now:%Y-%m-%d_%H-%M-%S} # add job num because time is no
 long_name: exp_${experiment}/data_${data.name}/ssl_${representor}/pred_${predictor.name}/seed_${seed}
 long_name_component: ${long_name}/comp_${component}
 is_nlp_cluster: False # should the working directory be used as main
+is_alternative_decomposition: False # add the alternative decomposition
 
 is_riskdec: True # whether to evaluate all the risk decomposition or just aggregated
 is_supervised: False # whether currently running supervised benchmark
 is_run_in_dist: True
-is_run_out_dist: False # whether to evaluate out of distribution
-out_dist_datasets : ["imagenet_v2","imagenet_a","imagenet_r","imagenet_sketch"] # out_dist data to evaluate on
 
 paths: #! the best practice is not to modify those paths but to symlink them to the places you want
   relative_work: outputs/${now:%Y-%m-%d_%H-%M-%S}
@@ -38,6 +36,7 @@ paths: #! the best practice is not to modify those paths but to symlink them to 
   logs: ${paths.tmp_dir}/logs/${long_name_component}/jid_${job_id}
   checkpoint: ${paths.tmp_dir}/checkpoints/${long_name_component}/jid_${job_id} # checkpoint to use during training
   results: ${paths.base_dir}/results/${long_name}/
+  statistics: ${paths.base_dir}/results/exp_${experiment}/data_${data.name}/ssl_${representor}/
   tuning: ${paths.base_dir}/tuning/${long_name}/
 
 data:
@@ -48,15 +47,10 @@ data:
   n_train: ???
   check_length: 1200000 # min length
   kwargs:
-    is_avoid_raw_dataset: False
     seed: ${seed}
     data_dir: ${paths.data}
-    features_basedir: ${paths.features}
     batch_size: 2048
     num_workers: -1
-    is_add_idx: False
-    is_debug: ${is_debug}
-    subset_raw_dataset: null
     dataset_kwargs:
       seed: ${seed}
       transform: null

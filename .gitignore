@@ -13,6 +13,7 @@ test
 /data
 logs
 notebooks
+notebooks/saved
 .hydra
 old
 .idea

@@ -17,16 +17,11 @@ timeout=$time
 # once https://github.com/facebookresearch/vissl/issues/516
 
 kwargs_multi="
-representor=barlow_rn50,barlow_rn50_ep300,mocov2_rn50_vissl,rotnet_rn50_in1k,rotnet_rn50_in22k,simclr_rn50,simclr_rn50_ep200,simclr_rn50_ep400,simclr_rn50_ep800,simclr_rn50_bs4096_ep100,simclr_rn50w2,simclr_rn50w2_ep100,simclr_rn101,simclr_rn101_ep100,jigsaw_rn50,jigsaw_rn50_in22k,colorization_rn50,colorization_rn50_in22k,clusterfit_rn50,npid_rn50,npidpp_rn50,pirl_rn50,pirl_rn50_ep200,pirl_rn50_headMLP,pirl_rn50_ep200_headMLP,pirl_rn50w2,pirl_rn50w2_headMLP
+representor=barlow_rn50,barlow_rn50_ep300,mocov2_rn50_vissl,rotnet_rn50_in1k,rotnet_rn50_in22k,simclr_rn50,simclr_rn50_ep200,simclr_rn50_ep400,simclr_rn50_ep800,simclr_rn50_bs4096_ep100,simclr_rn50w2,simclr_rn50w2_ep100,simclr_rn101,simclr_rn101_ep100,jigsaw_rn50,jigsaw_rn50_in22k,clusterfit_rn50,npid_rn50,npidpp_rn50,pirl_rn50,pirl_rn50_ep200,pirl_rn50_headMLP,pirl_rn50_ep200_headMLP,pirl_rn50w2,pirl_rn50w2_headMLP
 seed=123
 predictor=torch_linear_delta_hypopt
 "
 
-kwargs_multi="
-representor=barlow_rn50_ep300
-seed=123
-predictor=torch_linear_delta_hypopt
-"
 
 
 # torch_linear_hypopt

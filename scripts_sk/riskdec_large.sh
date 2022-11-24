@@ -22,14 +22,6 @@ data.kwargs.is_avoid_raw_dataset=True
 data.kwargs.subset_raw_dataset=0.3
 "
 
-kwargs_multi="
-representor=simclr_resnet50_d8192_e100_m2
-seed=123
-predictor=sk_logistic_hypopt
-data.kwargs.is_avoid_raw_dataset=True
-data.kwargs.subset_raw_dataset=0.3
-"
-
 
 # torch_linear_erm
 # need to run seed=124,125

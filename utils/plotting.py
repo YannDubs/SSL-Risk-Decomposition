@@ -19,7 +19,7 @@ import warnings
 from matplotlib.cbook import MatplotlibDeprecationWarning
 import seaborn as sns
 
-from utils.collect_results import COMPONENTS
+from utils.collect_results import COMPONENTS, COMPONENTS_ONLY_IMP, clean_model_name
 from utils.helpers import to_numpy, min_max_scale
 import math
 
@@ -88,6 +88,8 @@ def plot_config(
         rc["font.family"] = font
         if is_use_tex:
             rc["text.usetex"] = True
+        else:
+            rc["text.usetex"] = False
         plt.rcParams.update(rc)
 
         with sns.axes_style(style=style, rc=rc), sns.plotting_context(
@@ -369,14 +371,7 @@ def plot_radar_grid(results,
                    color=colors[0])
 
         for i, (model, row) in enumerate(rest_data.iterrows(), start=1):
-            model = model.replace(" ", "_")
-            if model.count("_") >= 2:
-                *model_arch, rest = model.split("_", 2)
-                model_arch = "_".join(model_arch)
-            else:
-                model_arch = model
-                rest = ""
-            model_arch = pretty_renamer[model_arch]
+            model_arch, rest = clean_model_name(model)
             #rest = pretty_renamer[rest]
             title = (rf"\Large{{{model_arch}}}"
                      "\n"
@@ -388,6 +383,66 @@ def plot_radar_grid(results,
                 flat_axes[j].axis("off")
 
         plt.tight_layout()
+
+    if save_path is None:
+        plt.show()
+    else:
+        plt.savefig(save_path, bbox_inches='tight', pad_inches=0.2)
+
+
+def plot_trend_ax(data, is_min=False, ax=None, pretty_renamer=PRETTY_RENAMER, **kwargs):
+    curr_df = data.copy()
+    if is_min:
+        curr_df = curr_df.loc[curr_df.groupby('year').agg_risk.idxmin()]
+
+    curr_df = curr_df[COMPONENTS_ONLY_IMP + ["year"]]
+    curr_df.columns = [pretty_renamer[c] for c in curr_df.columns]
+    values = curr_df.groupby("Year").mean()
+    if ax is None:
+        ax = plt.gca()
+
+    ax = values.plot.area(alpha=0.7, ax=ax)
+    ax.set_ylabel("Error")
+
+    return ax
+
+
+def plot_trend(df, is_min=False, save_path=None, figsize=(6.5, 5)):
+    """Plots a stacked plot to understand how components changed over time."""
+    with plot_config(rc={'lines.linewidth': 2, 'font.family': 'sans-serif',
+                         "ytick.labelsize": 13, "xtick.labelsize": 13},
+                     ):
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=figsize)
+        plot_trend_ax(df, is_min=is_min, ax=ax)
+
+        ax.xaxis.get_major_locator().set_params(integer=True)
+
+        plt.tight_layout()
+
+    if save_path is None:
+        plt.show()
+    else:
+        plt.savefig(save_path, bbox_inches='tight', pad_inches=0.2)
+
+
+def plot_trend_split(df, split, ordering=None, is_min=False, save_path=None,
+                     pretty_renamer=PRETTY_RENAMER, is_legend=True):
+    curr_df = df.copy()
+
+    curr_df[split] = [pretty_renamer[s] for s in curr_df[split]]
+
+    if ordering is not None:
+        curr_df[split] = curr_df[split].astype("category").cat.set_categories(ordering)
+
+    with plot_config(font_scale=1.3,
+                     rc={'lines.linewidth': 2, 'font.family': 'sans-serif',
+                         "ytick.labelsize": 13, "xtick.labelsize": 13}):
+        g = sns.FacetGrid(curr_df, col=split)
+        g = g.map_dataframe(plot_trend_ax, is_min=is_min)
+        if is_legend:
+            g.add_legend()
+        g.set_titles("{col_name}")
+        g.set_axis_labels(x_var="Year", y_var="Error")
 
     if save_path is None:
         plt.show()

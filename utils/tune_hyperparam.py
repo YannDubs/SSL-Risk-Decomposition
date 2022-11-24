@@ -47,7 +47,8 @@ except ImportError:
 logger = logging.getLogger(__name__)
 BEST_HPARAMS = "best_hparams.json"
 
-def tune_hyperparam_(datamodule, cfg, train_on="train-sbst-0.5", validate_on="train-cmplmnt-0.5", label_size=None, tuning_path=None):
+def tune_hyperparam_(datamodule, cfg, train_on="train-sbst-0.5", validate_on="train-cmplmnt-0.5",
+                     label_size=None, tuning_path=None, **kwargs):
     logger.info(f"Hyperparameter tuning")
 
     if tuning_path is None:
@@ -69,9 +70,9 @@ def tune_hyperparam_(datamodule, cfg, train_on="train-sbst-0.5", validate_on="tr
     cfg.data.n_train = len(datamodule.get_train_dataset())
 
     if cfg.predictor.is_sklearn:
-        hparams = tune_hyperparam_sklearn_(datamodule, cfg, path_hypopt)
+        hparams = tune_hyperparam_sklearn_(datamodule, cfg, path_hypopt, **kwargs)
     else:
-        hparams = tune_hyperparam_torch_(datamodule, cfg, path_hypopt)
+        hparams = tune_hyperparam_torch_(datamodule, cfg, path_hypopt, **kwargs)
 
     # reset to default splits
     datamodule.reset()
@@ -127,7 +128,7 @@ def tune_hyperparam_sklearn_(datamodule, cfg, path_hypopt):
 
 
 
-def tune_hyperparam_torch_(datamodule, cfg, path_hypopt):
+def tune_hyperparam_torch_(datamodule, cfg, path_hypopt, Predictor=Predictor):
     """Tune the hyperparameters for the torch probe and then loads them."""
 
 
@@ -146,7 +147,7 @@ def tune_hyperparam_torch_(datamodule, cfg, path_hypopt):
         # runs standard hparam to start with
         study.enqueue_trial(dict(**trial))  # need to be a dict
 
-    study.optimize(partial(objective, cfg=cfg, datamodule=datamodule),
+    study.optimize(partial(objective, cfg=cfg, datamodule=datamodule, Predictor=Predictor),
                    #n_trials=cfgh.n_hyper,
                    callbacks=[MaxTrialsCallback(cfgh.n_hyper, states=(TrialState.COMPLETE,))],
                    gc_after_trial=True)  # ensures memory not adding
@@ -161,7 +162,7 @@ def tune_hyperparam_torch_(datamodule, cfg, path_hypopt):
     return study.best_trial.params
 
 
-def objective(trial, cfg, datamodule):
+def objective(trial, cfg, datamodule, Predictor=Predictor):
     """Objective function to hyperparameter tune."""
     cfg = copy.deepcopy(cfg)
     cfg.trainer.enable_checkpointing = False  # no checkpointing during hypopt
@@ -200,6 +201,7 @@ def objective(trial, cfg, datamodule):
 def set_hparams_(cfg, datamodule, hparams):
     """Set the hyperparameters."""
 
+    logger.info(f"Setting hyperparameters: {hparams}")
     if cfg.predictor.is_sklearn:
         for k, v in hparams.items():
             k = k.replace("clf__", "")  # in case you had a Pipeline

@@ -1,2 +1,8 @@
 name: imagenet
 n_classes: 1000
+
+kwargs:
+  is_avoid_raw_dataset: False
+  features_basedir: ${paths.features}
+  subset_raw_dataset: null
+  num_workers: -1

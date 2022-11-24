@@ -1,0 +1,17 @@
+defaults:
+  - torch_linear_delta_hypopt
+
+name: torch_linear_aug
+
+hypopt:
+  search_space:
+    batch_size: # randint in power of 2
+      min: 9 # 512
+      max: 10 # decrease by 1 to ensure that no memory issues
+  to_eval_first:
+    simsiam:
+      batch_size: 10 # decrease by 2
+    erm:
+      batch_size: 10
+    basic_sgd:
+      batch_size: 10

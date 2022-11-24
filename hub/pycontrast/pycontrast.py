@@ -18,7 +18,7 @@ PYCONTRAST_MODELS = {
 
 def get_pycontrast_models(name):
 
-    encoder = tmodels.resnet.resnet50(pretrained=False, num_classes=0)
+    encoder = tmodels.resnet.resnet50(num_classes=0)
     encoder.fc = nn.Identity()
 
     state_dict = load_state_dict_from_url(

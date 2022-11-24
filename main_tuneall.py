@@ -70,7 +70,6 @@ def main(cfg):
     # those components can have the same hyperparameters
     components2hypopt = {"train_train": dict(train_on="train-sbst-0.5",  validate_on="train-sbst-0.5", label_size=0.2),
                          "train-cmplmnt-ntest_train-sbst-ntest": dict(train_on="train-sbst-0.5", validate_on="train-cmplmnt-0.5", label_size=0.2),
-                         "train-cmplmnt-ntest_test": dict(train_on="train-sbst-0.5", validate_on="test", label_size=0.2),  # validation should be done on test-sbst-0.1
                          "train_test": dict(train_on="train-sbst-0.5", validate_on="test", label_size=0.2),   # valdiation should be done on test-sbst-0.1
                          "train_test-cmplmnt-0.1": dict(train_on="train", validate_on="test-sbst-0.1"),
                          "union_test": dict(train_on="train-sbst-0.5", validate_on="train-sbst-0.5", label_size=0.2),
@@ -87,14 +86,12 @@ def main(cfg):
                       ]
     else:
         # test should be replaced by test-cmplmnt-0.1
-        components = ["train-cmplmnt-ntest_train-sbst-ntest",
-                      "train_train",
-                      "train-cmplmnt-ntest_test",
-                      "train_test"
-                      #"train_test-cmplmnt-0.1",
-                      #"union_test",
-                    ]
+        components = ["train_train",
+                      "train_test",
+                      "train-cmplmnt-ntest_train-sbst-ntest"]
 
+        if cfg.is_alternative_decomposition:
+            components += ["union_test"]
     for component in components:
 
         sffx_hypopt = "hyp_{train_on}_{validate_on}_{label_size}".format(**components2hypopt[component])

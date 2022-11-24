@@ -15,7 +15,7 @@ timeout=$time
 
 
 kwargs_multi="
-representor=lossyless_b001,lossyless_b005,lossyless_b01
+representor=lossyless_vitb32_b001,lossyless_vitb32_b005,lossyless_vitb32_b01
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True

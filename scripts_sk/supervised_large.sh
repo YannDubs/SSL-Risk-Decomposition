@@ -24,14 +24,7 @@ data.kwargs.is_avoid_raw_dataset=True
 data.kwargs.subset_raw_dataset=0.3
 "
 
-kwargs_multi="
-representor=sup_vitB8_dino,sup_vitS16_dino
-seed=123
-is_supervised=True
-predictor=sk_logistic_hypopt
-data.kwargs.is_avoid_raw_dataset=True
-data.kwargs.subset_raw_dataset=0.3
-"
+
 
 #predictor=torch_bnlinear
 #seed=123,124,125

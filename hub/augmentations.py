@@ -21,7 +21,6 @@ def get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
     return transforms.Compose([
         transforms.Resize(pre_resize, interpolation=interpolation),
         transforms.CenterCrop(224),
-        transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize(mean=mean, std=std),
     ])

@@ -8,6 +8,7 @@ from utils.collect_results import COMPONENTS
 
 from statsmodels.tools.eval_measures import rmse
 
+from utils.helpers import ols_clean_df_
 
 
 def ols_summary(df,
@@ -24,19 +25,8 @@ def ols_summary(df,
 
     condition = [c.format(treatment=treatment) for c in condition]
 
-    for c in condition + [outcome]:
-        if "(" in c and ")" in c:
-            # take column without function applied
-            c = c[c.find("(") + 1:c.find(")")]
-        if ":" in c:
-            continue
 
-        if isinstance(df[c].dtype, pd.StringDtype):
-            df[c] = df[c].astype("object")
-        elif isinstance(df[c].dtype, pd.Int64Dtype):
-            df[c] = df[c].astype(int)
-        elif isinstance(df[c].dtype, pd.BooleanDtype):
-            df[c] = df[c].astype(bool)
+    ols_clean_df_(df, condition + [outcome])
 
     if "log" in f_outcome:
         y = f"np.log({outcome})"

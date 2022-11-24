@@ -20,13 +20,6 @@ seed=123
 predictor=torch_linear_delta_hypopt
 "
 
-kwargs_multi="
-representor=dissl_resnet50_dNone_e100_m2
-seed=123
-predictor=torch_linear_delta_hypopt
-"
-
-
 # need to run seed=124,125
 # torch_linear_erm
 

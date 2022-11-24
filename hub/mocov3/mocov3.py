@@ -38,7 +38,7 @@ def get_mocov3_models(name, architecture, representation="cls"):
         encoder.head = nn.Identity()
 
     elif architecture == "resnet50":
-        encoder = tmodels.resnet.resnet50(pretrained=False, num_classes=0)
+        encoder = tmodels.resnet.resnet50(num_classes=0)
         encoder.fc = nn.Identity()
 
     else:

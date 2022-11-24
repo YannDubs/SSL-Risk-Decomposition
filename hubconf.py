@@ -367,8 +367,8 @@ try:
     def simclr_resnet50_d8192_e100_m2():
         return _get_riskdec_models('simclr_resnet50_d8192_e100_m2', dim=8192)
 
-    def speccl_bs384_ep100():
-        return _get_riskdec_models('speccl_bs384_ep100', is_speccl=True)
+    def speccl_resnet50_bs384_ep100():
+        return _get_riskdec_models('speccl_resnet50_bs384_ep100', is_speccl=True)
 
 except ImportError as e:
     _logging.warning(f"RiskDec models not available because of the following import error: \n {e}")
@@ -380,13 +380,13 @@ except ImportError as e:
 try:
     from hub.lossyless import get_lossyless_models as _get_lossyless_models
 
-    def lossyless_b001():
+    def lossyless_vitb32_b001():
         return _get_lossyless_models('clip_compressor_b001')
 
-    def lossyless_b005():
+    def lossyless_vitb32_b005():
         return _get_lossyless_models('clip_compressor_b005')
 
-    def lossyless_b01():
+    def lossyless_vitb32_b01():
         return _get_lossyless_models('clip_compressor_b01')
 
 except ImportError as e:
@@ -735,6 +735,66 @@ try:
 
 except ImportError as e:
     _logging.warning(f"Torchvision models not available because of the following import error: \n {e}")
+
+
+### INITIALIZATION ###
+
+try:
+    from hub.initialized import get_initialized_models as _get_initialized_models
+
+    def init_rn50():
+        return _get_initialized_models("resnet50")
+
+    def init_rn50_d4096():
+        return _get_initialized_models("resnet50", new_dim=4096)
+
+    def init_rn50_d8192():
+        return _get_initialized_models("resnet50", new_dim=8192)
+
+    def init_rn50_d1024():
+        return _get_initialized_models("resnet50", new_dim=1024)
+
+    def init_rn50_d512():
+        return _get_initialized_models("resnet50", new_dim=512)
+
+    def init_rn101():
+        return _get_initialized_models("resnet101")
+
+    def init_rn50w2():
+        return _get_initialized_models("resnet50w2")
+
+    def init_vitB8():
+        return _get_initialized_models('vit_base_patch8_224')
+
+    def init_vitB8_dino():
+        return _get_initialized_models('vit_base_patch8_224', representation_vit='cls+avg')
+
+    def init_vitB16():
+        return _get_initialized_models('vit_base_patch16_224')
+
+    def init_vitB16_dino():
+        return _get_initialized_models('vit_base_patch16_224', representation_vit="cls+avg")
+
+    def init_vitB16_dino_extractS():
+        return _get_initialized_models('vit_base_patch16_224', representation_vit="4xcls")
+
+    def init_vitB32():
+        return _get_initialized_models('vit_base_patch32_224')
+
+    def init_vitL16():
+        return _get_initialized_models('vit_large_patch16_224')
+
+    def init_vitS16():
+        return _get_initialized_models('vit_small_patch16_224')
+
+    def init_vitS16_dino():
+        return _get_initialized_models('vit_small_patch16_224', representation_vit="4xcls")
+
+    def init_vitS16_dino_extractB():
+        return _get_initialized_models('vit_small_patch16_224', representation_vit="cls+avg")
+
+except ImportError as e:
+    _logging.warning(f"Initialized models not available because of the following import error: \n {e}")
 
 
 def _metadata_cols_to_types():

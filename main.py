@@ -23,6 +23,7 @@ import os
 import sys
 from collections.abc import Callable
 from typing import Union
+from timeit import default_timer as timer
 
 import pandas as pd
 import hydra
@@ -135,10 +136,6 @@ def main(cfg):
 
         save_results(cfg, results, "all")
 
-    if cfg.is_run_out_dist:
-        # Only if want out_dist results
-        for rob_dataset in cfg.out_dist_datasets:
-            run_out_dist_decomposition(rob_dataset, datamodule, cfg, representor, preprocess)
 
     # remove all saved features at the end
     # remove_rf(datamodule.features_path, not_exist_ok=True)
@@ -171,12 +168,15 @@ def init_wandb(offline=False, **kwargs):
         **kwargs,
     )
 
-def instantiate_datamodule_(cfg: Container, representor : Callable, preprocess: Callable, **kwargs) -> pl.LightningDataModule:
+
+def instantiate_datamodule_nofeature_(cfg: Container,
+                                        preprocess: Callable,
+                                        **kwargs) -> pl.LightningDataModule:
     """Instantiate dataset."""
     data_kwargs = omegaconf2namespace(cfg.data.kwargs)
     data_kwargs.dataset_kwargs.transform = preprocess
     Datamodule = get_Datamodule(cfg.data.name)
-    datamodule = Datamodule(representor=representor, representor_name=cfg.representor, **data_kwargs, **kwargs)
+    datamodule = Datamodule(**data_kwargs, **kwargs)
 
     if cfg.data.check_length is not None:
         check_length = cfg.data.check_length
@@ -184,11 +184,18 @@ def instantiate_datamodule_(cfg: Container, representor : Callable, preprocess: 
 
     return datamodule
 
+
+def instantiate_datamodule_(cfg: Container, representor : Callable, preprocess: Callable, **kwargs) -> pl.LightningDataModule:
+    """Instantiate dataset."""
+    return instantiate_datamodule_nofeature_(cfg, preprocess, representor=representor, representor_name=cfg.representor, **kwargs)
+
+
 def run_component_(component : str, datamodule : pl.LightningDataModule, cfg : Container, results : dict,
-                   components_same_train : dict ={}, Predictor=Predictor, results_path=None, **kwargs):
+                   components_same_train : dict ={}, Predictor=Predictor, results_path=None,
+                   reset_kwargs : dict ={}, **kwargs):
     logger.info(f"Stage : {component}")
 
-    cfg_comp, datamodule = set_component_(datamodule, cfg, component)
+    cfg_comp, datamodule = set_component_(datamodule, cfg, component, **reset_kwargs)
 
     if cfg.predictor.is_sklearn:
         predictor = get_sklearn_predictor(cfg_comp)
@@ -211,7 +218,10 @@ def run_component_(component : str, datamodule : pl.LightningDataModule, cfg : C
 
     except FileNotFoundError:
 
+        start = timer()
         fit_(trainer, predictor, datamodule, cfg_comp)
+        end = timer()
+        logger.info(f"Fitted {component} in {end - start} seconds.")
 
         logger.info(f"Evaluate predictor for {component} ...")
         results[component] = evaluate(trainer, datamodule, cfg_comp, component, model=predictor, **kwargs)
@@ -225,7 +235,10 @@ def run_component_(component : str, datamodule : pl.LightningDataModule, cfg : C
 
     return results
 
-def set_component_(datamodule : pl.LightningDataModule, cfg: Container, component: str) -> tuple[NamespaceMap, pl.LightningDataModule]:
+def set_component_(datamodule : pl.LightningDataModule,
+                   cfg: Container,
+                   component: str,
+                   **reset_kwargs) -> tuple[NamespaceMap, pl.LightningDataModule]:
     """Set the current component to evaluate."""
     cfg = copy.deepcopy(cfg)  # not inplace
 
@@ -238,13 +251,13 @@ def set_component_(datamodule : pl.LightningDataModule, cfg: Container, componen
 
     # make sure all paths exist
     for name, path in cfg.paths.items():
-        if name == "data" and cfg.data.kwargs.is_avoid_raw_dataset:
+        if (name == "data") and ("is_avoid_raw_dataset" in cfg.data.kwargs) and cfg.data.kwargs.is_avoid_raw_dataset:
             continue
         Path(path).mkdir(parents=True, exist_ok=True)
 
     separator_tr_te = "_"
     is_train_on, is_test_on = component.split(separator_tr_te)
-    datamodule.reset(is_train_on=is_train_on, is_test_on=is_test_on)
+    datamodule.reset(is_train_on=is_train_on, is_test_on=is_test_on, **reset_kwargs)
 
     cfg.data.n_train = len(datamodule.get_train_dataset())
 
@@ -344,29 +357,6 @@ def save_results(cfg : NamespaceMap, results : Union[pd.Series,pd.DataFrame], co
     path = results_path / filename
     results.to_csv(path, header=True, index=True)
     logger.info(f"Logging {component} results to {path}.")
-
-def run_out_dist_decomposition(rob_dataset : str, old_datamodule: pl.LightningDataModule, cfg: Container,
-                                 representor : Callable, preprocess: Callable):
-    """Run the out_dist decomposition."""
-    logger.info("Stage : Out of distribution")
-
-    main_data = cfg.data.name
-    cfg = copy.deepcopy(cfg)  # not inplace
-    results = dict()
-
-    # for loading test set use out_dist data only, then use old training set
-    cfg.data.name = rob_dataset
-    datamodule = instantiate_datamodule_(cfg, representor, preprocess, train_dataset=old_datamodule.train_dataset)
-    cfg.data.name = f"{main_data}-{rob_dataset}"  # for saving you want to remember both datasets: train and test
-
-    for component in ["test_test", "union_test", "train_test"]:
-        results = run_component_(component, datamodule, cfg, results)
-
-    # save results
-    results = pd.DataFrame.from_dict(results)
-    results["enc_gen"] = results["union_test"] - results["test_test"]
-    results["pred_gen"] = results["train_test"] - results["union_test"]
-    save_results(cfg, results, "all")
 
 if __name__ == "__main__":
     try:

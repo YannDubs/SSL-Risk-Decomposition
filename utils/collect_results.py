@@ -1,4 +1,5 @@
 import pdb
+import types
 import warnings
 
 import numpy as np
@@ -6,7 +7,6 @@ import pandas as pd
 from pathlib import Path
 import xgboost as xgb
 from sklearn.preprocessing import MultiLabelBinarizer
-from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.inspection import permutation_importance
 import shap
 from IPython.display import display
@@ -15,16 +15,28 @@ from matplotlib import pyplot as plt
 from sklearn.model_selection import KFold, LeaveOneOut
 import copy
 import seaborn as sns
+from scipy.stats import pearsonr, spearmanr, kendalltau
+import statsmodels.formula.api as smf
+import statsmodels.api as sm
+import statsmodels.tools.eval_measures as sme
+from sklearn.metrics import mean_squared_error, r2_score
+from lmfit import Model, Parameter
+import inspect
 
 
 import optuna
 from optuna.samplers import TPESampler
 from optuna.visualization.matplotlib import plot_param_importances, plot_optimization_history, plot_parallel_coordinate
 
+import hubconf
+from utils.helpers import ols_clean_df_, powerset
+from utils.pretty_renamer import PRETTY_RENAMER
+
 COMPONENTS_ONLY = ["approx", "usability", "probe_gen", "enc_gen"]
 COMPONENTS_ONLY_IMP = [ "usability", "probe_gen", "enc_gen", "approx"]
 COMPONENTS = COMPONENTS_ONLY + ["agg_risk"]
-
+CORE_METRICS = ["train_test", 'train-balsbst-ntrain0.01_test',
+                ]
 
 def tune_std_xgb(X, y, seed=123, n_trials=50, verbose=False, **kwargs):
     """Tune standard xgboost and return final model + study"""
@@ -170,11 +182,19 @@ def cross_validate_pd(model, X, y, kfold=10, seed=123, **kwargs):
         scores.append(rmse)
     return sum(scores) / len(scores)
 
-def load_single_file(f, skip_ifin=dict(), skip_ifneq=dict(), metric="err"):
+def path2params(f):
+    """Converts a path to a dictionary of parameters."""
+    return {f.split("_", 1)[0].lower(): f.split("_", 1)[1].lower()
+            for f in str(f.resolve()).split("results")[1].split("/")[1:-1]}
+
+def load_single_file(f, skip_ifin=dict(), skip_ifneq=dict(), metric="err", is_skip_test=True):
     """Load results from a single file. Skip is a dictionary of values to skip for certain params."""
 
-    params = {f.split("_", 1)[0].lower(): f.split("_", 1)[1].lower()
-              for f in str(f.resolve()).split("results")[1].split("/")[1:-1]}
+    params = path2params(f)
+
+    if is_skip_test:
+        if "test" in params["exp"]:
+            return None, None
 
     for k, values in skip_ifin.items():
         for v in values:
@@ -263,8 +283,9 @@ def add_approximation_results_(ssl, sup, is_allow_nan=True, **sbst_kwargs):
     ssl.loc[~missing, f"sup_train{tr_tr_sffx}_train{tr_tr_sffx}"] = sup.loc[ssl_to_sup[~missing], f"train{tr_tr_sffx}_train{tr_tr_sffx}"].values
     ssl.loc[~missing, f"sup_train{sffx}_test"] = sup.loc[ssl_to_sup[~missing], f"train{sffx}_test"].values
 
+    #ssl.loc[~missing, f"sup_train{tr_tr_sffx}_train{tr_tr_sffx}"]
 
-def format_approx_results(results, metadata, f_replace_arch=None, **kwargs):
+def format_approx_results(results, metadata, f_replace_arch=None, is_keep_sup=True, **kwargs):
     """Separates the supervised results into the approximation error column."""
 
     arch = np.array([metadata.loc[i, "architecture_exact"] for i in results.index.get_level_values(0)])
@@ -272,13 +293,20 @@ def format_approx_results(results, metadata, f_replace_arch=None, **kwargs):
 
     is_supervised = np.array([metadata.loc[i, "ssl_mode"] for i in results.index.get_level_values(0)]) == "supervised"
     results_sup = results[is_supervised].copy()
-    results_ssl = results[~is_supervised].copy()
+
+    if is_keep_sup:
+        results_ssl = results.copy()
+    else:
+        results_ssl = results[~is_supervised].copy()
 
     results_sup = results_sup.set_index("arch", append=True)
     if f_replace_arch is not None:
         # replaces architectures if needed for the supervised models (in the case where couldn't find correct one)
         results_ssl.loc[:, "arch"] = results_ssl.loc[:, "arch"].apply(f_replace_arch)
     results_ssl = results_ssl.set_index("arch", append=True)
+
+    # Placeholder that gives 0 to whatever you want. Used to set zero for approx error of large models
+    results_sup.loc[("zero", "torch_linear_delta_hypopt", "123", "zero")] = 0
 
     add_approximation_results_(results_ssl, results_sup, **kwargs)
 
@@ -310,6 +338,9 @@ def f_replace_arch(arch):
     arch = arch.replace("clipresnet", "resnet")
     arch = arch.replace("beit", "vit")
     arch = arch.replace("vitl14", "vitl16")  # close enough
+    arch = arch.replace("vitl7", "vitl16")  # close enough
+    arch = arch.replace("vitb4", "vitb8")  # close enough
+    arch = arch.replace("vitb32 pred", "vitb32 cls")  # close enough although dimensionality decreases from 768 -> 512
 
     if "resnet50d" in arch:
         # if increasing last dimension the architecture does not change much
@@ -319,6 +350,19 @@ def f_replace_arch(arch):
         # surprisingly I couldn't find any pytorch pretrained resnet50x2
         # so i' using wide resnet which is somewhat comparable although not ideal
         return "wide_resnet50_2"
+
+    # all the following are assumed to have zero approximation error given that they are upperbounded
+    # by resnet50w which achieve 0.8% and those are much better with larger dim
+    # and are much better models
+    if arch in ["resnet50w4", "resnet50w16", "resnet50w64", "vith14 cls"]:
+        arch = "zero"
+    #arch = arch.replace("vith14 cls", "zero")
+
+    # Those values seem are suspiciously large. A vit-S would be able to fit the TRAINING data by more than 92%
+    # => remove until you rerun
+    if arch in ["vits16 cls+avg", "vits16 cls"]:
+        arch = "missing"
+
 
     return arch
 
@@ -384,15 +428,37 @@ def make_risk_decomposition(results, traverse_path=["down", "right", "down"],
 
             results[component_names[action].pop()] = results[dec_table[tuple(ind)]] - curr_val
 
-    return results[selected_columns]
+    return results#[selected_columns]
 
+
+def add_statistics_(metadata):
+    """Add precomputed statistics to the metadata."""
+    results_dir = Path() / "results/exp_statistics"
+    pattern = "data_*/ssl_*/"
+    files = list(results_dir.glob(pattern))
+
+    for f in files:
+        params = path2params(f/"placeholder")
+
+        for d in ["train", "test", "trainaug", "testaug"]:
+            f_stats = f / f"{d}_statistics.npz"
+            if f_stats.exists():
+                with np.load(f  / f"{d}_statistics.npz") as statistics:
+                    for k in statistics.keys():
+                        if statistics[k].size == 1:
+                            metadata.loc[params["ssl"], f"{d}_{k}"] = statistics[k]
+
+    metadata['trainaug_vars'] = metadata['trainaug_intra_var'] / metadata['trainaug_inter_var']
+    metadata['train_vars'] = metadata['train_intra_var'] / metadata['train_inter_var']
+    # nc1 computes the trace => sum over non zero dimensions => let's normalize (sqrt is to have std instead of var)
+    metadata['trainaug_nc1norm'] = (metadata['trainaug_nc1'] / metadata['train_rank'])**0.5
 
 def clean_results(results,
                   metadata,
                   predictor=None,  # predictor to select
                   is_avg_seed=True,  # avg over seed
                   is_positive=True,  # force pos
-                  is_add_metadata=True # adds additional metadata that are funciton of others
+                  is_add_metadata=True  # adds additional metadata that are funciton of others
                   ):
     """Clean the risk decomposition results."""
 
@@ -421,11 +487,11 @@ def clean_results(results,
             except:
                 pass
 
-
-
+    metadata = metadata.replace(dict(ssl_mode={"hierarchical contrastive": "hierarchical"}))
 
     if is_add_metadata:
         add_metadata_(metadata)
+
 
     return results, metadata
 
@@ -449,22 +515,29 @@ def validate_results(results, metadata,
         warnings.warn(f"The following models have very different original and evalauted performance:")
         display(delta[is_large_delta])
 
-    is_nan = results.isna().any(axis=1)
+    is_nan = results[COMPONENTS_ONLY].isna().any(axis=1)
     if is_nan.sum() > 0:
         warnings.warn(f"The following results have some nan:")
-        display(results.loc[is_nan].round(3))
+        display(results.loc[is_nan,COMPONENTS_ONLY].round(3))
 
 def add_metadata_(metadata):
     """Adds additional metadata that are function of others"""
-    metadata["nviews"] = metadata["views"].apply(lambda s: count_views(s))
+    idx_ssl = ~metadata["ssl_mode"].isin(["initialized","supervised"])
 
-    # cleanup date (chooses day = 1 arbitrarily_
-    metadata["date_published"] = pd.to_datetime(dict(year=metadata.year,
-                                                     month=metadata.month,
-                                                     day=metadata.month * 0 + 1))
+    metadata.loc[idx_ssl,"nviews"] = metadata.loc[idx_ssl,"views"].apply(lambda s: count_views(s)).astype(pd.Int64Dtype())
+
+    # cleanup date (chooses day = 1 arbitrarily)
+    metadata.loc[idx_ssl,"date_published"] = pd.to_datetime(dict(year=metadata[idx_ssl].year,
+                                                                     month=metadata[idx_ssl].month,
+                                                                     day=metadata[idx_ssl].month * 0 + 1),
+                                                                errors='coerce')
+
+    metadata.loc[idx_ssl,"n_augmentations"] = metadata.loc[idx_ssl,"augmentations"].apply(lambda s: len(s))
 
 
 def count_views(s):
+    if pd.isnull(s):
+        return 0
     count = 0
     while "x" in s:
         splitted = s.split("x", maxsplit=1)
@@ -542,9 +615,7 @@ def report_xgboost(reg, X, y, is_std_featimp=True, is_shap_interactive=False,
     else:
         inp_pred = X
 
-    rmse = mean_squared_error(y, reg.predict(inp_pred), squared=False)
-    r2 = r2_score(y, reg.predict(inp_pred))
-    print(f"R2: {r2}. RMSE: {rmse}")
+    regression_report(y, reg.predict(inp_pred))
 
     if is_std_featimp:
         fig, axes = plt.subplots(1, 2, figsize=(12, 4))
@@ -623,9 +694,312 @@ def get_only_vary(df, varying_keys, all_keys, drop_cols=[]):
     return selected
 
 
-def melt(df, components=COMPONENTS):
+def melt(df, components=COMPONENTS, var_name="component", **kwargs):
     """Melts components"""
     return pd.melt(df,
                    value_vars=components,
                    id_vars=[c for c in df.columns if c not in components],
-                   var_name="component")
+                   var_name=var_name,
+                   **kwargs)
+
+def clean_model_name(name, pretty_renamer=PRETTY_RENAMER):
+    name = name.replace(" ", "_")
+    if name.count("_") >= 2:
+        *model_arch, rest = name.split("_", 2)
+        model_arch = "_".join(model_arch)
+    else:
+        model_arch = name
+        rest = ""
+    model_arch = pretty_renamer[model_arch]
+    return model_arch, rest
+
+
+def filter_by_quantile(df, col="agg_risk", is_year=True, quantile=0.1):
+    """Select results that are the best (quantile) in total or for their year"""
+    df = df.copy()
+    if is_year:
+        quantiles = df.groupby("year").quantile(quantile, numeric_only=True)[col]
+        quantiles = [quantiles[y] for y in df.year]
+    else:
+        quantiles = df[col].quantile(quantile)
+
+    return df[df[col].le(quantiles)]
+
+
+def load_df(is_read_files = True,
+                DATA = "imagenet",
+                subset = None,
+                pred = 'torch_linear_delta_hypopt',
+                threshold_kwargs = dict(),
+            traverse_path=["down", "right", "down"],
+            is_zero_approx=False):
+
+    metadata_df = hubconf.metadata_df(is_multiindex=False)
+
+    if is_read_files:
+        results = load_all_results(pattern=f"**/data_{DATA}/**/pred_{pred}/seed_*/results_all.csv",
+                                   skip_ifneq=dict(data=DATA.lower()),
+                                   skip_ifin=dict(ssl=["swav_rn50w5", "selav2_rn50_ep400_2x160_4x96"]),
+                                   )
+
+        check_missing(results, metadata_df)
+        results = format_approx_results(results, metadata_df, f_replace_arch=f_replace_arch,
+                                        subset=subset)
+
+        if is_zero_approx:
+            assert subset is None
+            results[f"sup_train_train"] = 0
+
+        results = make_risk_decomposition(results,
+                                          traverse_path=traverse_path,
+                                          is_print=True,
+                                          subset=subset)
+
+        results, metadata_df = clean_results(results, metadata_df, predictor=pred)
+        add_statistics_(metadata_df)
+        validate_results(results, metadata_df, threshold_delta=5, **threshold_kwargs)
+
+        results.to_csv(f"notebooks/saved/results_{DATA}_{pred}.csv")
+
+        # filter out values that are suspiciously bad
+        to_del = []
+        to_keep = [i for i in results.index.get_level_values("enc") if i not in to_del]
+        results = results.loc[to_keep]
+    else:
+        results = pd.read_csv(f"notebooks/saved/results_{DATA}_{pred}.csv", index_col=0)
+
+    metadata_df = metadata_df.loc[to_keep]
+    df = pd.concat([results, metadata_df], axis=1)
+    return df, metadata_df
+
+def compute_correlations_log(x,y):
+    """Compute correlations between x and y under possible log transformation"""
+    for is_logx in [True, False]:
+        for is_logy in [True, False]:
+            print(f"logx={is_logx}, logy={is_logy}")
+            compute_correlations(x,y, is_logx=is_logx, is_logy= is_logy)
+
+
+def compute_correlations(x, y, is_logx=False, is_logy=False, correlations=["Pearson", "Spearman", "Kendall"]):
+    """Compute different correlation coefficient."""
+
+    notna = ~(x.isna() | y.isna())
+    x = x[notna]
+    y = y[notna]
+
+
+    if is_logx:
+        selectx = x > 0
+        x = np.log(x[selectx])
+    else:
+        selectx = True
+
+    if is_logy:
+        selecty = y > 0
+        y = np.log(y[selecty])
+    else:
+        selecty = True
+
+    if is_logx or is_logy:
+        select = selectx & selecty
+        x = x[select]
+        y = y[select]
+
+    for k, f in dict(Pearsons=pearsonr,  # linear
+                     Spearman=spearmanr,  # monotonic / rank ordering
+                     Kendall=kendalltau,  # monotonic / rank ordering
+                     ).items():
+        if k  in correlations:
+            corr, pval = f(x, y)
+            print(f'{k} correlation: {corr:.3f} pvalue = {pval:.2e}')
+
+def loglike_undolog(self, params, scale=None):
+    nobs2 = self.nobs / 2.0
+    nobs = float(self.nobs)
+    resid = np.exp(self.endog) - np.exp(np.dot(self.exog, params))
+    assert not hasattr(self, 'offset'), "cannot yet deal with offset"
+
+    ssr = np.sum(resid ** 2)
+    if scale is None:
+        # profile log likelihood
+        llf = -nobs2 * np.log(2 * np.pi) - nobs2 * np.log(ssr / nobs) - nobs2
+    else:
+        # log-likelihood
+        llf = -nobs2 * np.log(2 * np.pi * scale) - ssr / (2 * scale)
+    return llf
+
+def fit_best_ols(data, potential_features,
+                 model_selection = "bic", target = "train_test", log_target = [False]):
+
+
+    best_loss = float("inf")
+
+    for is_log_target in log_target:
+        if is_log_target:
+            ftarget = f"np.log({target})"
+            f = np.exp
+        else:
+            f = lambda x: x
+            ftarget = target
+
+        for features in powerset(potential_features):
+            formula = f"{ftarget} ~ " + " + ".join(features)
+            model = smf.ols(formula=formula, data=data)
+
+            if is_log_target:
+                model.loglike = types.MethodType(loglike_undolog, model)
+
+            model = model.fit()
+
+            loss = getattr(model, model_selection)
+
+            if loss < best_loss:
+
+                best_loss = loss
+                best_model = model
+                best_features = features
+                best_log_target = is_log_target
+                rmse = ((data[target] - f(best_model.predict(data)))**2).mean()**0.5
+
+
+    print(f"best features: {best_features}. {model_selection}: {best_loss}. R2 = "
+          f"{best_model.rsquared:.3f}. best_log_target: {best_log_target}. best rmse: {rmse}")
+    return best_model
+
+def get_sample_size(s):
+    if s =="train_test":
+        return 1281167
+    elif "train-nperclass-" in s:
+        return int(s.split("_")[0][len("train-nperclass-"):]) * 1000
+    elif "train-balsbst-ntrain" in s:
+        return int(float(s.split("_")[0][len("train-balsbst-ntrain"):]) * 1281167)
+
+def fit_scaling_law(data, features, target="train_test", n_epsilons=20,
+                    is_raw_r2=True, eps_col=None, min_eps=0,
+                    no_intercept=False, is_log_target=True):
+    best_loss = float("inf")
+
+    data = data.copy()
+    ols_clean_df_(data, features+[target])
+
+    if eps_col is not None:
+        eps = data[eps_col]
+    else:
+        eps = 0
+
+    if is_log_target:
+        def f_inv_tgt(pred_tgt, eps):
+            return np.exp(pred_tgt) + eps
+
+        def f_tgt(tgt, eps):
+            return np.log(tgt - eps)
+    else:
+        def f_inv_tgt(pred_tgt, eps):
+            return pred_tgt + eps
+
+        def f_tgt(tgt, eps):
+            return tgt - eps
+
+    for delta_eps in np.linspace(min_eps, (data[target] - eps).min(), num=n_epsilons, endpoint=False):
+
+        data_eps = data.copy()
+        new_eps = eps + delta_eps
+
+        data_eps[target] = f_tgt(data_eps[target], new_eps)
+        formula = f"{target} ~ " + " + ".join(features)
+        if no_intercept:
+            formula += " - 1"
+        model = smf.ols(formula=formula, data=data_eps).fit()
+        pred_tgt = f_inv_tgt(model.predict(data_eps), new_eps)
+        rmse = ((data[target] - pred_tgt) ** 2).mean() ** 0.5
+
+        if is_raw_r2:
+            loss = 1 - model.rsquared
+        else:
+            loss = rmse
+
+        if loss < best_loss:
+            best_loss = loss
+            best_model = model
+            best_delta_eps = delta_eps
+            best_rmse = rmse
+
+    print(f"R2 = {best_model.rsquared:.3f}. best rmse: {best_rmse:.3f}. best delta eps: {best_delta_eps:.3f}")
+    return best_model, best_rmse
+
+
+def regression_report(Y,Y_hat, sffx=""):
+    rmse = mean_squared_error(Y,Y_hat, squared=False)
+    r2 = r2_score(Y,Y_hat)
+    print(f"{sffx}RMSE: {rmse:.4f}. R2: {r2:.4f}")
+
+def f_pred(params, data, model_var):
+    return params["irr"] + params["C"] / (params["n"] ** params["alpha"])
+
+def scalinglaw(data,
+               model_col=None,
+               f_pred=f_pred,
+               is_finegrained_report=False,
+               model_dep=[],
+               possible_params=["irr", "C", "alpha"],
+               independent_vars=dict(n=data["n_samples"]),
+               all_kwargs={"irr": dict(value=10, min=0, max=100, user_data="irr"),
+                           "alpha": dict(value=0.2, min=0, max=0.5, user_data="alpha"),
+                           "C": dict(value=100, min=0, max=1000, user_data="C"),
+                           "K": dict(value=100, min=0, max=1000, user_data="K"),
+                           "beta": dict(value=0.2, min=0, max=0.5, user_data="beta"),
+                           },
+               max_nfev=10000,
+               optim="least_squares",
+               ):
+
+    def f_pred_params(model_var=None, data=None, **kwargs):
+        params = {k: np.array([kwargs[f"{k}_{m}"] for m in model_var])
+        if k in model_dep else kwargs[k]
+                  for k in possible_params + list(independent_vars.keys())}
+        return f_pred(params, data, model_var)
+
+    all_params = {}
+    for k in possible_params:
+        if k in model_dep:
+            for m in data[model_col].unique():
+                all_params[f"{k}_{m}"] = Parameter(f"{k}_{m}", **all_kwargs[k])
+        else:
+            all_params[k] = Parameter(k, **all_kwargs[k])
+
+    f_pred_params.__signature__ = inspect.Signature([inspect.Parameter(param,
+                                                                       kind=inspect.Parameter.POSITIONAL_OR_KEYWORD)
+                                                     for
+                                                     param in
+                                                     list(independent_vars.keys()) + list(all_params.keys())] +
+                                                    [inspect.Parameter(param,
+                                                                       default=None,
+                                                                       kind=inspect.Parameter.POSITIONAL_OR_KEYWORD)
+                                                     for param in ["model_var", "data"]])
+
+    model = Model(f_pred_params,
+                  independent_vars=list(independent_vars.keys()),
+                  model_var=data[model_col] if model_col is not None else None)
+
+    result = model.fit(data["value"],
+                       nan_policy='omit',
+                       max_nfev=max_nfev,
+                       method=optim,
+                       **independent_vars,
+                       **all_params,
+                       )
+
+    regression_report(result.data, result.eval(), sffx="*All* ")
+
+    if is_finegrained_report:
+        for m in data[model_col].unique():
+            idx = list(data[model_col] == m)
+            regression_report(result.data[idx], result.eval()[idx], sffx=f"*{m}* ")
+
+    fitted_params = pd.DataFrame.from_dict({k: dict(value=v.value, param=v.user_data) for k, v in
+                                            result.params.items()}).T
+    display(fitted_params.groupby("param").agg(['mean', 'sem']).T)
+
+    print(f"N param: {len(result.params)}")
+
+    return result

@@ -11,13 +11,13 @@ hydra:
     partition: sphinx
     comment: null
     constraint: null # 12G,11G,24G,pascal,ampere,maxwell,turing,volta # TODO test if works if not will have to use gres
-    exclude: null
-    array_parallelism: 4
+    exclude: sphinx3
+    array_parallelism: 12
     mem_gb: 120
-    cpus_per_task: 8
+    cpus_per_task: 32
 
     max_num_timeout: 10 # allow resume from checkpointing
     gpus_per_node: 1
     additional_parameters:
-      nodelist: sphinx6 #
+      #nodelist:  #
       account: nlp

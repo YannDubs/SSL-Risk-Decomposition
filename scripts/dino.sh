@@ -19,11 +19,6 @@ seed=123
 predictor=torch_linear_delta_hypopt
 "
 
-kwargs_multi="
-representor=dino_vitB8_last,dino_vitB8,dino_vitS8_last
-seed=123
-predictor=torch_linear_delta_hypopt
-"
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

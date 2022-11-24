@@ -1812,8 +1812,8 @@ mugs_vitb16_ep400_extractB:
     pred_dim: 256
     projection_hid_width: 2048 # 2048 for proj and 4096 for pred
     projection_hid_depth: 6 # 3 for proj and 3 for pred
-    architecture_exact: vits16 cls+avg
-    architecture: vits
+    architecture_exact: vitb16 cls+avg
+    architecture: vitb
     family: vit
     patch_size: 16
     projection_arch: mlp
@@ -3674,7 +3674,7 @@ clip_rn50:
     time_hours: ???
 
 ##### Lossyless #####
-lossyless_b01:
+lossyless_vitb32_b01:
   ssl:
     objective: clip+eb
     ssl_mode: contrastive
@@ -3687,16 +3687,16 @@ lossyless_b01:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
-    architecture_exact: vitb32 cls
+    architecture_exact: vitb32 pred
     architecture: vitb
     family: vit
     patch_size: 32
-    projection_arch: linear
+    projection_arch: null
     n_parameters: 85799424
-    projection_nparameters: 0.4e6
+    projection_nparameters: 0
   representation:
-    z_dim: 768
-    z_layer: cls
+    z_dim: 512
+    z_layer: pred
   optimization:
     epochs: 32
     batch_size: 32768
@@ -3730,7 +3730,7 @@ lossyless_b01:
     pu_type: V100
     time_hours: ???
 
-lossyless_b005:
+lossyless_vitb32_b005:
   ssl:
     objective: clip+eb
     ssl_mode: contrastive
@@ -3743,16 +3743,16 @@ lossyless_b005:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
-    architecture_exact: vitb32 cls
+    architecture_exact: vitb32 pred
     architecture: vitb
     family: vit
     patch_size: 32
-    projection_arch: linear
+    projection_arch: null
     n_parameters: 85799424
-    projection_nparameters: 0.4e6
+    projection_nparameters: 0
   representation:
-    z_dim: 768
-    z_layer: cls
+    z_dim: 512
+    z_layer: pred
   optimization:
     epochs: 32
     batch_size: 32768
@@ -3786,7 +3786,7 @@ lossyless_b005:
     pu_type: V100
     time_hours: ???
 
-lossyless_b001:
+lossyless_vitb32_b001:
   ssl:
     objective: clip+eb
     ssl_mode: contrastive
@@ -3799,16 +3799,16 @@ lossyless_b001:
     pred_dim: 512
     projection_hid_width: null
     projection_hid_depth: null
-    architecture_exact: vitb32 cls
+    architecture_exact: vitb32 pred
     architecture: vitb
     family: vit
     patch_size: 32
-    projection_arch: linear
+    projection_arch: null
     n_parameters: 85799424
-    projection_nparameters: 0.4e6
+    projection_nparameters: 0
   representation:
-    z_dim: 768
-    z_layer: cls
+    z_dim: 512
+    z_layer: pred
   optimization:
     epochs: 32
     batch_size: 32768
@@ -3843,7 +3843,7 @@ lossyless_b001:
     time_hours: ???
 
 ##### Risk Dec #####
-speccl_bs384_ep100:
+speccl_resnet50_bs384_ep100:
   ssl:
     objective: speccl
     ssl_mode: contrastive
@@ -7721,7 +7721,6 @@ barlow_rn50:
       - normalize
   metrics:
     top1acc_in1k_official: 71.8
-    top1acc_in1k-1%_official: 55.0
     top1acc_in1k-1%_official: null
     top1acc_in1k-c5_official: null
   meta:
@@ -8725,6 +8724,385 @@ sup_rn101:
     img_size: 224
   metrics:
     top1acc_in1k_official: 78.312
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/pytorch/vision
+    license: BSD 3-Clause
+    is_official: false
+
+
+###################################### ALL UNTRAINED MODELS ######################################
+init_vitS16_dino_extractB:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: vits16 cls+avg
+    architecture: vits
+    patch_size: 16
+    family: vit
+    patch_size: 16
+  representation:
+    z_dim: 768
+    z_layer: cls+avg
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/rwightman/pytorch-image-models
+    license: Apache 2.0
+    is_official: false
+
+init_vitS16_dino:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: vits16 4xcls
+    architecture: vits
+    patch_size: 16
+    family: vit
+    patch_size: 16
+  representation:
+    z_dim: 1536
+    z_layer: 4xcls
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/rwightman/pytorch-image-models
+    license: Apache 2.0
+    is_official: false
+
+init_vitS16:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: vits16 cls
+    architecture: vits
+    patch_size: 16
+    family: vit
+  representation:
+    z_dim: 384
+    z_layer: cls
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/rwightman/pytorch-image-models
+    license: Apache 2.0
+    is_official: false
+
+init_vitL16:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: vitl16 cls
+    architecture: vitl
+    family: vit
+    patch_size: 16
+  representation:
+    z_dim: 1024
+    z_layer: cls
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/rwightman/pytorch-image-models
+    license: Apache 2.0
+    is_official: false
+
+init_vitB32:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: vitb32 cls
+    architecture: vitb
+    family: vit
+    patch_size: 32
+  representation:
+    z_dim: 768
+    z_layer: cls
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/rwightman/pytorch-image-models
+    license: Apache 2.0
+    is_official: false
+
+init_vitB16_dino_extractS:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: vitb16 4xcls
+    architecture: vitb
+    family: vit
+    patch_size: 16
+  representation:
+    z_dim: 3072
+    z_layer: 4xcls
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/rwightman/pytorch-image-models
+    license: Apache 2.0
+    is_official: false
+
+init_vitB16_dino:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: vitb16 cls+avg
+    architecture: vitb
+    family: vit
+    patch_size: 16
+  representation:
+    z_dim: 1536
+    z_layer: cls+avg
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/rwightman/pytorch-image-models
+    license: Apache 2.0
+    is_official: false
+
+init_vitB16:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: vitb16 cls
+    architecture: vitb
+    family: vit
+    patch_size: 16
+  representation:
+    z_dim: 768
+    z_layer: cls
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/rwightman/pytorch-image-models
+    license: Apache 2.0
+    is_official: false
+
+init_vitB8_dino:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: vitb8 cls+avg
+    architecture: vitb
+    family: vit
+    patch_size: 8
+  representation:
+    z_dim: 1536
+    z_layer: cls+avg
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/rwightman/pytorch-image-models
+    license: Apache 2.0
+    is_official: false
+
+init_vitB8:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: vitb8 cls
+    architecture: vitb
+    family: vit
+    patch_size: 8
+  representation:
+    z_dim: 768
+    z_layer: cls
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/rwightman/pytorch-image-models
+    license: Apache 2.0
+    is_official: false
+
+init_rn50:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: resnet50
+    architecture: resnet50
+    patch_size: null
+    family: resnet
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/pytorch/vision
+    license: BSD 3-Clause
+    is_official: false
+
+init_rn50_d4096:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: resnet50d4096
+    architecture: resnet50
+    patch_size: null
+    family: resnet
+  representation:
+    z_dim: 4096
+    z_layer: avgpool
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/pytorch/vision
+    license: BSD 3-Clause
+    is_official: false
+
+init_rn50_d512:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: resnet50d512
+    architecture: resnet50
+    patch_size: null
+    family: resnet
+  representation:
+    z_dim: 512
+    z_layer: avgpool
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/pytorch/vision
+    license: BSD 3-Clause
+    is_official: false
+
+init_rn50_d1024:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: resnet50d1024
+    architecture: resnet50
+    patch_size: null
+    family: resnet
+  representation:
+    z_dim: 1024
+    z_layer: avgpool
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/pytorch/vision
+    license: BSD 3-Clause
+    is_official: false
+
+init_rn50_d8192:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: resnet50d8192
+    architecture: resnet50
+    patch_size: null
+    family: resnet
+  representation:
+    z_dim: 8192
+    z_layer: avgpool
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/pytorch/vision
+    license: BSD 3-Clause
+    is_official: false
+
+init_rn50w2:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: wide_resnet50_2
+    architecture: resnet50w2
+    patch_size: null
+    family: resnet
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/pytorch/vision
+    license: BSD 3-Clause
+    is_official: false
+    notes: this is not exactly correct, we are using wide_resnet50_2 (Wide_ResNet101_2_Weights.IMAGENET1K_V2) instead of resnet50w2 because I couldn't find parameters for the latter
+
+init_rn101:
+  ssl:
+    ssl_mode: initialized
+  model:
+    architecture_exact: resnet101
+    architecture: resnet101
+    patch_size: null
+    family: resnet
+  representation:
+    z_dim: 2048
+    z_layer: avgpool
+  data:
+    img_size: 224
+  metrics:
+    top1acc_in1k_official: null
     top1acc_in1k-1%_official: null
     top1acc_in1k-c5_official: null
   meta:

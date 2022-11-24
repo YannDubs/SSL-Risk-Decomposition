@@ -7,8 +7,12 @@ import numbers
 import os
 import random
 import shutil
+import warnings
 from copy import deepcopy
 from functools import  wraps
+from itertools import chain, combinations
+
+import pandas as pd
 import pytorch_lightning as pl
 import math
 import torch
@@ -38,6 +42,31 @@ except ImportError:
     pass
 
 logger = logging.getLogger(__name__)
+
+
+def ols_clean_df_(df, columns):
+    for c in columns:
+
+        for s in ["*", ":", "+"]:
+            if s in c:
+                ols_clean_df_(df, c.split(s))
+
+        if "(" in c and ")" in c:
+            # take column without function applied
+            c = c[c.find("(") + 1:c.find(")")]
+
+        if c not in df:
+            continue
+
+        # to numeric if possible
+        df[c] = pd.to_numeric(df[c], errors='ignore')
+
+        if isinstance(df[c].dtype, pd.StringDtype):
+            df[c] = df[c].astype("object")
+        elif isinstance(df[c].dtype, pd.Int64Dtype):
+            df[c] = df[c].astype(int)
+        elif isinstance(df[c].dtype, pd.BooleanDtype):
+            df[c] = df[c].astype(bool)
 
 def file_cache(filename):
     """Decorator to cache the output of a function to disk."""
@@ -476,3 +505,38 @@ class StrFormatter:
     def update(self, new_dict):
         """Update the substring replacer dictionary with a new one (missing keys will be prepended)."""
         self.substring_replace = update_prepending(self.substring_replace, new_dict)
+
+# credits : https://gist.github.com/simon-weber/7853144
+@contextlib.contextmanager
+def all_logging_disabled(highest_level=logging.CRITICAL):
+    """
+    A context manager that will prevent any logging messages
+    triggered during the body from being processed.
+
+    :param highest_level: the maximum logging level in use.
+      This would only need to be changed if a custom level greater than CRITICAL
+      is defined.
+    """
+    # two kind-of hacks here:
+    #    * can't get the highest logging level in effect => delegate to the user
+    #    * can't get the current module-level override => use an undocumented
+    #       (but non-private!) interface
+
+    previous_level = logging.root.manager.disable
+
+    logging.disable(highest_level)
+
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            yield
+    finally:
+        logging.disable(previous_level)
+
+def powerset(iterable, rm_empty=True):
+    "Compute power set of list"
+    s = list(iterable)
+    out = [s for s in chain.from_iterable(combinations(s, r) for r in range(len(s)+1))]
+    if rm_empty:
+        out = out [1:]
+    return out

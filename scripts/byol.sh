@@ -19,11 +19,6 @@ seed=123
 predictor=torch_linear_delta_hypopt
 "
 
-kwargs_multi="
-representor=byol_rn50_bs4096
-seed=123
-predictor=torch_linear_delta_hypopt
-"
 
 
 

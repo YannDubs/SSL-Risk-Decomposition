@@ -21,12 +21,6 @@ predictor=torch_linear_delta_hypopt
 "
 
 
-kwargs_multi="
-representor=clip_vitB32
-seed=123
-predictor=torch_linear_delta_hypopt
-"
-
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

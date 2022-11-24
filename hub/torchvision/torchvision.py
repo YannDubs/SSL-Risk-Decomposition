@@ -5,9 +5,9 @@ from hub.augmentations import get_augmentations
 
 __all__ = ["get_torchvision_models"]
 
-def get_torchvision_models(model):
+def get_torchvision_models(model, weights="IMAGENET1K_V1"):
 
-    encoder = torchvision.models.__dict__[model](weights="IMAGENET1K_V1")
+    encoder = torchvision.models.__dict__[model](weights=weights)
     if "resnet" in model:
         encoder.fc = torch.nn.Identity()
     else:

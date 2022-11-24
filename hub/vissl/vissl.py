@@ -59,7 +59,7 @@ def get_vissl_models(name, architecture= "resnet50", width_multiplier= 1):
 
     if width_multiplier == 1:
         state_dict = replace_module_prefix(state_dict, "_feature_blocks.")
-        encoder = tmodels.resnet.__dict__[architecture](pretrained=False, num_classes=0)
+        encoder = tmodels.resnet.__dict__[architecture](num_classes=0)
         encoder.fc = torch.nn.Identity()
 
         if "jigsaw" in name:

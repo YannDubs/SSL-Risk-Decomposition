@@ -20,13 +20,13 @@ RISKDEC_MODELS = {"dissl_resnet50_dNone_e100_m2_augLarge": "https://github.com/Y
                 "simclr_resnet50_dNone_e100_m2_headTMlpSMlp": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTMlpSMlp.torch",
                 "simclr_resnet50_dNone_e100_m2_headTNoneSNone": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_dNone_e100_m2_headTNoneSNone.torch",
                 "simclr_resnet50_d8192_e100_m2": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/simclr_resnet50_d8192_e100_m2.torch",
-                "speccl_bs384_ep100": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/speccl_bs384_ep100.pth",
+                "speccl_resnet50_bs384_ep100": "https://github.com/YannDubs/SSL-Risk-Decomposition/releases/download/v0.1/speccl_bs384_ep100.pth",
                   }
 
 
 def get_riskdec_models(model, dim=None, is_speccl=False):
 
-    encoder = tmodels.resnet.resnet50(pretrained=False, num_classes=0)
+    encoder = tmodels.resnet.resnet50(num_classes=0)
     ckpt_path = RISKDEC_MODELS[model]
     state_dict = torch.hub.load_state_dict_from_url(url=ckpt_path, map_location="cpu")
 
