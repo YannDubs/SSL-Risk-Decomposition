@@ -12,7 +12,7 @@ import shap
 from IPython.display import display
 
 from matplotlib import pyplot as plt
-from sklearn.model_selection import KFold, LeaveOneOut
+from sklearn.model_selection import KFold, LeaveOneOut, train_test_split
 import copy
 import seaborn as sns
 from scipy.stats import pearsonr, spearmanr, kendalltau
@@ -22,6 +22,7 @@ import statsmodels.tools.eval_measures as sme
 from sklearn.metrics import mean_squared_error, r2_score
 from lmfit import Model, Parameter
 import inspect
+from IPython.utils import io
 
 
 import optuna
@@ -933,68 +934,110 @@ def regression_report(Y,Y_hat, sffx=""):
     r2 = r2_score(Y,Y_hat)
     print(f"{sffx}RMSE: {rmse:.4f}. R2: {r2:.4f}")
 
+
 def f_pred(params, data, model_var):
-    return params["irr"] + params["C"] / (params["n"] ** params["alpha"])
+    return (params["Irr"] + params["C"] / (params["n_samples"] ** params["alpha"])).clip(0,100)
+
 
 def scalinglaw(data,
+               independent_vars,
                model_col=None,
                f_pred=f_pred,
-               is_finegrained_report=False,
+               coldep_report=["metrics"],
                model_dep=[],
-               possible_params=["irr", "C", "alpha"],
-               independent_vars=dict(n=data["n_samples"]),
-               all_kwargs={"irr": dict(value=10, min=0, max=100, user_data="irr"),
-                           "alpha": dict(value=0.2, min=0, max=0.5, user_data="alpha"),
-                           "C": dict(value=100, min=0, max=1000, user_data="C"),
-                           "K": dict(value=100, min=0, max=1000, user_data="K"),
-                           "beta": dict(value=0.2, min=0, max=0.5, user_data="beta"),
-                           },
-               max_nfev=10000,
+               possible_params=["Irr", "C", "alpha"],
+               all_pkwargs={"Irr": dict(value=10, min=0, max=100, user_data="Irr"),
+                            "alpha": dict(value=0.2, min=0, max=0.5, user_data="alpha"),
+                            "C": dict(value=100, min=0, max=1000, user_data="C")},
+               max_nfev=100000,
                optim="least_squares",
+               seed=123,
+               test_mask=None,
+               test_size=None,
+               stratify="metrics",
                ):
-
     def f_pred_params(model_var=None, data=None, **kwargs):
         params = {k: np.array([kwargs[f"{k}_{m}"] for m in model_var])
         if k in model_dep else kwargs[k]
-                  for k in possible_params + list(independent_vars.keys())}
+                  for k in possible_params + independent_vars}
         return f_pred(params, data, model_var)
 
     all_params = {}
     for k in possible_params:
+        if k in all_pkwargs:
+            pkwargs = all_pkwargs[k]
+        elif len(k) == 1 and k.isupper():
+            # single upper letter for pos constants
+            pkwargs = dict(value=100, min=0, max=1000, user_data=k)
+        elif len(k) > 1 and k.islower():
+            # greek letter for power
+            pkwargs = dict(value=1, min=0, max=2, user_data=k)
+        else:
+            raise ValueError(f"Missing pkwargs for {k}")
+
         if k in model_dep:
             for m in data[model_col].unique():
-                all_params[f"{k}_{m}"] = Parameter(f"{k}_{m}", **all_kwargs[k])
+                all_params[f"{k}_{m}"] = Parameter(f"{k}_{m}", **pkwargs)
         else:
-            all_params[k] = Parameter(k, **all_kwargs[k])
+            all_params[k] = Parameter(k, **pkwargs)
 
     f_pred_params.__signature__ = inspect.Signature([inspect.Parameter(param,
-                                                                       kind=inspect.Parameter.POSITIONAL_OR_KEYWORD)
-                                                     for
-                                                     param in
-                                                     list(independent_vars.keys()) + list(all_params.keys())] +
+                                                                       kind=inspect.Parameter.POSITIONAL_OR_KEYWORD) for
+                                                     param in independent_vars + list(all_params.keys())] +
                                                     [inspect.Parameter(param,
                                                                        default=None,
                                                                        kind=inspect.Parameter.POSITIONAL_OR_KEYWORD)
                                                      for param in ["model_var", "data"]])
 
-    model = Model(f_pred_params,
-                  independent_vars=list(independent_vars.keys()),
-                  model_var=data[model_col] if model_col is not None else None)
+    if test_mask is not None:
+        data_train = data[~test_mask]
+        data_test = data[test_mask]
 
-    result = model.fit(data["value"],
+    elif test_size is not None:
+        if stratify is not None:
+            stratify = data[stratify]
+        data_train, data_test = train_test_split(data, test_size=test_size, random_state=seed, stratify=stratify)
+
+    else:
+        data_train, data_test = data, data
+
+    model = Model(f_pred_params,
+                  independent_vars=independent_vars,
+                  model_var=data_train[model_col] if model_col is not None else None,
+                  data=data_train)
+
+    indep_v = {i: data_train[i] for i in independent_vars}
+    result = model.fit(data_train["value"],
                        nan_policy='omit',
                        max_nfev=max_nfev,
                        method=optim,
-                       **independent_vars,
+                       **indep_v,
                        **all_params,
                        )
 
-    regression_report(result.data, result.eval(), sffx="*All* ")
+    def predict(data):
+        indep_v = {i: data[i] for i in independent_vars}
+        return result.eval(**indep_v,
+                           data=data,
+                           model_var=data[model_col] if model_col is not None else None)
 
-    if is_finegrained_report:
-        for m in data[model_col].unique():
-            idx = list(data[model_col] == m)
-            regression_report(result.data[idx], result.eval()[idx], sffx=f"*{m}* ")
+    Y_train = data_train["value"]
+    Y_test = data_test["value"]
+    Yh_train = predict(data_train)
+    Yh_test = predict(data_test)
+
+    regression_report(Y_train, Yh_train, sffx="*Train* ")
+    regression_report(Y_test, Yh_test, sffx="*Test* ")
+
+    def res_df(Y, Yh):
+        rmse = mean_squared_error(Y, Yh, squared=False)
+        r2 = r2_score(Y, Yh)
+        return pd.Series(dict(rmse=rmse, r2=r2))
+
+    for c in coldep_report:
+        df = pd.DataFrame({c: data_test[c], "y": Y_test, "y_pred": Yh_test})
+        out = df.groupby(c).apply(lambda df: res_df(df["y"], df["y_pred"])).T
+        display(out)
 
     fitted_params = pd.DataFrame.from_dict({k: dict(value=v.value, param=v.user_data) for k, v in
                                             result.params.items()}).T
