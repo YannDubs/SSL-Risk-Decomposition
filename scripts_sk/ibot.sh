@@ -14,7 +14,7 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=ibot_vitB16,ibot_vitS16,ibot_vitL16,ibot_vitS16_extractS
+representor=ibot_vitB16,ibot_vitS16,ibot_vitL16
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True

@@ -1,9 +1,13 @@
 import torch
 import clip
+from torchvision import transforms
 
 __all__ = ["get_clip_models"]
 
-def get_clip_models(model):
+from hub.augmentations import get_normalization
+
+
+def get_clip_models(model, is_train_transform=False):
     encoder, preprocessor = clip.load(model, "cpu", jit=False)
     encoder = encoder.visual.float()  # only keep the image model
 
@@ -25,5 +29,12 @@ def get_clip_models(model):
         # I'm really not sure whether they also do so for resnets they didn't say anything about it
         # but it seems a little complex to do so => makes me think they don't
         # I opened an issue: https://github.com/openai/CLIP/issues/211 but no answer yet
+
+    if is_train_transform:
+        # the real augmentation in CLIP is actually the mapping to the text
+        preprocessor = transforms.Compose([
+            transforms.RandomResizedCrop(224, scale=(0.9, 1.0), interpolation=transforms.InterpolationMode.BICUBIC),
+            transforms.ToTensor(),
+            get_normalization(mode="clip")])
 
     return encoder, preprocessor

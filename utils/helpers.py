@@ -11,6 +11,7 @@ import warnings
 from copy import deepcopy
 from functools import  wraps
 from itertools import chain, combinations
+from typing import Any
 
 import pandas as pd
 import pytorch_lightning as pl
@@ -20,12 +21,13 @@ from pytorch_lightning.plugins.environments import SLURMEnvironment
 from torch import nn
 from pathlib import Path
 from typing import Optional, Union
-import sys
 from joblib import dump, load
 from sklearn.metrics import log_loss, accuracy_score
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 from torchvision.transforms import functional as F_trnsf
 from torchvision.transforms import InterpolationMode
 
@@ -35,6 +37,7 @@ from torch.nn.utils.rnn import PackedSequence
 from torch.utils.data import DataLoader
 from collections.abc import MutableMapping
 
+from hub.helpers import check_import
 
 try:
     import wandb
@@ -164,19 +167,6 @@ def remove_rf(path: Union[str, Path], not_exist_ok: bool = False) -> None:
     elif path.is_dir:
         shutil.rmtree(path)
 
-def check_import(module: str, to_use: Optional[str] = None):
-    """Check whether the given module is imported."""
-    if module not in sys.modules:
-        if to_use is None:
-            error = '{} module not imported. Try "pip install {}".'.format(
-                module, module
-            )
-            raise ImportError(error)
-        else:
-            error = 'You need {} to use {}. Try "pip install {}".'.format(
-                module, to_use, module
-            )
-            raise ImportError(error)
 
 
 class SklearnTrainer:
@@ -540,3 +530,34 @@ def powerset(iterable, rm_empty=True):
     if rm_empty:
         out = out [1:]
     return out
+
+def save_fig(
+    fig: Any, filename: Union[str, bytes, os.PathLike], dpi: int=300, is_tight: bool = True
+) -> None:
+    """General function for many different types of figures."""
+
+    # order matters ! and don't use elif!
+    if isinstance(fig, sns.FacetGrid):
+        fig = fig.fig
+
+    if isinstance(fig, torch.Tensor):
+        x = fig.permute(1, 2, 0)
+        if x.size(2) == 1:
+            fig = plt.imshow(to_numpy(x.squeeze()), cmap="gray")
+        else:
+            fig = plt.imshow(to_numpy(x))
+        plt.axis("off")
+
+    if isinstance(fig, plt.Artist):  # any type of axes
+        fig = fig.get_figure()
+
+    if isinstance(fig, plt.Figure):
+
+        plt_kwargs = {}
+        if is_tight:
+            plt_kwargs["bbox_inches"] = "tight"
+
+        fig.savefig(filename, dpi=dpi, **plt_kwargs)
+        plt.close(fig)
+    else:
+        raise ValueError(f"Unknown figure type {type(fig)}")

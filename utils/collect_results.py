@@ -355,7 +355,7 @@ def f_replace_arch(arch):
     # all the following are assumed to have zero approximation error given that they are upperbounded
     # by resnet50w which achieve 0.8% and those are much better with larger dim
     # and are much better models
-    if arch in ["resnet50w4", "resnet50w16", "resnet50w64", "vith14 cls"]:
+    if arch in ["resnet50w4", "resnet50w16", "resnet50w64", "vith14 cls", "convnextxl"]:
         arch = "zero"
     #arch = arch.replace("vith14 cls", "zero")
 
@@ -438,10 +438,11 @@ def add_statistics_(metadata):
     pattern = "data_*/ssl_*/"
     files = list(results_dir.glob(pattern))
 
+    all_data = ["train", "test", "trainaug", "testaug", "trainrealaug", "testrealaug"]
     for f in files:
         params = path2params(f/"placeholder")
 
-        for d in ["train", "test", "trainaug", "testaug"]:
+        for d in all_data:
             f_stats = f / f"{d}_statistics.npz"
             if f_stats.exists():
                 with np.load(f  / f"{d}_statistics.npz") as statistics:
@@ -449,10 +450,20 @@ def add_statistics_(metadata):
                         if statistics[k].size == 1:
                             metadata.loc[params["ssl"], f"{d}_{k}"] = statistics[k]
 
-    metadata['trainaug_vars'] = metadata['trainaug_intra_var'] / metadata['trainaug_inter_var']
-    metadata['train_vars'] = metadata['train_intra_var'] / metadata['train_inter_var']
+    for d in all_data:
+        try:
+
+            metadata[f"{d}_vars"] = metadata[f"{d}_intra_var"] / metadata[f"{d}_inter_var"]
+        except KeyError:
+            pass
+
     # nc1 computes the trace => sum over non zero dimensions => let's normalize (sqrt is to have std instead of var)
-    metadata['trainaug_nc1norm'] = (metadata['trainaug_nc1'] / metadata['train_rank'])**0.5
+    for d in all_data:
+        try:
+            prfx = "train" if d.startswith("train") else "test"
+            metadata[f"{d}_nc1norm"] = metadata[f"{d}_nc1"] / metadata[f"{prfx}_rank"]**0.5
+        except KeyError:
+            pass
 
 def clean_results(results,
                   metadata,
@@ -938,6 +949,10 @@ def regression_report(Y,Y_hat, sffx=""):
 def f_pred(params, data, model_var):
     return (params["Irr"] + params["C"] / (params["n_samples"] ** params["alpha"])).clip(0,100)
 
+def f_pred_param(params, data, model_var):
+    std = f_pred(params, data, model_var)
+    return (std + params["K"] / (params["n_params_probe"] ** params["beta"])).clip(0,100)
+
 
 def scalinglaw(data,
                independent_vars,
@@ -955,6 +970,7 @@ def scalinglaw(data,
                test_mask=None,
                test_size=None,
                stratify="metrics",
+               is_return_results=False
                ):
     def f_pred_params(model_var=None, data=None, **kwargs):
         params = {k: np.array([kwargs[f"{k}_{m}"] for m in model_var])
@@ -1001,6 +1017,9 @@ def scalinglaw(data,
     else:
         data_train, data_test = data, data
 
+    if model_col is not None and (len(data[model_col].unique()) != len(data_train[model_col].unique())):
+        raise ValueError("Not all model_var are in train data")
+
     model = Model(f_pred_params,
                   independent_vars=independent_vars,
                   model_var=data_train[model_col] if model_col is not None else None,
@@ -1032,7 +1051,7 @@ def scalinglaw(data,
     def res_df(Y, Yh):
         rmse = mean_squared_error(Y, Yh, squared=False)
         r2 = r2_score(Y, Yh)
-        return pd.Series(dict(rmse=rmse, r2=r2))
+        return pd.Series(dict(rmse=rmse, r2=r2, mse=rmse**2/Y.var()))
 
     for c in coldep_report:
         df = pd.DataFrame({c: data_test[c], "y": Y_test, "y_pred": Yh_test})
@@ -1045,4 +1064,7 @@ def scalinglaw(data,
 
     print(f"N param: {len(result.params)}")
 
-    return result
+    if is_return_results:
+        return result, res_df(Y_test, Yh_test)
+    else:
+        return result

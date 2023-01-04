@@ -32,7 +32,7 @@ from PIL import Image
 
 from torchvision.datasets import ImageNet, ImageFolder
 
-from utils.helpers import check_import, file_cache, int_or_ratio, max_num_workers, npimg_resize, remove_rf, tmp_seed
+from utils.helpers import file_cache, int_or_ratio, max_num_workers, npimg_resize, remove_rf, tmp_seed
 
 
 

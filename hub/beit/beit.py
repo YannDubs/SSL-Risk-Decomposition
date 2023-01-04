@@ -3,7 +3,7 @@ from torch.hub import load_state_dict_from_url
 from torchvision import transforms
 
 
-from hub.augmentations import get_augmentations
+from hub.augmentations import get_augmentations, get_normalization
 from hub.helpers import VITWrapper, get_intermediate_layers
 
 import timm
@@ -19,7 +19,7 @@ BEIT_MODELS = {
 "beitv2_vitL16_pt1k": "https://conversationhub.blob.core.windows.net/beit-share-public/beitv2/beitv2_large_patch16_224_pt1k.pth",
 }
 
-def get_beit_models(name, architecture, representation="cls", normalize="imagenet"):
+def get_beit_models(name, architecture, representation="cls", normalize="imagenet", is_train_transform=False):
 
     state_dict = load_state_dict_from_url(
         url=BEIT_MODELS[name],
@@ -52,7 +52,18 @@ def get_beit_models(name, architecture, representation="cls", normalize="imagene
     encoder.get_intermediate_layers = types.MethodType(get_intermediate_layers, encoder)
     encoder = VITWrapper(encoder, representation=representation)
 
-    preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BICUBIC,
-                                     normalize=normalize, pre_resize=256)
+    if is_train_transform:
+        preprocessor = transforms.Compose([
+            transforms.ColorJitter(0.4, 0.4, 0.4),
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomResizedCrop(224,
+                                         scale=(0.08, 1.0),
+                                         interpolation=transforms.InterpolationMode.BICUBIC),
+            transforms.ToTensor(),
+            get_normalization(mode="imagenet")])
+    else:
+        preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BICUBIC,
+                                         normalize=normalize, pre_resize=256)
+
 
     return encoder, preprocessor

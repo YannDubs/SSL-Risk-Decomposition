@@ -3,7 +3,7 @@ from torchvision import transforms
 import torch.nn as nn
 
 
-from hub.augmentations import get_augmentations
+from hub.augmentations import GaussianBlur, get_augmentations, get_normalization
 import torchvision.models as tmodels
 
 __all__ = ["get_pycontrast_models"]
@@ -16,7 +16,7 @@ PYCONTRAST_MODELS = {
 # I'm not adding CMC as it uses half parameters
 # not adding PIRL and MOCO and NPID as we have many of those already
 
-def get_pycontrast_models(name):
+def get_pycontrast_models(name, is_train_transform=False):
 
     encoder = tmodels.resnet.resnet50(num_classes=0)
     encoder.fc = nn.Identity()
@@ -33,7 +33,21 @@ def get_pycontrast_models(name):
 
     encoder.load_state_dict(state_dict, strict=True)
 
-    preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
+    if is_train_transform:
+        preprocessor = transforms.Compose([
+            transforms.RandomResizedCrop(224, scale=(0.08, 1.)),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomApply([
+                transforms.ColorJitter(0.8, 0.8, 0.8, 0.2)
+            ], p=0.8),
+            transforms.RandomApply([GaussianBlur()], p=0.5),
+            transforms.RandAugment(num_ops=2, magnitude=10),
+            transforms.RandomGrayscale(p=0.2),
+            # TODO should add jigsaw
+            transforms.ToTensor(),
+            get_normalization(mode="imagenet")])
+    else:
+        preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
                                      normalize="imagenet", pre_resize=256)
 
     return encoder, preprocessor

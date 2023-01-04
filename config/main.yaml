@@ -69,6 +69,10 @@ predictor:
   name: ???
   hypopt: {}
 
+statistics:
+  force_recompute: False # force recomputing (for now only dor statistics)
+  n_augs: 3
+
 ########## HYDRA ##########
 hydra:
   job:

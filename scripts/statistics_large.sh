@@ -22,13 +22,15 @@ data.kwargs.subset_raw_dataset=0.1
 data.kwargs.is_avoid_raw_dataset=True
 "
 
-kwargs_multi="
-representor=swav_rn50w4
-seed=123
-data=imagenet
-data.kwargs.subset_raw_dataset=0.1
-data.kwargs.is_avoid_raw_dataset=True
-"
+#kwargs_multi="
+#representor=simclr_rn50w4,simclr_rn50w2,pirl_rn50w2,clip_vitl14_px336,clip_rn50x64,clip_rn50x4,clip_rn50x16
+#seed=123
+#data=imagenet
+#data.kwargs.subset_raw_dataset=0.1
+#data.kwargs.is_avoid_raw_dataset=True
+#"
+
+
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
   do

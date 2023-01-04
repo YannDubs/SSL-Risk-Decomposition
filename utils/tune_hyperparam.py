@@ -28,9 +28,8 @@ from sklearn.model_selection import PredefinedSplit, RandomizedSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 
-from utils.helpers import namespace2dict, omegaconf2namespace
+from utils.helpers import namespace2dict, omegaconf2namespace, save_fig
 from utils.predictor import Predictor, get_sklearn_predictor
-from utils.plotting import save_fig
 
 
 try:

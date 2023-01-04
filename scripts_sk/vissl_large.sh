@@ -29,7 +29,7 @@ data.kwargs.subset_raw_dataset=0.3
 
 
 kwargs_multi="
-representor=simclr_rn50w2,simclr_rn50w2_ep100,simclr_rn50w4
+representor=pirl_rn50w2_headMLP,pirl_rn50w2
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True

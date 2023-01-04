@@ -1,7 +1,7 @@
 import copy
 import os
 import pdb
-from typing import Any, Union
+
 
 import numpy as np
 
@@ -20,7 +20,7 @@ from matplotlib.cbook import MatplotlibDeprecationWarning
 import seaborn as sns
 
 from utils.collect_results import COMPONENTS, COMPONENTS_ONLY_IMP, clean_model_name
-from utils.helpers import to_numpy, min_max_scale
+from utils.helpers import to_numpy, min_max_scale, save_fig
 import math
 
 from utils.pretty_renamer import PRETTY_RENAMER
@@ -214,36 +214,6 @@ def radar_factory(num_vars, frame='circle'):
     register_projection(RadarAxes)
     return theta
 
-def save_fig(
-    fig: Any, filename: Union[str, bytes, os.PathLike], dpi: int=300, is_tight: bool = True
-) -> None:
-    """General function for many different types of figures."""
-
-    # order matters ! and don't use elif!
-    if isinstance(fig, sns.FacetGrid):
-        fig = fig.fig
-
-    if isinstance(fig, torch.Tensor):
-        x = fig.permute(1, 2, 0)
-        if x.size(2) == 1:
-            fig = plt.imshow(to_numpy(x.squeeze()), cmap="gray")
-        else:
-            fig = plt.imshow(to_numpy(x))
-        plt.axis("off")
-
-    if isinstance(fig, plt.Artist):  # any type of axes
-        fig = fig.get_figure()
-
-    if isinstance(fig, plt.Figure):
-
-        plt_kwargs = {}
-        if is_tight:
-            plt_kwargs["bbox_inches"] = "tight"
-
-        fig.savefig(filename, dpi=dpi, **plt_kwargs)
-        plt.close(fig)
-    else:
-        raise ValueError(f"Unknown figure type {type(fig)}")
 
 
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import torch
-from hub.augmentations import get_augmentations
+from hub.augmentations import GaussianBlur, Solarization, get_augmentations, get_normalization
 from hub.helpers import replace_module_prefix
 import torchvision.models as tmodels
 from torchvision import transforms
@@ -44,7 +44,7 @@ VISSL_MODELS = {"barlow_rn50": "https://github.com/YannDubs/SSL-Risk-Decompositi
                 "pirl_rn50w2_headMLP": "https://dl.fbaipublicfiles.com/vissl/model_zoo/pirl/r50w2_400ep_mlphead_gblur/model_final_checkpoint_phase399.torch",
                }
 
-def get_vissl_models(name, architecture= "resnet50", width_multiplier= 1):
+def get_vissl_models(name, architecture= "resnet50", width_multiplier= 1, is_train_transform=False):
 
 
     state_dict = load_state_dict_from_url(url=VISSL_MODELS[name],
@@ -73,7 +73,110 @@ def get_vissl_models(name, architecture= "resnet50", width_multiplier= 1):
 
     encoder.load_state_dict(state_dict, strict=True)
 
-    preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
-                                     normalize="imagenet", pre_resize=256)
+    if is_train_transform:
+        if "barlow" in name:
+            preprocessor = transforms.Compose([
+                transforms.RandomResizedCrop(224,
+                                             scale=(0.08, 1.0),
+                                             interpolation=transforms.InterpolationMode.BILINEAR),
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.RandomApply([
+                    transforms.ColorJitter(
+                        brightness=0.4, contrast=0.4, saturation=0.4, hue=0.1
+                    )], p=0.8),
+                transforms.RandomGrayscale(p=0.2),
+                transforms.RandomApply([GaussianBlur()], p=0.1),
+                transforms.RandomApply([Solarization()], p=0.2),
+                transforms.ToTensor(),
+                get_normalization(mode="imagenet")])
+
+        elif "moco" in name:
+            preprocessor = transforms.Compose([
+                transforms.RandomResizedCrop(224,
+                                             scale=(0.08, 1.0),
+                                             interpolation=transforms.InterpolationMode.BILINEAR),
+                transforms.RandomApply([
+                    transforms.ColorJitter(
+                        brightness=0.4, contrast=0.4, saturation=0.4, hue=0.1
+                    )], p=0.8),
+                transforms.RandomGrayscale(p=0.2),
+                transforms.RandomApply([GaussianBlur()], p=0.1),
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.ToTensor(),
+                get_normalization(mode="imagenet")])
+
+        elif "rotnet" in name:
+            preprocessor = transforms.Compose([
+                transforms.RandomResizedCrop(224,
+                                             scale=(0.08, 1.0),
+                                             interpolation=transforms.InterpolationMode.BILINEAR),
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.ToTensor(),
+                get_normalization(mode="imagenet")])
+
+        elif "simclr" in name:
+            preprocessor = transforms.Compose([
+                transforms.RandomResizedCrop(224, scale=(0.08, 1.0), interpolation=transforms.InterpolationMode.BILINEAR),
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.RandomApply([
+                    transforms.ColorJitter(
+                        brightness=0.8, contrast=0.8, saturation=0.8, hue=0.2
+                    )], p=0.8),
+                transforms.RandomGrayscale(p=0.2),
+                transforms.RandomApply([GaussianBlur()], p=0.5),
+                transforms.ToTensor(),
+                get_normalization(mode="imagenet")])
+
+        elif "jigsaw" in name:
+            preprocessor = transforms.Compose([
+                transforms.Resize(256),
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.RandomCrop(255),
+                transforms.RandomGrayscale(p=0.66),
+                transforms.ToTensor(),
+                get_normalization(mode="imagenet")])
+
+        elif "clusterfit" in name:
+            preprocessor = transforms.Compose([
+                transforms.RandomResizedCrop(224,
+                                             scale=(0.08, 1.0),
+                                             interpolation=transforms.InterpolationMode.BILINEAR),
+                transforms.ColorJitter(
+                        brightness=[0.6, 1.4], contrast=[0.6, 1.4],
+                        saturation=[0.6, 1.4], hue=[-0.2, 0.2]),
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.ToTensor(),
+                get_normalization(mode="imagenet")])
+
+        elif "npid" in name:
+            preprocessor = transforms.Compose([
+                transforms.ColorJitter(
+                        brightness=0.4, contrast=0.4,
+                        saturation=0.4, hue=0.4),
+                transforms.RandomResizedCrop(224,
+                                             scale=(0.08, 1.0),
+                                             interpolation=transforms.InterpolationMode.BILINEAR),
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.ToTensor(),
+                get_normalization(mode="imagenet")])
+
+        elif "pirl" in name:
+            preprocessor = transforms.Compose([
+                transforms.RandomResizedCrop(224,
+                                             scale=(0.08, 1.0),
+                                             interpolation=transforms.InterpolationMode.BILINEAR),
+                transforms.ColorJitter(
+                        brightness=0.4, contrast=0.4,
+                        saturation=0.4, hue=0.2),
+                transforms.RandomGrayscale(p=0.2),
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.ToTensor(),
+                get_normalization(mode="imagenet")])
+        else:
+            raise ValueError(f"Unknown {name}")
+
+    else:
+        preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
+                                        normalize="imagenet", pre_resize=256)
 
     return encoder, preprocessor

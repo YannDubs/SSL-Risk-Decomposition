@@ -3,7 +3,7 @@ import types
 from torch.hub import load_state_dict_from_url
 from torchvision import transforms
 
-from hub.augmentations import get_augmentations
+from hub.augmentations import GaussianBlur, Solarization, get_augmentations, get_normalization
 from hub.helpers import VITWrapper, get_intermediate_layers
 
 import timm
@@ -17,7 +17,7 @@ MUGS_MODELS = {"mugs_vits16_ep100": "https://drive.google.com/u/0/uc?id=1V2TyArz
                "mugs_vitl16_ep250": "https://drive.google.com/uc?export=download&id=1K76a-YnFYcmDXUZ_UlYVYFrWOt2a6733&confirm=t&uuid=4cfaa659-24a0-4694-bd88-aba03643fa86",
                }
 
-def get_mugs_models(name, architecture, representation="cls"):
+def get_mugs_models(name, architecture, representation="cls", is_train_transform=False):
 
     state_dict = load_state_dict_from_url(
         url=MUGS_MODELS[name],
@@ -35,7 +35,22 @@ def get_mugs_models(name, architecture, representation="cls"):
     encoder.get_intermediate_layers = types.MethodType(get_intermediate_layers, encoder)
     encoder = VITWrapper(encoder, representation=representation)
 
-    preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BICUBIC,
+    if is_train_transform:
+        # MUGS has actually uses with 50% probability autoaugment and 50 % the one below.
+        preprocessor = transforms.Compose([
+            transforms.RandomResizedCrop(224, scale=(0.25, 1.0), interpolation=transforms.InterpolationMode.BICUBIC),
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomApply([
+                transforms.ColorJitter(
+                    brightness=0.4, contrast=0.4, saturation=0.2, hue=0.1
+                )], p=0.8),
+            transforms.RandomGrayscale(p=0.2),
+            transforms.RandomApply([GaussianBlur()], p=0.1),
+            transforms.RandomApply([Solarization()], p=0.2),
+            transforms.ToTensor(),
+            get_normalization(mode="imagenet")])
+    else:
+        preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BICUBIC,
                                      normalize="imagenet", pre_resize=256)
 
     return encoder, preprocessor

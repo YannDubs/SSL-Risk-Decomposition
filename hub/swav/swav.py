@@ -1,5 +1,5 @@
 import torch
-from hub.augmentations import get_augmentations
+from hub.augmentations import GaussianBlur, get_augmentations, get_normalization
 from torchvision import transforms
 import torchvision.models as tmodels
 from torch.hub import load_state_dict_from_url
@@ -24,7 +24,7 @@ SWAV_MODELS = {"resnet50": "https://dl.fbaipublicfiles.com/deepcluster/swav_800e
                 "selav2_rn50_ep400_2x160_4x96": "https://dl.fbaipublicfiles.com/deepcluster/selav2_400ep_pretrain.pth.tar",
                }
 
-def get_swav_models(name, model, architecture):
+def get_swav_models(name, model, architecture, is_train_transform=False):
 
     if architecture == "resnet50":
         encoder = tmodels.resnet.resnet50(num_classes=0)
@@ -57,7 +57,20 @@ def get_swav_models(name, model, architecture):
 
     encoder.load_state_dict(state_dict, strict=True)
 
-    preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
-                                     normalize="imagenet228", pre_resize=256)
+    if is_train_transform:
+        preprocessor = transforms.Compose([
+            transforms.RandomResizedCrop(224, scale=(0.14, 1.0), interpolation=transforms.InterpolationMode.BILINEAR),
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomApply([
+                transforms.ColorJitter(
+                    brightness=0.8, contrast=0.8, saturation=0.8, hue=0.2
+                )], p=0.8),
+            transforms.RandomGrayscale(p=0.2),
+            transforms.RandomApply([GaussianBlur()], p=0.5),
+            transforms.ToTensor(),
+            get_normalization(mode="imagenet228")])
+    else:
+        preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
+                                         normalize="imagenet228", pre_resize=256)
 
     return encoder, preprocessor

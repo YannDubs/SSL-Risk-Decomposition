@@ -27,7 +27,7 @@ data.kwargs.subset_raw_dataset=0.3
 
 
 kwargs_multi="
-representor=mocov2_rn50_vissl,rotnet_rn50_in1k,rotnet_rn50_in22k,simclr_rn50,simclr_rn50_ep200,simclr_rn50_ep400,simclr_rn50_ep800,simclr_rn50_bs4096_ep100,simclr_rn101,simclr_rn101_ep100,jigsaw_rn50,jigsaw_rn50_in22k,clusterfit_rn50,npid_rn50,npidpp_rn50,barlow_rn50_ep300,barlow_rn50
+representor=pirl_rn50,pirl_rn50_ep200,pirl_rn50_headMLP,pirl_rn50_ep200_headMLP
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True

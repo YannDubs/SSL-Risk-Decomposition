@@ -110,8 +110,9 @@ def main(cfg):
     save_results(cfg, results, "all")
 
 
-def get_train_transform(preprocess):
+def get_train_transform(preprocess, is_fixed=True):
     # use the same normalization and interpolation as for eval
+    # same augmentation for all models. We use cropping as this is used for all models
     normalization = [t for t in preprocess.transforms if isinstance(t, transforms.Normalize)][0]
     resize = [t for t in preprocess.transforms if isinstance(t, transforms.Resize)][0]
     return transforms.Compose([
@@ -120,6 +121,7 @@ def get_train_transform(preprocess):
         transforms.ToTensor(),
         normalization,
     ])
+
 
 if __name__ == "__main__":
     try:

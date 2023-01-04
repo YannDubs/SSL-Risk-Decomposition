@@ -8,7 +8,6 @@ the file `config/main.yaml` for details about the configs. or use `python main.p
 from __future__ import annotations
 
 
-
 import logging
 import traceback
 from pathlib import Path
@@ -21,7 +20,7 @@ import torch
 import pytorch_lightning as pl
 from omegaconf import Container
 
-from main import instantiate_datamodule_, instantiate_datamodule_nofeature_
+from main import instantiate_datamodule_
 from main_augs import get_train_transform
 from utils.cluster import nlp_cluster
 
@@ -50,8 +49,6 @@ def main_except(cfg):
 def main(cfg):
     logger.info(os.uname().nodename)
 
-
-
     ############## STARTUP ##############
     logger.info("Stage : Startup")
     begin(cfg)
@@ -59,15 +56,10 @@ def main(cfg):
     save_dir.mkdir(parents=True, exist_ok=True)
     logger.info(f"Saving results to {save_dir}.")
 
-    if (save_dir / f"testaug_statistics.npz").exists():
-        logger.info("Results already exist, skipping.")
+    last_file = save_dir / f"trainrealaug_statistics.npz"
+    if last_file.exists() and not cfg.statistics.force_recompute:
+        logger.info(f"Results already exist at {last_file}, skipping.")
         return
-
-    # if (save_dir / f"aug_statistics.npz").exists():
-    #     with np.load(save_dir  / f"aug_statistics.npz") as statistics:
-    #         if "alignment" in statistics:
-    #             logger.info("All statistics already computed.")
-    #             return
 
     ############## COMPUTING STATISTICS WITH PRETRAINED FEATURES ##############
     logger.info(f"Representing data with {cfg.representor}")
@@ -95,15 +87,36 @@ def main(cfg):
 
     datamodule.is_avoid_raw_dataset = False
     datamodule.is_save_features = False
-    train_transform = get_train_transform(preprocess)
 
+    # computes statistics for images that are always augmented using a standard and unique transformation
+    train_transform = get_train_transform(preprocess)
+    compute_augstatistics(datamodule,
+                          train_transform,
+                          save_dir,
+                          filename="{data}aug_statistics.npz",
+                          n_augs=cfg.statistics.n_augs)
+
+    # computes statistics for images that are augmented with the actual transformation used for training
+    _, train_transform = hubconf.__dict__[cfg.representor](is_train_transform=True)
+    compute_augstatistics(datamodule,
+                          train_transform,
+                          save_dir,
+                          filename="{data}realaug_statistics.npz",
+                          n_augs=cfg.statistics.n_augs)
+
+def compute_augstatistics(datamodule, train_transform, save_dir, filename="{data}aug_statistics.npz", n_augs=10):
     # use the same number of samples for estimating aug than for the train statistics (after augmentation)
-    n_augs = 10
-    n_samples = int(datamodule.len_train * datamodule.subset_raw_dataset) // n_augs
-    for data, datagetter in dict(train=datamodule.get_initial_train_dataset, test=datamodule.get_initial_test_dataset).items():
+    n_train_samples = int(datamodule.len_train * datamodule.subset_raw_dataset) // n_augs
+    for data, datagetter in dict(train=datamodule.get_initial_train_dataset,
+                                 test=datamodule.get_initial_test_dataset).items():
+        if data == "train":
+            n_samples = n_train_samples
+        elif data == "test":
+            n_samples = min(n_train_samples, len(datamodule.test_dataset))
 
         Z, Y = [], []
         for seed in range(n_augs):
+            # ! DEV making sure that sampling is correct => remove train_transform and variance should be zero
             datamodule.dataset_kwargs["transform"] = train_transform
             with tmp_seed(seed):
                 # note that we are not resetting the datamodule's seed => actually the examples will be in order
@@ -118,14 +131,19 @@ def main(cfg):
             Z = Z.cuda()
             Y = Y.cuda()
 
+        filename = filename.format(data=data)
         nc1, intra_var, inter_var, alignment = get_collapse(Z, Y)
-        logger.info(f"For {data} aug. Intra {intra_var}, inter variance {inter_var}. NC1: {nc1}. Alignment: {alignment}")
+        logger.info(f"For {filename}. Intra {intra_var}, inter variance {inter_var}. NC1: {nc1}. Alignment: {alignment}")
 
-        np.savez(save_dir/f"{data}aug_statistics.npz",
+        np.savez(save_dir / filename,
                  nc1=nc1, intra_var=intra_var, inter_var=inter_var, alignment=alignment)
 
 def get_eff_dim(Z, t_uniformity=2):
     corr_coef = Z.T.corrcoef()
+    # remove if all nan
+    nan_cols = corr_coef.isnan().all(1)
+    corr_coef = corr_coef[~nan_cols]
+    corr_coef = corr_coef.T[~nan_cols].T
     rank = torch.linalg.matrix_rank(corr_coef, atol=1e-4, rtol=0.01, hermitian=True)
     log_eigenv = torch.linalg.eigvalsh(corr_coef).abs().log().sort(descending=True)[0]
 
@@ -148,13 +166,14 @@ def get_collapse(Z,Y):
     intra_cov = 0
     intra_var = 0
     alignment = 0
-    for i,y in enumerate(Y_unique):
+    for i, y in enumerate(Y_unique):
         Z_y = Z[Y==y]
         means[i,:] = Z_y.mean(0)
         intra_cov += Z_y.T.cov()
         intra_var += (Z_y - means[i]).pow(2).sum(1).mean()
 
-        Z_norm_y = Z_Norm[Y==y]
+        # alignment is computed on normalized features
+        Z_norm_y = Z_Norm[Y == y]
         # E[||f(x)-f(x')||^2] = 2 * \sum_i Var(f_i(x)). Compute O(n) instead of O(n^2)
         alignment += 2 * (Z_norm_y - Z_norm_y.mean(0)).pow(2).sum(1).mean()
 
@@ -174,8 +193,6 @@ def begin(cfg: Container) -> None:
     cfg.paths.work = str(Path.cwd())
     logger.info(f"Workdir : {cfg.paths.work}.")
     logger.info(f"Job id : {cfg.job_id}.")
-
-
 
 if __name__ == "__main__":
     try:

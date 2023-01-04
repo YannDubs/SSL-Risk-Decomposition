@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 add="-a data.subset=0.01"
-add="-a data.n_per_class=5 is_riskdec=False"
-add="-a data.n_per_class=3,30 is_riskdec=False"
+add="-a data.n_per_class=3,5,30 is_riskdec=False"
 
 scripts_sk/riskdec_large.sh -s john_XL "$add"
 sleep 5

@@ -6,7 +6,7 @@ from torchvision import transforms
 import torch.nn as nn
 
 
-from hub.augmentations import get_augmentations
+from hub.augmentations import GaussianBlur, get_augmentations, Solarization, get_normalization
 from hub.helpers import VITWrapper, get_intermediate_layers
 import torchvision.models as tmodels
 
@@ -24,7 +24,7 @@ MOCOV3_MODELS = {"mocov3_rn50_ep100": "https://dl.fbaipublicfiles.com/moco-v3/r-
                 "mocov3_vitB_ep300": "https://dl.fbaipublicfiles.com/moco-v3/vit-b-300ep/vit-b-300ep.pth.tar",
                }
 
-def get_mocov3_models(name, architecture, representation="cls"):
+def get_mocov3_models(name, architecture, representation="cls", is_train_transform=False):
 
     if architecture == "vit_small_patch16_224":
         # MOCO ViTs uses 12 heads instead of the standard 6
@@ -60,7 +60,20 @@ def get_mocov3_models(name, architecture, representation="cls"):
         encoder.get_intermediate_layers = types.MethodType(get_intermediate_layers, encoder)
         encoder = VITWrapper(encoder, representation=representation)
 
-    preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
+    if is_train_transform:
+        preprocessor = transforms.Compose([
+            transforms.RandomResizedCrop(224, scale=(0.08, 1.)),
+            transforms.RandomApply([
+                transforms.ColorJitter(0.4, 0.4, 0.2, 0.1)  # not strengthened
+            ], p=0.8),
+            transforms.RandomGrayscale(p=0.2),
+            transforms.RandomApply([GaussianBlur()], p=0.1),
+            transforms.RandomApply([Solarization()], p=0.2),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            get_normalization(mode="imagenet")])
+    else:
+        preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
                                      normalize="imagenet", pre_resize=256)
 
     return encoder, preprocessor

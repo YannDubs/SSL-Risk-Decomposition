@@ -7,6 +7,7 @@ arch_kwargs:
   architecture: linear
   is_normalize: False
 
+# IDEALLY should have added standard l2 normalization of features
 hypopt:
   search_space:
     to_tune: [lr, weight_decay, batch_size, is_batchnorm, optim, scheduler]

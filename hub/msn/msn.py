@@ -5,7 +5,7 @@ import torch.nn as nn
 from torch.hub import load_state_dict_from_url
 from torchvision import transforms
 
-from hub.augmentations import get_augmentations
+from hub.augmentations import GaussianBlur, get_augmentations, get_normalization
 from hub.helpers import VITWrapper, get_intermediate_layers
 
 import timm
@@ -21,7 +21,7 @@ MSN_MODELS = {"msn_vits16_ep800": "https://dl.fbaipublicfiles.com/msn/vits16_800
                 "msn_vitl7_ep200": "https://dl.fbaipublicfiles.com/msn/vitl7_200ep.pth.tar",
                }
 
-def get_msn_models(name, architecture, representation="cls"):
+def get_msn_models(name, architecture, representation="cls", is_train_transform=False):
 
     state_dict = load_state_dict_from_url(
         url=MSN_MODELS[name],
@@ -52,7 +52,19 @@ def get_msn_models(name, architecture, representation="cls"):
     encoder.get_intermediate_layers = types.MethodType(get_intermediate_layers, encoder)
     encoder = VITWrapper(encoder, representation=representation)
 
-    preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
+    if is_train_transform:
+        preprocessor = transforms.Compose([
+            transforms.RandomResizedCrop(224, scale=(0.3, 1.0)),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomApply([
+                transforms.ColorJitter(0.8, 0.8, 0.8, 0.2)  # not strengthened
+            ], p=0.8),
+            transforms.RandomGrayscale(p=0.2),
+            transforms.RandomApply([GaussianBlur()], p=0.5),
+            transforms.ToTensor(),
+            get_normalization(mode="imagenet")])
+    else:
+        preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
                                      normalize="imagenet", pre_resize=256)
 
     return encoder, preprocessor

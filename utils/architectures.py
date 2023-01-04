@@ -43,23 +43,30 @@ class Linear(nn.Linear):
     is_normalize : bool, optional
         Whether to use a batchnorm layer before the input.
 
+    is_l2_normalize : bool, optional
+        Whether to use a batchnorm layer before the input.
+
     kwargs :
         Additional arguments to `torch.nn.Linear`.
     """
 
     def __init__(
-        self, in_dim: int, out_dim: int, is_normalize : bool = True, **kwargs
+        self, in_dim: int, out_dim: int, is_normalize : bool = True, is_l2_normalize: bool=False, **kwargs
     ) -> None:
         super().__init__(in_features=in_dim, out_features=out_dim, **kwargs)
 
         self.in_dim = in_dim
         self.out_dim = out_dim
+        self.is_l2_normalize = is_l2_normalize
         self.is_normalize = is_normalize
         self.normalizer = nn.BatchNorm1d(self.in_dim) if is_normalize else nn.Identity()
 
         self.reset_parameters()
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
+        if self.is_l2_normalize:
+            X = nn.functional.normalize(X, dim=-1)
+
         return super().forward(self.normalizer(X))
 
     def reset_parameters(self):

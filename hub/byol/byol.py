@@ -12,7 +12,7 @@ from . import resnet_byol
 from torchvision import transforms
 
 from torch.hub import load_state_dict_from_url
-from hub.augmentations import get_augmentations
+from hub.augmentations import GaussianBlur, Solarization, get_augmentations, get_normalization
 import dill
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ BYOL_MODELS = {
     "res50x1_crop_and_color_only": "https://storage.googleapis.com/deepmind-byol/checkpoints/ablations/res50x1_crop_and_color_only.pkl",
 }
 
-def get_byol_models(name, model, architecture= "resnet50"):
+def get_byol_models(name, model, architecture= "resnet50", is_train_transform=False):
     """Loads the BYOL encoder and preprocessor."""
     ckpt_path = CURR_DIR / "pretrained_models" / f"{name}.pth"
     ckpt_path.parent.mkdir(parents=True, exist_ok=True)
@@ -65,8 +65,36 @@ def get_byol_models(name, model, architecture= "resnet50"):
     encoder.load_state_dict(state_dict, strict=True)
     encoder.fc = torch.nn.Identity()
 
-    preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
-                                     normalize="imagenet", pre_resize=256)
+    if is_train_transform:
+
+        augs = []
+        augs += [transforms.RandomResizedCrop(224, scale=(0.08, 1.0), interpolation=transforms.InterpolationMode.BILINEAR)]
+
+        if model not in ["res50x1_crop_and_blur_only", "res50x1_crop_only", "res50x1_crop_and_color_only"]:
+            augs += [transforms.RandomHorizontalFlip(p=0.5)]
+
+        if model not in ["res50x1_no_color", "res50x1_crop_only", "res50x1_crop_and_blur_only"]:
+            augs += [transforms.RandomApply([
+                transforms.ColorJitter(
+                    brightness=0.4, contrast=0.4, saturation=0.2, hue=0.1
+                )], p=0.8)]
+
+        if model not in ["res50x1_crop_and_blur_only", "res50x1_crop_only", "res50x1_crop_and_color_only", "res50x1_no_grayscale"]:
+            augs += [transforms.RandomGrayscale(p=0.2)]
+
+        if model not in ["res50x1_crop_only", "res50x1_crop_and_color_only"]:
+            augs += [transforms.RandomApply([GaussianBlur()], p=0.1)]
+
+        if model not in ["res50x1_crop_and_blur_only", "res50x1_crop_only", "res50x1_crop_and_color_only"]:
+            augs += [transforms.RandomApply([Solarization()], p=0.2)]
+
+        augs += [transforms.ToTensor()]
+        augs += [get_normalization(mode="imagenet")]
+
+        preprocessor = transforms.Compose(augs)
+    else:
+        preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
+                                         normalize="imagenet", pre_resize=256)
 
 
     return encoder, preprocessor

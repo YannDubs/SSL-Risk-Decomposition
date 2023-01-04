@@ -4,7 +4,7 @@ import contextlib
 from tqdm import tqdm
 import urllib.request
 from pathlib import Path
-from typing import Any, Dict, Iterator
+from typing import Any, Dict, Iterator, Optional
 import sys
 
 import torch
@@ -56,6 +56,15 @@ def download_url_tmp(url):
         yield download_url(url, None)
     finally:
         urllib.request.urlcleanup()
+
+class EncoderIndexing(nn.Module):
+    def __init__(self, encoder : nn.Module, index: int):
+        super().__init__()
+        self.encoder = encoder
+        self.index = index
+
+    def forward(self, x: torch.Tensor):
+        return self.encoder(x)[self.index]
 
 class VITWrapper(nn.Module):
     """
@@ -156,3 +165,17 @@ def replace_module_prefix(
         for (key, val) in state_dict.items()
     }
     return state_dict
+
+def check_import(module: str, to_use: Optional[str] = None):
+    """Check whether the given module is imported."""
+    if module not in sys.modules:
+        if to_use is None:
+            error = '{} module not imported. Try "pip install {}".'.format(
+                module, module
+            )
+            raise ImportError(error)
+        else:
+            error = 'You need {} to use {}. Try "pip install {}".'.format(
+                module, to_use, module
+            )
+            raise ImportError(error)

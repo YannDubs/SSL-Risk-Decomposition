@@ -15,7 +15,15 @@ timeout=$time
 
 # large
 kwargs_multi="
-representor=clip_rn50x64,clip_rn50x16
+representor=clip_rn50x64,clip_rn50x16,clip_rn50x4
+seed=123
+predictor=sk_logistic_hypopt
+data.kwargs.is_avoid_raw_dataset=True
+data.kwargs.subset_raw_dataset=0.3
+"
+
+kwargs_multi="
+representor=clip_rn50x4
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
