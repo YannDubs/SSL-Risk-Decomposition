@@ -3,12 +3,14 @@ import pdb
 import pandas as pd
 import statsmodels.formula.api as smf
 import numpy as np
+from IPython.core.display import display
 
 from utils.collect_results import COMPONENTS
 
 from statsmodels.tools.eval_measures import rmse
 
 from utils.helpers import ols_clean_df_
+import graphviz as gr
 
 
 def ols_summary(df,
@@ -19,6 +21,7 @@ def ols_summary(df,
                 objectives=COMPONENTS,
                 f_outcome="",  # "log", "delta_log"
                 n_tune=50,
+                is_short=False,
                 ):
     df = df.copy()
 
@@ -72,7 +75,64 @@ def ols_summary(df,
 
         if (p_values[treat_cols] < alpha).any():
             summary = best_model.summary(title=o)
-            print(summary.tables[0])
-            print(f"rmse: {best_rmse}, delta: {best_delta}")
-            print(summary.tables[1])
+            if is_short:
+                print(o)
+                print(f"rmse: {best_rmse}, delta: {best_delta}")
+                display(best_model.summary2().tables[1].loc[treat_cols])
+
+            else:
+                print(summary.tables[0])
+                print(f"rmse: {best_rmse}, delta: {best_delta}")
+                print(summary.tables[1])
+
             print()
+
+
+def nodes2feat(node):
+    replace = dict(data="pretraining_data", bs="batch_size", obj="objective", aug="augmentations", n_views="nviews",
+                   arch="architecture", n_param='n_parameters', n_aug="n_augmentations")
+
+    if node in replace:
+        return replace[node]
+
+    return node
+
+
+TO_LOG = ["nviews", "z_dim", "batch_size", "n_parameters", "epochs"]
+
+
+def causal_graph(treatment, return_to_condition=True):
+    g = gr.Digraph()
+
+    top_hypopt = ["data"]
+    core_hypopt = ["epochs", "bs", "n_views", "n_aug"]
+
+    if treatment == "obj":
+        top_hypopt += ["obj"]
+    else:
+        top_hypopt += ["ssl_mode"]
+
+    if treatment == "arch":
+        core_hypopt += ["arch"]
+    else:
+        core_hypopt += ["n_param", "family", "z_dim", "patch_size"]
+
+    for i in ["year", "is_industry"]:
+        for j in core_hypopt + top_hypopt + ["outcome"]:
+            g.edge(i, j)
+    g.edge("is_official", j)
+
+    for i in top_hypopt:
+        g.edge(i, "outcome")
+        for j in core_hypopt:
+            g.edge(i, j)
+            g.edge(j, "outcome")
+
+    g.node(treatment, treatment, color="blue")
+
+    if return_to_condition:
+        to_condition = [nodes2feat(n) for n in top_hypopt + core_hypopt + ["year", "is_industry", "is_official"]]
+        to_condition = [c for c in to_condition if c != treatment]
+        return g, to_condition
+
+    return g

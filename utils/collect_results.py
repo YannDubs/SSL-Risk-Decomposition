@@ -1,3 +1,6 @@
+import os
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+
 import pdb
 import types
 import warnings
@@ -563,8 +566,9 @@ def preprocess_features(df,
                                       weight_decay=10, pred_dim=2, img_size=2, n_negatives=2),
                         len_cols=["augmentations"]):
     """Preprocesses the features to make it more amenable for ML."""
+    df = df.copy()
     for c, round_to in round_dict.items():
-        df[c] = df[c] // round_to * round_to
+        df[c] = (df[c] / round_to).round() * round_to
 
     for c, base in pow_dict.items():
         powered = base**(np.log(df[c])//np.log(base))
@@ -583,29 +587,46 @@ def prepare_sklearn(df,
                                      "license", "month"],
                     features_to_keep=None,
                     components=COMPONENTS,
+                    min_count_onehot=3,
+                    features_onehot=[],
                     target="agg_risk"):
     X = df.copy()
     y = df[target].copy()
 
     X = X.drop(components, axis=1)
 
-    # binarize augmentations
-    if "augmentations" in X.columns:
-        binarizer = MultiLabelBinarizer().fit(X["augmentations"])
-        X = pd.concat([X, pd.DataFrame(binarizer.transform(X["augmentations"]),
-                                       columns=["aug_" + c for c in binarizer.classes_],
-                                       index=X.index)], axis=1
-                      ).drop("augmentations", axis=1)
-
     if features_to_keep is not None:
         features_to_del = [c for c in X.columns if c not in features_to_keep]
 
     X = X.drop(features_to_del, axis=1)
 
-    # convert categorical
+    all_str_cols = []
     for c in X.columns:
-        if X[c].dtype == "string":
+        # convert categorical
+        if X[c].dtype == "string" or isinstance(X[c].dtype, pd.StringDtype):
             X[c] = X[c].astype("category")
+            all_str_cols += [c]
+        elif isinstance(X[c].dtype, pd.Int64Dtype):
+            X[c] = X[c].astype(int)
+        elif isinstance(X[c].dtype, pd.BooleanDtype) or isinstance(X[c].dtype, bool):
+            X[c] = X[c].astype(int)
+
+    if features_onehot == "all":
+        features_onehot = all_str_cols
+
+    for o in features_onehot:
+        counts = X[o].value_counts()
+        idx_threshold = counts > min_count_onehot
+        if not idx_threshold.all():
+            X[o] = pd.Categorical(
+                X[o],
+                categories=list(counts[idx_threshold].index) + ["other"]
+            ).fillna('other')
+
+    X = pd.get_dummies(X,
+                       prefix=features_onehot,
+                       columns=features_onehot,
+                       drop_first=True)
 
     date_col = X.select_dtypes(include=['datetime64']).columns
     X = X.drop(date_col, axis="columns")
@@ -739,10 +760,10 @@ def filter_by_quantile(df, col="agg_risk", is_year=True, quantile=0.1):
 
 
 def load_df(is_read_files = True,
-                DATA = "imagenet",
-                subset = None,
-                pred = 'torch_linear_delta_hypopt',
-                threshold_kwargs = dict(),
+            DATA = "imagenet",
+            subset = None,
+            pred = 'torch_linear_delta_hypopt',
+            threshold_kwargs = dict(),
             traverse_path=["down", "right", "down"],
             is_zero_approx=False):
 

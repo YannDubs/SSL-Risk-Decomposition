@@ -63,6 +63,7 @@ PRETTY_RENAMER = StrFormatter(
         "v2": "-v2",
         "v3": "-v3",
         "Z Dim": "Z Dim.",
+"Is Aug ": "",
     },
     to_upper=["Rn50", "Rn101", "Npid", "Pirl", "Byol", "Clip", "Mugs", "Odc", "Dino", "Msn", "Dissl", "BYOL",
               "Mae"],
