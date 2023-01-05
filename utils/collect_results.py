@@ -566,22 +566,27 @@ def count_views(s):
 def preprocess_features(df,
                         round_dict=dict(n_parameters=int(1e7), n_classes=100, projection_nparameters=int(1e7), epochs=200),
                         pow_dict=dict(batch_size=2, z_dim=2, patch_size=2,learning_rate=10,
-                                      weight_decay=10, pred_dim=2, img_size=2, n_negatives=2),
+                                      weight_decay=10, pred_dim=2, img_size=2, n_negatives=2,
+                                      projection_hid_width=2, n_classes=2, n_augmentations=2,
+                                      nviews=2),
                         len_cols=["augmentations"]):
     """Preprocesses the features to make it more amenable for ML."""
-    df = df.copy()
-    for c, round_to in round_dict.items():
-        df[c] = (df[c] / round_to).round() * round_to
 
-    for c, base in pow_dict.items():
-        powered = base**(np.log(df[c])//np.log(base))
-        if df[c].dtype in [int, pd.Int64Dtype()]:
-            powered = powered.round().astype(df[c].dtype)
-        df[c] = powered
+    df = df.copy()
 
     for c in len_cols:
         df["n_"+c] = df[c].apply(lambda s: len(s))
 
+    for c, round_to in round_dict.items():
+        notna = (~df[c].isna())
+        df.loc[notna,c] = (df.loc[notna,c] / round_to).round() * round_to
+
+    for c, base in pow_dict.items():
+        logable = (~df[c].isna()) & (df[c] > 0)
+        powered = base**(np.log(df.loc[logable,c])//np.log(base))
+        if df[c].dtype in [int, pd.Int64Dtype()]:
+            powered = powered.round().astype(df[c].dtype)
+        df.loc[logable,c] = powered
     return df
 
 
@@ -619,7 +624,7 @@ def prepare_sklearn(df,
                 X[c] = X[c].astype(float)
         elif isinstance(X[c].dtype, pd.Float64Dtype):
             X[c] = X[c].astype(float)
-        elif isinstance(X[c].dtype, (pd.BooleanDtype,bool)) or isinstance(X[c].dtype, bool):
+        elif isinstance(X[c].dtype, pd.BooleanDtype) or X[c].dtype == bool:
             try:
                 X[c] = X[c].astype(int)
             except:
