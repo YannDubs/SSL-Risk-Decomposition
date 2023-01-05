@@ -136,3 +136,4 @@ def causal_graph(treatment, return_to_condition=True):
         return g, to_condition
 
     return g
+

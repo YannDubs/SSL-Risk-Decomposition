@@ -1,4 +1,7 @@
 import os
+
+import joblib
+
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 import pdb
@@ -614,7 +617,9 @@ def prepare_sklearn(df,
                 X[c] = X[c].astype(int)
             except:
                 X[c] = X[c].astype(float)
-        elif isinstance(X[c].dtype, pd.BooleanDtype) or isinstance(X[c].dtype, bool):
+        elif isinstance(X[c].dtype, pd.Float64Dtype):
+            X[c] = X[c].astype(float)
+        elif isinstance(X[c].dtype, (pd.BooleanDtype,bool)) or isinstance(X[c].dtype, bool):
             try:
                 X[c] = X[c].astype(int)
             except:
@@ -1098,3 +1103,25 @@ def scalinglaw(data,
         return result, res_df(Y_test, Yh_test)
     else:
         return result
+
+
+def get_all_xgb(objectives, df, features_to_keep, prfx="", is_train=True, folder="notebooks/saved/", **kwargs):
+    xgbs = dict()
+    studys = dict()
+    Xs = dict()
+    ys = dict()
+    for o in objectives:
+        Xs[o], ys[o] = prepare_sklearn(df,
+                                       features_to_keep=features_to_keep,
+                                       target=o)
+
+        if is_train:
+            xgbs[o], studys[o] = tune_std_xgb(Xs[o], ys[o], is_force_exact=True, **kwargs)
+            joblib.dump(studys[o], f"{folder}{prfx}_study_{o}.pkl")
+            xgbs[o].save_model(f"{folder}{prfx}_xgb_{o}.json")
+        else:
+            xgbs[o] = xgb.Booster()
+            xgbs[o].load_model(f"{folder}{prfx}_xgb_{o}.json")
+            studys[o] = joblib.load(f"{folder}{prfx}_study_{o}.pkl")
+
+    return xgbs, studys, Xs, ys
