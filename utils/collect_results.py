@@ -593,6 +593,9 @@ def prepare_sklearn(df,
     X = df.copy()
     y = df[target].copy()
 
+    X = X[~y.isna()]
+    y = y[~y.isna()]
+
     X = X.drop(components, axis=1)
 
     if features_to_keep is not None:
@@ -607,9 +610,15 @@ def prepare_sklearn(df,
             X[c] = X[c].astype("category")
             all_str_cols += [c]
         elif isinstance(X[c].dtype, pd.Int64Dtype):
-            X[c] = X[c].astype(int)
+            try:
+                X[c] = X[c].astype(int)
+            except:
+                X[c] = X[c].astype(float)
         elif isinstance(X[c].dtype, pd.BooleanDtype) or isinstance(X[c].dtype, bool):
-            X[c] = X[c].astype(int)
+            try:
+                X[c] = X[c].astype(int)
+            except:
+                X[c] = X[c].astype(float)
 
     if features_onehot == "all":
         features_onehot = all_str_cols
