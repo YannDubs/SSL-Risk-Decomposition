@@ -153,8 +153,8 @@ def get_eff_dim(Z, t_uniformity=2):
     for batch in Z[torch.randperm(len(Z))].chunk(n_batches):
         # uniformity is computed on normalized features
         batch = torch.nn.functional.normalize(batch, dim=-1)
-        uniformity += torch.pdist(batch, p=2).pow(2).mul(-t_uniformity).exp().mean().log()
-    uniformity /= n_batches
+        uniformity += torch.pdist(batch, p=2).pow(2).mul(-t_uniformity).exp().mean()
+    uniformioty = (uniformity / n_batches).log()
 
     return rank.cpu().numpy(), log_eigenv.cpu().numpy(), uniformity.cpu().numpy()
 

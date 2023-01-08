@@ -75,7 +75,7 @@ def tune_std_xgb(X, y, seed=123, n_trials=50, verbose=False, **kwargs):
     print(f"Final 30-fold cv rmse={rmse}")
 
     best_model = xgb.train(params=params, dtrain=dtrain, num_boost_round=num_boost_round)
-    return best_model, study
+    return best_model, study, rmse
 
 def plot_optuna(study):
     """Visually summarizes an optuna hypopt study."""
@@ -564,12 +564,12 @@ def count_views(s):
     return max(count,1)
 
 def preprocess_features(df,
-                        round_dict=dict(n_parameters=int(1e7), n_classes=100, projection_nparameters=int(1e7), epochs=200),
+                        round_dict=dict(n_parameters=int(1e7), n_classes=100, projection_nparameters=int(1e7), epochs=100),
                         pow_dict=dict(batch_size=2, z_dim=2, patch_size=2,learning_rate=10,
                                       weight_decay=10, pred_dim=2, img_size=2, n_negatives=2,
                                       projection_hid_width=2, n_classes=2, n_augmentations=2,
                                       nviews=2),
-                        len_cols=["augmentations"]):
+                        len_cols=[]):
     """Preprocesses the features to make it more amenable for ML."""
 
     df = df.copy()
@@ -1113,6 +1113,7 @@ def scalinglaw(data,
 def get_all_xgb(objectives, df, features_to_keep, prfx="", is_train=True, folder="notebooks/saved/", **kwargs):
     xgbs = dict()
     studys = dict()
+    rmses = dict()
     Xs = dict()
     ys = dict()
     for o in objectives:
@@ -1121,12 +1122,14 @@ def get_all_xgb(objectives, df, features_to_keep, prfx="", is_train=True, folder
                                        target=o)
 
         if is_train:
-            xgbs[o], studys[o] = tune_std_xgb(Xs[o], ys[o], is_force_exact=True, **kwargs)
+            xgbs[o], studys[o], rmses[o] = tune_std_xgb(Xs[o], ys[o], is_force_exact=True, **kwargs)
             joblib.dump(studys[o], f"{folder}{prfx}_study_{o}.pkl")
             xgbs[o].save_model(f"{folder}{prfx}_xgb_{o}.json")
+            np.save(f"{folder}{prfx}_rmses_{o}.npy", rmses[o])
         else:
             xgbs[o] = xgb.Booster()
             xgbs[o].load_model(f"{folder}{prfx}_xgb_{o}.json")
             studys[o] = joblib.load(f"{folder}{prfx}_study_{o}.pkl")
+            rmses[o] = np.load(f"{folder}{prfx}_rmses_{o}.npy")
 
-    return xgbs, studys, Xs, ys
+    return xgbs, studys, Xs, ys, rmses
