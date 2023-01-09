@@ -556,15 +556,17 @@ def count_views(s):
         return 0
     elif "+" in s:
         return sum([count_views(e) for e in s.split("+")])
-    else:
+    elif "x" in s:
         return int(s.split("x")[0])
+    else:
+        return 1
 
 def preprocess_features(df,
-                        round_dict=dict(n_parameters=int(1e7), n_classes=100, projection_nparameters=int(1e7), epochs=100),
+                        round_dict=dict( epochs=200, n_augmentations=2),
                         pow_dict=dict(batch_size=2, z_dim=2, patch_size=2,learning_rate=10,
                                       weight_decay=10, pred_dim=2, img_size=2, n_negatives=2,
-                                      projection_hid_width=2, n_classes=2, n_augmentations=2,
-                                      nviews=2),
+                                      projection_hid_width=2, n_classes=2,
+                                      nviews=2, n_parameters=2, projection_nparameters=2),
                         len_cols=[]):
     """Preprocesses the features to make it more amenable for ML."""
 
