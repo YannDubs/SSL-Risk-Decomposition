@@ -554,12 +554,10 @@ def add_metadata_(metadata):
 def count_views(s):
     if pd.isnull(s):
         return 0
-    count = 0
-    while "x" in s:
-        splitted = s.split("x", maxsplit=1)
-        count += int(splitted[0][-1])
-        s = splitted[1]
-    return max(count,1)
+    elif "+" in s:
+        return sum([count_views(e) for e in s.split("+")])
+    else:
+        return int(s.split("x")[0])
 
 def preprocess_features(df,
                         round_dict=dict(n_parameters=int(1e7), n_classes=100, projection_nparameters=int(1e7), epochs=100),
