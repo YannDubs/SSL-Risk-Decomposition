@@ -2420,7 +2420,7 @@ ibot_vitB16_extractB:
     scheduler: cosine
   data:
     pretraining_data: ImageNet-1K
-    finetuning_data: prediction shape is block
+    finetuning_data: null
     img_size: 224
     views: 2x224+10x96
     is_aug_invariant: true
@@ -2439,7 +2439,7 @@ ibot_vitB16_extractB:
     top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/bytedance/ibot
-    notes: null
+    notes: prediction shape is block
     month: 11
     year: 2021
     license: Apache License 2.0
@@ -2612,7 +2612,7 @@ ibot_vitB16:
     scheduler: cosine
   data:
     pretraining_data: ImageNet-1K
-    finetuning_data: prediction shape is block
+    finetuning_data: null
     img_size: 224
     views: 2x224+10x96
     is_aug_invariant: true
@@ -2631,7 +2631,7 @@ ibot_vitB16:
     top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/bytedance/ibot
-    notes: null
+    notes: prediction shape is block
     month: 11
     year: 2021
     license: Apache License 2.0

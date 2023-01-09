@@ -71,6 +71,7 @@ PRETTY_RENAMER = StrFormatter(
         "Is Industry": "Industry?",
         "N Augmentations": "Num. Aug.",
         "Nviews": "Num. Views",
+        "Projection Nparameters Hidden": "Projection Hid Nparameters",
         "Nparameters": "N Parameters",
         "N Parameters": "Num. Param.",
         "Architecture Exact": "Exact Arch.",
@@ -80,6 +81,7 @@ PRETTY_RENAMER = StrFormatter(
         "Projection1": "1st Proj.",
         "Projection": "Proj.",
         "Hid": "Hid.",
+        "Vars": "Intra/Inter Variance",
         ###
         "..": ".",
     },

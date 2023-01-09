@@ -105,7 +105,7 @@ def causal_graph(treatment, return_to_condition=True):
     g = gr.Digraph()
 
     top_hypopt = ["data"]
-    core_hypopt = ["epochs", "bs", "n_views", "n_aug"]
+    core_hypopt = ["epochs", "bs", "n_views", "n_aug", "projection2_arch"]
 
     if treatment == "obj":
         top_hypopt += ["obj"]

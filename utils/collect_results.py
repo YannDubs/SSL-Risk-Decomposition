@@ -25,7 +25,7 @@ import statsmodels.formula.api as smf
 from sklearn.metrics import mean_squared_error, r2_score
 from lmfit import Model, Parameter
 import inspect
-
+from pandas.api.types import is_numeric_dtype
 
 import optuna
 from optuna.samplers import TPESampler
@@ -1145,4 +1145,16 @@ def get_df_shap(model, X, y):
     joined = X.join(pd.DataFrame(shap_values.values,
                                  columns=[f"shap_{c}" for c in X.columns],
                                  index=X.index))
-    return joined
+    return joined, shap_values
+
+
+
+
+
+def prettify_df(df, pretty_renamer=PRETTY_RENAMER):
+    df = df.copy()
+    df = df.rename(columns=pretty_renamer)
+    for c in df.columns:
+        if not is_numeric_dtype(df[c]):
+            df[c] = df[c].apply(lambda x: PRETTY_RENAMER[x])
+    return df
