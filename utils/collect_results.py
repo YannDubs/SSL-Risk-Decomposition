@@ -581,7 +581,7 @@ def preprocess_features(df,
 
     for c, base in pow_dict.items():
         logable = (~df[c].isna()) & (df[c] > 0)
-        powered = base**(np.log(df.loc[logable,c])//np.log(base))
+        powered = base**(np.log(df.loc[logable,c])/np.log(base)).round()
         if df[c].dtype in [int, pd.Int64Dtype()]:
             powered = powered.round().astype(df[c].dtype)
         df.loc[logable,c] = powered

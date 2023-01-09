@@ -1398,7 +1398,7 @@ msn_vitl7_ep200:
     pretraining_data: ImageNet-1K
     finetuning_data: null
     img_size: 224
-    views: 2x224+10*96
+    views: 2x224+10x96
     is_aug_invariant: true
     augmentations:
       - crop
@@ -1461,7 +1461,7 @@ msn_vitl16_ep600:
     pretraining_data: ImageNet-1K
     finetuning_data: null
     img_size: 224
-    views: 2x224+10*96
+    views: 2x224+10x96
     is_aug_invariant: true
     augmentations:
       - crop
@@ -1524,7 +1524,7 @@ msn_vitb4_ep300:
     pretraining_data: ImageNet-1K
     finetuning_data: null
     img_size: 224
-    views: 2x224+10*96
+    views: 2x224+10x96
     is_aug_invariant: true
     augmentations:
       - crop
@@ -1588,7 +1588,7 @@ msn_vitb16_ep600:
     pretraining_data: ImageNet-1K
     finetuning_data: null
     img_size: 224
-    views: 2x224+10*96
+    views: 2x224+10x96
     is_aug_invariant: true
     augmentations:
       - crop
@@ -1652,7 +1652,7 @@ msn_vits16_ep800:
     pretraining_data: ImageNet-1K
     finetuning_data: null
     img_size: 224
-    views: 2x224+10*96
+    views: 2x224+10x96
     is_aug_invariant: true
     augmentations:
       - crop
