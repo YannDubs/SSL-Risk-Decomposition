@@ -12,7 +12,6 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import xgboost as xgb
-from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.inspection import permutation_importance
 import shap
 from IPython.display import display
@@ -23,12 +22,9 @@ import copy
 import seaborn as sns
 from scipy.stats import pearsonr, spearmanr, kendalltau
 import statsmodels.formula.api as smf
-import statsmodels.api as sm
-import statsmodels.tools.eval_measures as sme
 from sklearn.metrics import mean_squared_error, r2_score
 from lmfit import Model, Parameter
 import inspect
-from IPython.utils import io
 
 
 import optuna
@@ -552,6 +548,8 @@ def add_metadata_(metadata):
 
     metadata.loc[idx_ssl,"n_augmentations"] = metadata.loc[idx_ssl,"augmentations"].apply(lambda s: len(s))
 
+    metadata.loc[idx_ssl, "projection_nparameters_hidden"] = metadata.loc[idx_ssl, "projection_nparameters"] - (metadata.loc[idx_ssl, "z_dim"] * metadata.loc[idx_ssl, "projection_hid_width"])
+
 
 def count_views(s):
     if pd.isnull(s):
@@ -662,7 +660,7 @@ def report_xgboost(reg, X, y, is_std_featimp=True, is_shap_interactive=False,
     sns.set_style("white")
 
     if isinstance(reg, xgb.core.Booster):
-        dtrain = xgb.DMatrix(X, label=y, enable_categorical=True)
+        dtrain = xgb.DMatrix(X, label=y, enable_categorical=True, feature_names=X.columns)
         inp_pred = dtrain
     else:
         inp_pred = X
@@ -704,7 +702,7 @@ def report_xgboost(reg, X, y, is_std_featimp=True, is_shap_interactive=False,
         plt.show()
 
     if is_shap and isinstance(reg, xgb.core.Booster):
-        explainer = shap.TreeExplainer(reg)
+        explainer = shap.TreeExplainer(reg, feature_names=X.columns)
         shap_values = explainer.shap_values(dtrain)
 
         plt.figure(figsize=(10, 4))
@@ -1133,3 +1131,18 @@ def get_all_xgb(objectives, df, features_to_keep, prfx="", is_train=True, folder
             rmses[o] = np.load(f"{folder}{prfx}_rmses_{o}.npy")
 
     return xgbs, studys, Xs, ys, rmses
+
+
+def get_df_shap(model, X, y):
+    dtrain = xgb.DMatrix(X, label=y,
+                         enable_categorical=True,
+                         feature_names=X.columns)
+
+    explainer = shap.TreeExplainer(model, feature_names=X.columns)
+    shap_values = explainer(dtrain.get_data())
+    shap_values.data = shap_values.data.toarray()
+
+    joined = X.join(pd.DataFrame(shap_values.values,
+                                 columns=[f"shap_{c}" for c in X.columns],
+                                 index=X.index))
+    return joined

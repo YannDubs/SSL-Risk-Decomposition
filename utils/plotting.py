@@ -1,18 +1,16 @@
 import copy
-import os
-import pdb
-
 
 import numpy as np
 
 import matplotlib.pyplot as plt
-import torch
 from matplotlib.patches import Circle, RegularPolygon
 from matplotlib.path import Path
 from matplotlib.projections.polar import PolarAxes
 from matplotlib.projections import register_projection
 from matplotlib.spines import Spine
 from matplotlib.transforms import Affine2D
+import shap
+import xgboost as xgb
 
 import contextlib
 import warnings
@@ -20,7 +18,7 @@ from matplotlib.cbook import MatplotlibDeprecationWarning
 import seaborn as sns
 
 from utils.collect_results import COMPONENTS, COMPONENTS_ONLY_IMP, clean_model_name
-from utils.helpers import to_numpy, min_max_scale, save_fig
+from utils.helpers import min_max_scale
 import math
 
 from utils.pretty_renamer import PRETTY_RENAMER
@@ -418,3 +416,26 @@ def plot_trend_split(df, split, ordering=None, is_min=False, save_path=None,
         plt.show()
     else:
         plt.savefig(save_path, bbox_inches='tight', pad_inches=0.2)
+
+def plot_shap_importance(model, X, y=None, n_feat=7, is_avg_imp=True, plot_size=None, pretty_renamer=None, **kwargs):
+
+    if pretty_renamer is not None:
+        feature_names = [PRETTY_RENAMER[c] for c in X.columns]
+    else:
+        feature_names = X.columns
+
+    dtrain = xgb.DMatrix(X, label=y,
+                         enable_categorical=True,
+                         feature_names=feature_names)
+    explainer = shap.TreeExplainer(model, feature_names=feature_names)
+    shap_values = explainer(dtrain.get_data())
+    shap.summary_plot(shap_values, X,
+                      show=False,
+                      plot_size=plot_size,
+                      max_display=n_feat,
+                      color_bar=False,
+                      plot_type="bar" if is_avg_imp else None,
+                      color="tab:blue",
+                     **kwargs)
+    plt.gca().set_xlabel("mean(|SHAP|)", fontsize=12)
+    return plt.gca()
