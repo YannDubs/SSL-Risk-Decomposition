@@ -74,16 +74,18 @@ def main(cfg):
         if torch.cuda.is_available():
             Z = Z.cuda()
             Y = Y.cuda()
-        rank, log_eigenv, uniformity = get_eff_dim(Z)
-        logger.info(f"Effective dimension for {data}: {rank}. uniformity: {uniformity}")
+        rank_Z, rank, log_eigenv, uniformity = get_eff_dim(Z)
+        logger.info(f"Effective dimension for {data}: {rank_Z} corr: {rank}. uniformity: {uniformity}")
 
         nc1, intra_var, inter_var, alignment = get_collapse(Z, Y)
         logger.info(f"For {data}. Intra {intra_var}, inter variance {inter_var}. NC1: {nc1}. Alignment: {alignment}")
 
         np.savez(save_dir/f"{data}_statistics.npz",
-                 rank=rank, log_eigenv=log_eigenv, nc1=nc1,
+                 rank=rank, rank_Z=rank_Z, log_eigenv=log_eigenv, nc1=nc1,
                  intra_var=intra_var, inter_var=inter_var,
                  uniformity=uniformity, alignment=alignment)
+
+    return
 
     datamodule.is_avoid_raw_dataset = False
     datamodule.is_save_features = False
@@ -144,7 +146,8 @@ def get_eff_dim(Z, t_uniformity=2):
     nan_cols = corr_coef.isnan().all(1)
     corr_coef = corr_coef[~nan_cols]
     corr_coef = corr_coef.T[~nan_cols].T
-    rank = torch.linalg.matrix_rank(corr_coef, atol=1e-4, rtol=0.01, hermitian=True)
+    rank= torch.linalg.matrix_rank(corr_coef, atol=1e-4, rtol=0.01, hermitian=True)
+    rank_Z = torch.linalg.matrix_rank(Z, atol=1e-4, rtol=0.01)
     log_eigenv = torch.linalg.eigvalsh(corr_coef).abs().log().sort(descending=True)[0]
 
     # for memory reasons, uniformity has to be computes on batches (can't compute pairwise distance of 1M examples)
@@ -154,9 +157,9 @@ def get_eff_dim(Z, t_uniformity=2):
         # uniformity is computed on normalized features
         batch = torch.nn.functional.normalize(batch, dim=-1)
         uniformity += torch.pdist(batch, p=2).pow(2).mul(-t_uniformity).exp().mean()
-    uniformioty = (uniformity / n_batches).log()
+    uniformity = (uniformity / n_batches).log()
 
-    return rank.cpu().numpy(), log_eigenv.cpu().numpy(), uniformity.cpu().numpy()
+    return rank_Z.cpu().numpy(), rank.cpu().numpy(), log_eigenv.cpu().numpy(), uniformity.cpu().numpy()
 
 def get_collapse(Z,Y):
     Z_Norm = torch.nn.functional.normalize(Z, dim=-1)

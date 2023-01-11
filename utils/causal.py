@@ -105,17 +105,17 @@ def causal_graph(treatment, return_to_condition=True):
     g = gr.Digraph()
 
     top_hypopt = ["data"]
-    core_hypopt = ["epochs", "bs", "n_views", "n_aug", "projection2_arch"]
+    core_hypopt = ["epochs", "batch_size", "nviews", "n_augmentations", "projection2_arch"]
 
-    if treatment == "obj":
-        top_hypopt += ["obj"]
+    if treatment == "objective":
+        top_hypopt += ["objective"]
     else:
         top_hypopt += ["ssl_mode"]
 
-    if treatment == "arch":
-        core_hypopt += ["arch"]
+    if treatment == "architecture":
+        core_hypopt += ["architecture"]
     else:
-        core_hypopt += ["n_param", "family", "z_dim", "patch_size"]
+        core_hypopt += ["n_parameters", "family", "z_dim", "patch_size"]
 
     for i in ["year", "is_industry"]:
         for j in core_hypopt + top_hypopt + ["outcome"]:

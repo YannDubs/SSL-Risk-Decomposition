@@ -11,6 +11,8 @@ from matplotlib.spines import Spine
 from matplotlib.transforms import Affine2D
 import shap
 import xgboost as xgb
+from matplotlib.colors import SymLogNorm, LogNorm
+from utils.helpers import save_fig
 
 import contextlib
 import warnings
@@ -18,7 +20,7 @@ from matplotlib.cbook import MatplotlibDeprecationWarning
 import seaborn as sns
 
 from utils.collect_results import COMPONENTS, COMPONENTS_ONLY_IMP, clean_model_name
-from utils.helpers import min_max_scale
+from utils.helpers import _prettify_df, min_max_scale
 import math
 
 from utils.pretty_renamer import PRETTY_RENAMER
@@ -439,3 +441,27 @@ def plot_shap_importance(model, X, y=None, n_feat=7, is_avg_imp=True, plot_size=
                      **kwargs)
     plt.gca().set_xlabel("mean(|SHAP|)", fontsize=12)
     return plt.gca()
+
+def plot_shap_components(param, df_shap,height=2, aspect=4,is_normalize=False, config_kwargs={}, **kwargs):
+    variable = PRETTY_RENAMER[param]
+    shap_prfx = PRETTY_RENAMER["normshap_"] if is_normalize else PRETTY_RENAMER["shap_"]
+
+    with plot_config(font_scale=1.4,
+                     rc={'lines.linewidth': 2, "xtick.labelsize": 12, "legend.fontsize": 12},
+                     **config_kwargs):
+
+        g=sns.catplot(data=_prettify_df(df_shap, pretty_renamer=PRETTY_RENAMER),
+                      x=f"{shap_prfx}{variable}",
+                      y="Component",
+                      hue=variable,
+                      aspect=aspect,
+                      kind="strip",
+                      height=height,
+                      **kwargs)
+
+        plt.axvline(color = "gray", alpha=0.5, linewidth=1.5)
+        for y in g.ax.get_yticks():
+            plt.axhline(y=y, color = "gray", alpha=0.5, linewidth=0.5, linestyle=(0, (1, 5)))
+        g.set(xlabel=shap_prfx.strip(), ylabel=None)
+        g._legend.set_title(None)
+    return g

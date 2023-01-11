@@ -552,7 +552,7 @@ simsiam_rn50_bs256_ep200_mmselfsup:
 densecl_rn50_200ep_mmselfsup:
   ssl:
     objective: densecl
-    ssl_mode: hierarchical contrastive
+    ssl_mode: hierarchical
     version: 1
     n_negatives: 512
     n_classes: null
@@ -1862,7 +1862,7 @@ mae_vitB16:
 mugs_vitb16_ep400_extractB:
   ssl:
     objective: mugs
-    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    ssl_mode: hierarchical  # both global and low level features (contrast patches)
     version: 1
     n_negatives: 65536
     n_classes: null
@@ -1928,7 +1928,7 @@ mugs_vitb16_ep400_extractB:
 mugs_vits16_ep800_extractS:
   ssl:
     objective: mugs
-    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    ssl_mode: hierarchical  # both global and low level features (contrast patches)
     version: 1
     n_negatives: 65536
     n_classes: null
@@ -1994,7 +1994,7 @@ mugs_vits16_ep800_extractS:
 mugs_vitl16_ep250:
   ssl:
     objective: mugs
-    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    ssl_mode: hierarchical  # both global and low level features (contrast patches)
     version: 1
     n_negatives: 65536
     n_classes: null
@@ -2060,7 +2060,7 @@ mugs_vitl16_ep250:
 mugs_vitb16_ep400:
   ssl:
     objective: mugs
-    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    ssl_mode: hierarchical  # both global and low level features (contrast patches)
     version: 1
     n_negatives: 65536
     n_classes: null
@@ -2126,7 +2126,7 @@ mugs_vitb16_ep400:
 mugs_vits16_ep800:
   ssl:
     objective: mugs
-    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    ssl_mode: hierarchical  # both global and low level features (contrast patches)
     version: 1
     n_negatives: 65536
     n_classes: null
@@ -2192,7 +2192,7 @@ mugs_vits16_ep800:
 mugs_vits16_ep300:
   ssl:
     objective: mugs
-    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    ssl_mode: hierarchical  # both global and low level features (contrast patches)
     version: 1
     n_negatives: 65536
     n_classes: null
@@ -2258,7 +2258,7 @@ mugs_vits16_ep300:
 mugs_vits16_ep100:
   ssl:
     objective: mugs
-    ssl_mode: hierarchical contrastive # both global and low level features (contrast patches)
+    ssl_mode: hierarchical  # both global and low level features (contrast patches)
     version: 1
     n_negatives: 65536
     n_classes: null
@@ -6342,7 +6342,7 @@ vicreg_rn50:
 vicregl_rn50_alpha09:
   ssl:
     objective: vicregl
-    ssl_mode: siamese
+    ssl_mode: hierarchical
     version: 1
     n_negatives: 4096
     n_classes: null
@@ -6405,7 +6405,7 @@ vicregl_rn50_alpha09:
 vicregl_rn50_alpha075:
   ssl:
     objective: vicregl
-    ssl_mode: siamese
+    ssl_mode: hierarchical
     version: 1
     n_negatives: 4096
     n_classes: null
@@ -6467,7 +6467,7 @@ vicregl_rn50_alpha075:
 
 vicregl_convnexts_alpha09:
   ssl:
-    objective: vicregl
+    objective: hierarchical
     ssl_mode: siamese
     version: 1
     n_negatives: 3072
@@ -6530,7 +6530,7 @@ vicregl_convnexts_alpha09:
 
 vicregl_convnexts_alpha075:
   ssl:
-    objective: vicregl
+    objective: hierarchical
     ssl_mode: siamese
     version: 1
     n_negatives: 3072
@@ -6593,7 +6593,7 @@ vicregl_convnexts_alpha075:
 
 vicregl_convnextb_alpha09:
   ssl:
-    objective: vicregl
+    objective: hierarchical
     ssl_mode: siamese
     version: 1
     n_negatives: 4608
@@ -6656,7 +6656,7 @@ vicregl_convnextb_alpha09:
 
 vicregl_convnextb_alpha075:
   ssl:
-    objective: vicregl
+    objective: hierarchical
     ssl_mode: siamese
     version: 1
     n_negatives: 4608
@@ -6721,7 +6721,7 @@ vicregl_convnextb_alpha075:
 vicregl_convnextxl_alpha075:
   ssl:
     objective: vicregl
-    ssl_mode: siamese
+    ssl_mode: hierarchical
     version: 1
     n_negatives: 7680
     n_classes: null

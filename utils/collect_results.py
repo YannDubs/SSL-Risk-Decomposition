@@ -32,7 +32,7 @@ from optuna.samplers import TPESampler
 from optuna.visualization.matplotlib import plot_param_importances, plot_optimization_history, plot_parallel_coordinate
 
 import hubconf
-from utils.helpers import ols_clean_df_, powerset
+from utils.helpers import _prettify_df, ols_clean_df_, powerset
 from utils.pretty_renamer import PRETTY_RENAMER
 
 COMPONENTS_ONLY = ["approx", "usability", "probe_gen", "enc_gen"]
@@ -587,6 +587,32 @@ def preprocess_features(df,
         df.loc[logable,c] = powered
     return df
 
+def convert_type_cols(X, is_use_bool=False):
+    X = X.copy()
+    for c in X.columns:
+        # convert categorical
+        if X[c].dtype == "string" or isinstance(X[c].dtype, pd.StringDtype):
+            X[c] = X[c].astype("category")
+        elif isinstance(X[c].dtype, pd.Int64Dtype):
+            try:
+                X[c] = X[c].astype(int)
+            except:
+                X[c] = X[c].astype(float)
+        elif isinstance(X[c].dtype, pd.Float64Dtype):
+            X[c] = X[c].astype(float)
+
+        if is_use_bool:
+            if "is" in c:
+                X[c] = X[c].astype(bool)
+
+        else:
+            if isinstance(X[c].dtype, pd.BooleanDtype) or X[c].dtype == bool:
+                try:
+                    X[c] = X[c].astype(int)
+                except:
+                    X[c] = X[c].astype(float)
+
+    return X
 
 def prepare_sklearn(df,
                     features_to_del=["notes", "where", "top1acc_in1k_official", "n_pus", "pu_type", "time_hours",
@@ -608,25 +634,14 @@ def prepare_sklearn(df,
         features_to_del = [c for c in X.columns if c not in features_to_keep]
 
     X = X.drop(features_to_del, axis=1)
+    X = convert_type_cols(X, is_use_bool=False)
 
     all_str_cols = []
     for c in X.columns:
         # convert categorical
         if X[c].dtype == "string" or isinstance(X[c].dtype, pd.StringDtype):
-            X[c] = X[c].astype("category")
             all_str_cols += [c]
-        elif isinstance(X[c].dtype, pd.Int64Dtype):
-            try:
-                X[c] = X[c].astype(int)
-            except:
-                X[c] = X[c].astype(float)
-        elif isinstance(X[c].dtype, pd.Float64Dtype):
-            X[c] = X[c].astype(float)
-        elif isinstance(X[c].dtype, pd.BooleanDtype) or X[c].dtype == bool:
-            try:
-                X[c] = X[c].astype(int)
-            except:
-                X[c] = X[c].astype(float)
+
 
     if features_onehot == "all":
         features_onehot = all_str_cols
@@ -1133,28 +1148,35 @@ def get_all_xgb(objectives, df, features_to_keep, prfx="", is_train=True, folder
     return xgbs, studys, Xs, ys, rmses
 
 
-def get_df_shap(model, X, y):
+
+def get_df_shap(model, X, y, normalize_by=None, df=None):
+    columns = [PRETTY_RENAMER[c] for c in X.columns]
     dtrain = xgb.DMatrix(X, label=y,
                          enable_categorical=True,
-                         feature_names=X.columns)
+                         feature_names=columns)
 
-    explainer = shap.TreeExplainer(model, feature_names=X.columns)
+    explainer = shap.TreeExplainer(model,
+                                   feature_names=columns)
     shap_values = explainer(dtrain.get_data())
     shap_values.data = shap_values.data.toarray()
 
-    joined = X.join(pd.DataFrame(shap_values.values,
+    if df is None:
+        df = X
+
+    joined = df.join(pd.DataFrame(shap_values.values,
                                  columns=[f"shap_{c}" for c in X.columns],
                                  index=X.index))
+
+    if normalize_by is not None:
+        normalized = shap_values.values / normalize_by
+        joined = joined.join(pd.DataFrame(normalized,
+                                         columns=[f"normshap_{c}" for c in X.columns],
+                                         index=X.index))
+
     return joined, shap_values
 
 
-
-
-
 def prettify_df(df, pretty_renamer=PRETTY_RENAMER):
-    df = df.copy()
-    df = df.rename(columns=pretty_renamer)
-    for c in df.columns:
-        if not is_numeric_dtype(df[c]):
-            df[c] = df[c].apply(lambda x: PRETTY_RENAMER[x])
-    return df
+    return _prettify_df(df, pretty_renamer)
+
+

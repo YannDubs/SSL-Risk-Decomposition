@@ -17,6 +17,7 @@ import pandas as pd
 import pytorch_lightning as pl
 import math
 import torch
+from pandas.core.dtypes.common import is_numeric_dtype
 from pytorch_lightning.plugins.environments import SLURMEnvironment
 from torch import nn
 from pathlib import Path
@@ -46,6 +47,13 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+def _prettify_df(df, pretty_renamer):
+    df = df.copy()
+    df = df.rename(columns=pretty_renamer)
+    for c in df.columns:
+        if not is_numeric_dtype(df[c]):
+            df[c] = df[c].apply(lambda x: pretty_renamer[x])
+    return df
 
 def ols_clean_df_(df, columns):
     for c in columns:
