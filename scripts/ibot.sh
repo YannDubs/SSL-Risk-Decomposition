@@ -19,6 +19,12 @@ seed=123
 predictor=torch_linear_delta_hypopt
 "
 
+kwargs_multi="
+representor=ibot_vitL16_extractB,ibot_vitL16_extractS
+seed=123
+predictor=torch_linear_delta_hypopt
+"
+
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""
   do

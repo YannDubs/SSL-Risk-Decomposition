@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-experiment="statistics"
+experiment="statistics_large"
 notes="**Goal**: estimate all the desired statistics of the representations."
 
 # parses special mode for running the script

@@ -85,8 +85,6 @@ def main(cfg):
                  intra_var=intra_var, inter_var=inter_var,
                  uniformity=uniformity, alignment=alignment)
 
-    return
-
     datamodule.is_avoid_raw_dataset = False
     datamodule.is_save_features = False
 

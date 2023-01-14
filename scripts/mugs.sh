@@ -18,6 +18,11 @@ representor=mugs_vits16_ep100,mugs_vits16_ep300,mugs_vits16_ep800,mugs_vitb16_ep
 seed=123
 predictor=torch_linear_delta_hypopt
 "
+kwargs_multi="
+representor=mugs_vitl16_ep250_extractS,mugs_vitl16_ep250_extractB,mugs_vitb16_ep400_extractS
+seed=123
+predictor=torch_linear_delta_hypopt
+"
 
 
 if [ "$is_plot_only" = false ] ; then
