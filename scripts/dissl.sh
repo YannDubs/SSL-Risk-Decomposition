@@ -20,8 +20,6 @@ seed=123
 predictor=torch_linear_delta_hypopt
 "
 
-# need to run seed=124,125
-# torch_linear_erm
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

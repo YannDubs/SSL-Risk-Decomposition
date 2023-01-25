@@ -1,16 +1,11 @@
 """Entry point to compute the loss decomposition for different models.
 
-This should be called by `python main.py <conf>` where <conf> sets all configs from the cli, see
-the file `config/main.yaml` for details about the configs. or use `python main.py -h`.
+This should be called by `python main_fullshot.py <conf>` where <conf> sets all configs from the cli, see
+the file `config/main.yaml` for details about the configs. or use `python main_fullshot.py -h`.
 """
 
 
 from __future__ import annotations
-
-import pdb
-from functools import partial
-
-from utils.predictor import RepresentorPredictor
 
 try:
     from sklearnex import patch_sklearn
@@ -29,10 +24,10 @@ import pandas as pd
 import hydra
 
 from utils.cluster import nlp_cluster
+from utils.helpers import LightningWrapper
 import hubconf
 from utils.tune_hyperparam import tune_hyperparam_
-from main import begin, instantiate_datamodule_nofeature_, run_component_, save_results
-from torchvision import transforms
+from main_fewshot import begin, instantiate_datamodule_, run_component_, save_results
 
 try:
     import wandb
@@ -60,68 +55,55 @@ def main(cfg):
     logger.info("Stage : Startup")
     begin(cfg)
 
-    ############## PREPARE ##############
+    ############## REPRESENT DATA ##############
+    logger.info(f"Representing data with {cfg.representor}")
     representor, preprocess = hubconf.__dict__[cfg.representor]()
-    Predictor = partial(RepresentorPredictor, representor=representor)
-
-    datamodule = instantiate_datamodule_nofeature_(cfg, None,
-                                                   train_transform=get_train_transform(preprocess),
-                                                   test_transform=preprocess)
-    datamodule.z_dim = hubconf.metadata_dict()[cfg.representor]["representation"]["z_dim"]
+    representor = LightningWrapper(representor)
+    datamodule = instantiate_datamodule_(cfg, representor, preprocess)
 
     ############## DOWNSTREAM PREDICTOR ##############
     results = dict()
 
     assert cfg.predictor.is_tune_hyperparam
     # those components can have the same hyperparameters
-    components2hypopt = {"train-cmplmnt-ntest_train-sbst-ntest": dict(train_on="train-sbst-0.5", validate_on="train-cmplmnt-0.5", label_size=0.2),
-                         "train_test": dict(train_on="train-sbst-0.5", validate_on="train-cmplmnt-0.5", label_size=0.2),
+    components2hypopt = {"train_train": dict(train_on="train-sbst-0.5",  validate_on="train-sbst-0.5", label_size=0.2),
+                         "train-cmplmnt-ntest_train-sbst-ntest": dict(train_on="train-sbst-0.5", validate_on="train-cmplmnt-0.5", label_size=0.2),
+                         "train_test": dict(train_on="train-sbst-0.5", validate_on="test", label_size=0.2),   # valdiation should be done on test-sbst-0.1
+                         "train_test-cmplmnt-0.1": dict(train_on="train", validate_on="test-sbst-0.1"),
+                         "union_test": dict(train_on="train-sbst-0.5", validate_on="train-sbst-0.5", label_size=0.2),
                          }
 
     # those components have the same training setup so don't retrain
     components_same_train = {}
 
-    # TODO for train_train should simply copy from torch no aug
-
     if cfg.is_supervised:
         # only need train on train for supervised baselines (i.e. approx error) and train on test (agg risk)
-        components = ["train_test"]
+        components = ["train_train",
+                      "train_test"
+                      #"train_test-cmplmnt-0.1",
+                      ]
     else:
         # test should be replaced by test-cmplmnt-0.1
-        components = ["train_test",
-                      "train-cmplmnt-ntest_train-sbst-ntest",
-                    ]
+        components = ["train_train",
+                      "train_test",
+                      "train-cmplmnt-ntest_train-sbst-ntest"]
 
+        if cfg.is_alternative_decomposition:
+            components += ["union_test"]
     for component in components:
 
         sffx_hypopt = "hyp_{train_on}_{validate_on}_{label_size}".format(**components2hypopt[component])
         tune_hyperparam_(datamodule, cfg,
                          tuning_path=cfg.paths.tuning + sffx_hypopt,
-                         Predictor=Predictor,
                          **components2hypopt[component])
 
         results = run_component_(component, datamodule, cfg, results, components_same_train,
-                                 results_path=cfg.paths.results + sffx_hypopt,
-                                 Predictor=Predictor)
+                                 results_path=cfg.paths.results + sffx_hypopt)
 
     # save results
     results = pd.DataFrame.from_dict(results)
 
     save_results(cfg, results, "all")
-
-
-def get_train_transform(preprocess, is_fixed=True):
-    # use the same normalization and interpolation as for eval
-    # same augmentation for all models. We use cropping as this is used for all models
-    normalization = [t for t in preprocess.transforms if isinstance(t, transforms.Normalize)][0]
-    resize = [t for t in preprocess.transforms if isinstance(t, transforms.Resize)][0]
-    return transforms.Compose([
-        transforms.RandomResizedCrop(224, interpolation=resize.interpolation),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        normalization,
-    ])
-
 
 if __name__ == "__main__":
     try:

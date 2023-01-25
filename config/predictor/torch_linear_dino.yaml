@@ -1,6 +1,0 @@
-defaults:
-  - base_pytorch
-
-# using param like https://github.com/facebookresearch/dino/issues/31
-opt_kwargs:
-  lr: 0.001

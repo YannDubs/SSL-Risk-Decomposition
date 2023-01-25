@@ -1,6 +1,0 @@
-defaults:
-  - sk_svm_hypopt
-
-name: sk_svm_hypopt_test
-model:
-  max_iter: 10

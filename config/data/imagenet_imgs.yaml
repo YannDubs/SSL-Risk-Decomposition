@@ -1,5 +1,0 @@
-name: imagenet_imgs
-n_classes: 1000
-
-kwargs:
-  num_workers: 31

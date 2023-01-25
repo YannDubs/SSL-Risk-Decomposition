@@ -36,7 +36,6 @@ data.kwargs.is_avoid_raw_dataset=True
 data.kwargs.subset_raw_dataset=0.3
 "
 
-# torch_linear_hypopt
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

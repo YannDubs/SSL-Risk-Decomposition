@@ -47,8 +47,6 @@ def get_Datamodule(datamodule: str) -> type:
     datamodule = datamodule.lower()
     if datamodule == "imagenet":
         return ImagenetFeaturizedDataModule
-    elif datamodule == "imagenet_imgs":
-        return ImagenetDataModule
     else:
         raise ValueError(f"Unknown datamodule: {datamodule}")
 
@@ -458,23 +456,6 @@ class FeaturizedDataModule(BaseDataModule):
         assert Z.ndim == 2
         return Z, Y
 
-class ImgDataModule(BaseDataModule):
-    def __init__(self, *args, train_transform, test_transform, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.train_transform = train_transform
-        self.test_transform = test_transform
-
-    def train_dataloader(self, dataset=None):
-        assert dataset is None
-        dataset = self.get_train_dataset()
-        return super().train_dataloader(AugmentedDataset(dataset, transform=self.train_transform))
-
-    def test_dataloader(self, dataset=None):
-        assert dataset is None
-        dataset = self.get_test_dataset()
-        return super().test_dataloader(AugmentedDataset(dataset, transform=self.test_transform))
-
-
 ### HELPERS ###
 class AugmentedDataset:
     def __init__(self, dataset, transform):
@@ -709,13 +690,5 @@ class ImagenetFeaturizedDataModule(FeaturizedDataModule):
     @property
     def Dataset(cls) -> Any:
         return ImageNetDataset
-
-class ImagenetDataModule(ImgDataModule):
-
-    @classmethod
-    @property
-    def Dataset(cls) -> Any:
-        return ImageNetDataset
-
 
 

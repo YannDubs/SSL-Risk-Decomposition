@@ -12,7 +12,7 @@ wandb
 test
 /data
 logs
-notebooks/saved
+notebooks/
 figures/
 .hydra
 old

@@ -21,8 +21,6 @@ data.kwargs.is_avoid_raw_dataset=True
 data.kwargs.subset_raw_dataset=0.3
 "
 
-# torch_linear_erm
-# need to run seed=124,125
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

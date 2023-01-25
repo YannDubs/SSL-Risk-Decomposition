@@ -1,6 +1,0 @@
-defaults:
-  - base_pytorch
-
-arch_kwargs:
-  architecture: linear
-  is_normalize: False

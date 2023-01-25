@@ -6,7 +6,7 @@ time="4200" # 3 days
 is_plot_only=false
 server=""
 mode=""
-main="main_tuneall.py"
+main="main_fullshot.py"
 
 # MODE ?
 while getopts ':s:p:t:v:a:i' flag; do

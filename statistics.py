@@ -1,7 +1,7 @@
 """Entry point to compute the loss decomposition for different models.
 
-This should be called by `python main.py <conf>` where <conf> sets all configs from the cli, see
-the file `config/main.yaml` for details about the configs. or use `python main.py -h`.
+This should be called by `python statistics.py <conf>` where <conf> sets all configs from the cli, see
+the file `config/main.yaml` for details about the configs. or use `python statistics.py -h`.
 """
 
 
@@ -21,8 +21,8 @@ import pytorch_lightning as pl
 from omegaconf import Container
 
 from main import instantiate_datamodule_
-from main_augs import get_train_transform
 from utils.cluster import nlp_cluster
+from torchvision import transforms
 
 from utils.helpers import LightningWrapper, tmp_seed
 import hubconf
@@ -89,7 +89,7 @@ def main(cfg):
     datamodule.is_save_features = False
 
     # computes statistics for images that are always augmented using a standard and unique transformation
-    train_transform = get_train_transform(preprocess)
+    train_transform = get_universal_train_transform(preprocess)
     compute_augstatistics(datamodule,
                           train_transform,
                           save_dir,
@@ -194,6 +194,19 @@ def begin(cfg: Container) -> None:
     cfg.paths.work = str(Path.cwd())
     logger.info(f"Workdir : {cfg.paths.work}.")
     logger.info(f"Job id : {cfg.job_id}.")
+
+def get_universal_train_transform(preprocess):
+    # use the same normalization and interpolation as for eval
+    # same augmentation for all models. We use cropping as this is used for all models
+    normalization = [t for t in preprocess.transforms if isinstance(t, transforms.Normalize)][0]
+    resize = [t for t in preprocess.transforms if isinstance(t, transforms.Resize)][0]
+    return transforms.Compose([
+        transforms.RandomResizedCrop(224, interpolation=resize.interpolation),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        normalization,
+    ])
+
 
 if __name__ == "__main__":
     try:
