@@ -15,7 +15,7 @@ timeout=$time
 
 
 kwargs_multi="
-representor=clip_rn50,clip_rn101,clip_vitB16,clip_vitB32,clip_vitL14,clip_vitL14_px336
+representor=clip_rn50,clip_rn101,clip_vitB16,clip_vitB32,clip_vitL14,clip_vitL14_px336,clip_vitL14_px336_extractPred,clip_vitL14_px336_extractPredCls
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
@@ -23,6 +23,21 @@ data.kwargs.subset_raw_dataset=0.3
 "
 
 
+kwargs_multi="
+representor=clip_vitL14_px336_extractPred,clip_vitL14_px336_extractPredCls
+seed=123
+predictor=sk_logistic_hypopt
+data.kwargs.is_avoid_raw_dataset=True
+data.kwargs.subset_raw_dataset=0.3
+"
+
+kwargs_multi="
+representor=clip_vitL14_px336_extractB
+seed=123
+predictor=sk_logistic_hypopt
+data.kwargs.is_avoid_raw_dataset=True
+data.kwargs.subset_raw_dataset=0.3
+"
 
 
 

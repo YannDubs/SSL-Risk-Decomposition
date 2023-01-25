@@ -14,13 +14,19 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=ibot_vitB16,ibot_vitS16,ibot_vitL16,ibot_vitB16_extractB,ibot_vitS16_extractS
+representor=ibot_vitB16,ibot_vitS16,ibot_vitL16,ibot_vitB16_extractB,ibot_vitS16_extractS,ibot_vitL16_extractB,ibot_vitL16_extractS
 seed=123
 predictor=torch_linear_delta_hypopt
 "
 
 kwargs_multi="
-representor=ibot_vitL16_extractB,ibot_vitL16_extractS
+representor=ibot_vitL16_extractB
+seed=123
+predictor=torch_linear_delta_hypopt
+"
+
+kwargs_multi="
+representor=ibot_vitL16_extractS
 seed=123
 predictor=torch_linear_delta_hypopt
 "

@@ -22,6 +22,15 @@ data.kwargs.is_avoid_raw_dataset=True
 data.kwargs.subset_raw_dataset=0.3
 "
 
+kwargs_multi="
+representor=mugs_vitl16_ep250_extractS,mugs_vitl16_ep250_extractB,mugs_vitb16_ep400_extractS
+seed=123
+predictor=sk_logistic_hypopt
+data.kwargs.is_avoid_raw_dataset=True
+data.kwargs.subset_raw_dataset=0.3
+"
+
+
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

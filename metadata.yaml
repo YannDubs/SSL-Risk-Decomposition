@@ -47,6 +47,8 @@ beitv2_vitB16_pt1k_extractB:
       - normalize
   metrics:
     top1acc_in1k_official: null # 80.1 is when using 300 epochs
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/microsoft/unilm/tree/master/beit2
     notes: the architecture is slightly different than vit because they use relative positional embeddings
@@ -55,6 +57,7 @@ beitv2_vitB16_pt1k_extractB:
     license: MIT
     is_official: true
     is_industry: True
+    is_our_extract: false
   compute:
     n_pus: 16
     pu_type: V100
@@ -73,7 +76,7 @@ beitv2_vitB16_pt1k:
     pred_dim: null
     projection_hid_width: null # 2048 for proj and 4096 for pred
     projection_hid_depth: null # 3 for proj and 3 for pred
-    architecture_exact: beitb16 cls+avg
+    architecture_exact: beitb16 cls
     architecture: vitb
     family: vit
     patch_size: 16
@@ -105,6 +108,8 @@ beitv2_vitB16_pt1k:
       - normalize
   metrics:
     top1acc_in1k_official: null # 80.1 is when using 300 epochs
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/microsoft/unilm/tree/master/beit2
     notes: the architecture is slightly different than vit because they use relative positional embeddings
@@ -113,6 +118,7 @@ beitv2_vitB16_pt1k:
     license: MIT
     is_official: true
     is_industry: True
+    is_our_extract: true
   compute:
     n_pus: 16
     pu_type: V100
@@ -174,66 +180,7 @@ beitv2_vitL16_pt1k:
     license: MIT
     is_official: true
     is_industry: True
-  compute:
-    n_pus: 16
-    pu_type: V100
-    time_hours: ???
-
-beitv2_vitB16_pt1k:
-  ssl:
-    objective: beit
-    ssl_mode: generative
-    version: 2
-    n_negatives: null
-    n_classes: null # it uses vocabulary size of 8192, but that's not global classes
-    is_stopgrad: false
-    is_ema: false
-  model:
-    pred_dim: null
-    projection_hid_width: null # 2048 for proj and 4096 for pred
-    projection_hid_depth: null # 3 for proj and 3 for pred
-    architecture_exact: beitb16 cls
-    architecture: vitb
-    family: vit
-    patch_size: 16
-    projection1_arch: null
-    projection2_arch: null
-    projection_same: null
-    n_parameters: 85761984
-    projection_nparameters: null
-  representation:
-    z_dim: 768
-    z_layer: cls
-  optimization:
-    epochs: 1600
-    batch_size: 2048
-    optimizer: adam
-    learning_rate:  1.875e-4
-    weight_decay: 0.05
-    scheduler: cosine
-  data:
-    pretraining_data: ImageNet-1K
-    finetuning_data: null
-    img_size: 224
-    views: 224
-    is_aug_invariant: False
-    augmentations:
-      - crop
-      - color
-      - masking
-      - normalize
-  metrics:
-    top1acc_in1k_official: null # 80.1 is when using cls+avg and 300 epochs
-    top1acc_in1k-1%_official: null
-    top1acc_in1k-c5_official: null
-  meta:
-    where: https://github.com/microsoft/unilm/tree/master/beit2
-    notes: the architecture is slightly different than vit because they use relative positional embeddings
-    month: 8
-    year: 2022
-    license: MIT
-    is_official: true
-    is_industry: True
+    is_our_extract: False
   compute:
     n_pus: 16
     pu_type: V100
@@ -294,6 +241,7 @@ beitv2_vitB16_pt1k_ep300:
     license: MIT
     is_official: true
     is_industry: True
+    is_our_extract: true
   compute:
     n_pus: 16
     pu_type: V100
@@ -355,6 +303,7 @@ beit_vitL16_pt22k:
     license: MIT
     is_official: true
     is_industry: True
+    is_our_extract: true
   compute:
     n_pus: 16
     pu_type: V100
@@ -416,6 +365,7 @@ beit_vitB16_pt22k:
     license: MIT
     is_official: true
     is_industry: True
+    is_our_extract: true
   compute:
     n_pus: 16
     pu_type: V100
@@ -480,6 +430,7 @@ deepcluster_rn50_bs512_ep200_mmselfsup:
     license: Apache 2.0
     is_official: false
     is_industry: True
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: V100
@@ -541,6 +492,7 @@ simclr_rn50_bs256_ep200_mmselfsup:
     license: Apache 2.0
     is_official: false
     is_industry: True
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -603,6 +555,7 @@ simsiam_rn50_bs256_ep200_mmselfsup:
     license: Apache 2.0
     is_official: false
     is_industry: True
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -665,6 +618,7 @@ densecl_rn50_200ep_mmselfsup:
     license: Apache 2.0
     is_official: false
     is_industry: False
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -727,6 +681,7 @@ odc_rn50_440ep_mmselfsup:
     license: Apache 2.0
     is_official: false
     is_industry: False
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -786,6 +741,7 @@ relativeloc_rn50_70ep_mmselfsup:
     license: Apache 2.0
     is_official: false
     is_industry: False
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -853,6 +809,7 @@ infomin_rn50_800ep:
     license: BSD 3-Clause
     is_official: true
     is_industry: False
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -917,6 +874,7 @@ infomin_rn50_200ep:
     license: BSD 3-Clause
     is_official: true
     is_industry: False
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -980,6 +938,7 @@ mocov2_rn50_ep800:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: V100
@@ -1042,6 +1001,7 @@ mocov2_rn50_ep200:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: V100
@@ -1103,6 +1063,7 @@ mocov1_rn50_ep200:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: V100
@@ -1166,6 +1127,7 @@ mocov3_vitB_ep300:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: Volta
@@ -1228,6 +1190,7 @@ mocov3_vitS_ep300:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: Volta
@@ -1290,6 +1253,7 @@ mocov3_rn50_ep1000:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 16
     pu_type: Volta
@@ -1352,6 +1316,7 @@ mocov3_rn50_ep300:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 16
     pu_type: Volta
@@ -1414,6 +1379,7 @@ mocov3_rn50_ep100:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 16
     pu_type: Volta
@@ -1479,6 +1445,135 @@ msn_vitl7_ep200:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
+  compute:
+    n_pus: ???
+    pu_type: ???
+    time_hours: ???
+
+msn_vitl7_ep200_extractb:
+  ssl:
+    objective: msn
+    ssl_mode: clustering
+    version: 1
+    n_negatives: 12288
+    n_classes: 1024
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture_exact: vitl7 cls+avg
+    architecture: vitl
+    family: vit
+    patch_size: 7
+    projection1_arch: mlp
+    projection2_arch: mlp
+    projection_same: true
+    n_parameters: 303301632
+    projection_nparameters: 13e6
+  representation:
+    z_dim: 2048
+    z_layer: cls+avg
+  optimization:
+    epochs: 200
+    batch_size: 1024
+    optimizer: adamw
+    learning_rate:  0.001
+    weight_decay: 0.04
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - masking
+      - flip
+      - color
+      - blur
+      - gray
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/facebookresearch/msn
+    notes: null
+    month: 4
+    year: 2022
+    license: CC BY-NC 4.0
+    is_official: true
+    is_industry: true
+    is_our_extract: true
+  compute:
+    n_pus: ???
+    pu_type: ???
+    time_hours: ???
+
+msn_vitl7_ep200_extracts:
+  ssl:
+    objective: msn
+    ssl_mode: clustering
+    version: 1
+    n_negatives: 12288
+    n_classes: 1024
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture_exact: vitl7 4xcls
+    architecture: vitl
+    family: vit
+    patch_size: 7
+    projection1_arch: mlp
+    projection2_arch: mlp
+    projection_same: true
+    n_parameters: 303301632
+    projection_nparameters: 13e6
+  representation:
+    z_dim: 4096
+    z_layer: 4xcls
+  optimization:
+    epochs: 200
+    batch_size: 1024
+    optimizer: adamw
+    learning_rate:  0.001
+    weight_decay: 0.04
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - masking
+      - flip
+      - color
+      - blur
+      - gray
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/facebookresearch/msn
+    notes: null
+    month: 4
+    year: 2022
+    license: CC BY-NC 4.0
+    is_official: true
+    is_industry: true
+    is_our_extract: true
   compute:
     n_pus: ???
     pu_type: ???
@@ -1542,6 +1637,7 @@ msn_vitl16_ep600:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: ???
@@ -1605,11 +1701,139 @@ msn_vitb4_ep300:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: ???
     time_hours: ???
 
+msn_vitb4_ep300_extractb:
+  ssl:
+    objective: msn
+    ssl_mode: clustering
+    version: 1
+    n_negatives: 12288
+    n_classes: 1024
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture_exact: vitb4 cls+avg
+    architecture: vitb
+    family: vit
+    patch_size: 4
+    projection1_arch: mlp
+    projection2_arch: mlp
+    projection_same: true
+    n_parameters: 85798656
+    projection_nparameters: 13e6
+  representation:
+    z_dim: 1536
+    z_layer: cls+avg
+  optimization:
+    epochs: 300
+    batch_size: 1024
+    optimizer: adamw
+    learning_rate:  0.001
+    weight_decay: 0.04
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - masking
+      - flip
+      - color
+      - blur
+      - gray
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/facebookresearch/msn
+    notes: null
+    month: 4
+    year: 2022
+    license: CC BY-NC 4.0
+    is_official: true
+    is_industry: true
+    is_our_extract: true
+  compute:
+    n_pus: ???
+    pu_type: ???
+    time_hours: ???
+
+msn_vitb4_ep300_extracts:
+  ssl:
+    objective: msn
+    ssl_mode: clustering
+    version: 1
+    n_negatives: 12288
+    n_classes: 1024
+    is_stopgrad: true
+    is_ema: true
+  model:
+    pred_dim: 256
+    projection_hid_width: 2048
+    projection_hid_depth: 3
+    architecture_exact: vitb4 4xcls
+    architecture: vitb
+    family: vit
+    patch_size: 4
+    projection1_arch: mlp
+    projection2_arch: mlp
+    projection_same: true
+    n_parameters: 85798656
+    projection_nparameters: 13e6
+  representation:
+    z_dim: 3072
+    z_layer: 4xcls
+  optimization:
+    epochs: 300
+    batch_size: 1024
+    optimizer: adamw
+    learning_rate:  0.001
+    weight_decay: 0.04
+    scheduler: cosine
+  data:
+    pretraining_data: ImageNet-1K
+    finetuning_data: null
+    img_size: 224
+    views: 2x224+10x96
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - masking
+      - flip
+      - color
+      - blur
+      - gray
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/facebookresearch/msn
+    notes: null
+    month: 4
+    year: 2022
+    license: CC BY-NC 4.0
+    is_official: true
+    is_industry: true
+    is_our_extract: true
+  compute:
+    n_pus: ???
+    pu_type: ???
+    time_hours: ???
 
 msn_vitb16_ep600:
   ssl:
@@ -1669,11 +1893,11 @@ msn_vitb16_ep600:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 16
     pu_type: ???
     time_hours: ???
-
 
 msn_vits16_ep800:
   ssl:
@@ -1733,6 +1957,7 @@ msn_vits16_ep800:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 16
     pu_type: ???
@@ -1794,6 +2019,7 @@ mae_vitH14:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 128
     pu_type: TPU v3
@@ -1853,6 +2079,7 @@ mae_vitL16:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 128
     pu_type: TPU v3
@@ -1912,6 +2139,7 @@ mae_vitB16:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 128
     pu_type: TPU v3
@@ -1979,6 +2207,7 @@ mugs_vitb16_ep400_extractB:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 24
     pu_type: A100
@@ -2045,6 +2274,7 @@ mugs_vits16_ep800_extractS:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 16
     pu_type: A100
@@ -2111,6 +2341,7 @@ mugs_vitl16_ep250:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 40
     pu_type: A100
@@ -2177,6 +2408,7 @@ mugs_vitb16_ep400:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: True
   compute:
     n_pus: 24
     pu_type: A100
@@ -2243,6 +2475,7 @@ mugs_vits16_ep800:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 16
     pu_type: A100
@@ -2309,6 +2542,7 @@ mugs_vits16_ep300:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 16
     pu_type: A100
@@ -2375,6 +2609,7 @@ mugs_vits16_ep100:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 8
     pu_type: A100
@@ -2441,6 +2676,7 @@ mugs_vitl16_ep250_extractB:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 40
     pu_type: A100
@@ -2508,6 +2744,7 @@ mugs_vitl16_ep250_extractS:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 40
     pu_type: A100
@@ -2575,6 +2812,7 @@ mugs_vitb16_ep400_extractS:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 24
     pu_type: A100
@@ -2642,6 +2880,7 @@ ibot_vitS16_extractS:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 16
     pu_type: V100
@@ -2706,6 +2945,7 @@ ibot_vitB16_extractB:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 24
     pu_type: V100
@@ -2770,6 +3010,7 @@ ibot_vitL16:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: V100
@@ -2835,6 +3076,7 @@ ibot_vitL16_extractB:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 64
     pu_type: V100
@@ -2899,10 +3141,13 @@ ibot_vitL16_extractS:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 64
     pu_type: V100
     time_hours: ???
+
+
 
 ibot_vitS16:
   ssl:
@@ -2963,6 +3208,7 @@ ibot_vitS16:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 16
     pu_type: V100
@@ -3027,6 +3273,7 @@ ibot_vitB16:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 24
     pu_type: V100
@@ -3080,8 +3327,8 @@ dino_vitB16_extractS:
       - flip
       - normalize
   metrics:
-    top1acc_in1k_official: 78.2
-    top1acc_in1k-1%_official: 64.5
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
     top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/dino
@@ -3091,6 +3338,7 @@ dino_vitB16_extractS:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 32
     pu_type: V100
@@ -3154,6 +3402,7 @@ dino_vitS16_extractB:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 16
     pu_type: V100
@@ -3217,6 +3466,7 @@ dino_vitB8:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 176
     pu_type: V100
@@ -3270,7 +3520,7 @@ dino_vitB16:
       - normalize
   metrics:
     top1acc_in1k_official: 78.2
-    top1acc_in1k-1%_official: null
+    top1acc_in1k-1%_official: 64.5
     top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/dino
@@ -3280,6 +3530,7 @@ dino_vitB16:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: V100
@@ -3343,6 +3594,7 @@ dino_vitS16:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 16
     pu_type: V100
@@ -3406,6 +3658,7 @@ dino_vitB8_last:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 176
     pu_type: V100
@@ -3459,6 +3712,8 @@ dino_vitB16_last:
       - normalize
   metrics:
     top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
   meta:
     where: https://github.com/facebookresearch/dino
     notes: null
@@ -3467,6 +3722,7 @@ dino_vitB16_last:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 32
     pu_type: V100
@@ -3530,6 +3786,7 @@ dino_vitS8_last:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 64
     pu_type: V100
@@ -3593,6 +3850,7 @@ dino_vitS16_last:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 16
     pu_type: V100
@@ -3656,6 +3914,7 @@ dino_rn50:
     license: Apache License 2.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 80
     pu_type: V100
@@ -3668,7 +3927,7 @@ clip_vitL14_px336:
     objective: clip
     ssl_mode: contrastive
     version: 1
-    n_negatives: 65536
+    n_negatives: 32768
     n_classes: null
     is_stopgrad: false
     is_ema: false
@@ -3716,6 +3975,243 @@ clip_vitL14_px336:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
+  compute:
+    n_pus: 256
+    pu_type: V100
+    time_hours: 288
+
+clip_vitL14_px336_extractPred:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 32768
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 768
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vitl14 proj
+    architecture: vitl
+    family: vit
+    patch_size: 14
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 303507456
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 768
+    z_layer: proj
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 4e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: null
+    img_size: 336
+    views: 2x336
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/openai/CLIP
+    notes: null
+    month: 1
+    year: 2021
+    license: MIT
+    is_official: true
+    is_industry: true
+    is_our_extract: true
+  compute:
+    n_pus: 256
+    pu_type: V100
+    time_hours: 288
+
+clip_vitL14_px336_extractPredCls:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 32768
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 768
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vitl14 proj+cls
+    architecture: vitl
+    family: vit
+    patch_size: 14
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 303507456
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 1792
+    z_layer: proj+cls
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 4e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: null
+    img_size: 336
+    views: 2x336
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/openai/CLIP
+    notes: null
+    month: 1
+    year: 2021
+    license: MIT
+    is_official: true
+    is_industry: true
+    is_our_extract: true
+  compute:
+    n_pus: 256
+    pu_type: V100
+    time_hours: 288
+
+clip_vitL14_px336_extractS:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 32768
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 768
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vitl14 4xcls
+    architecture: vitl
+    family: vit
+    patch_size: 14
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 303507456
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 4096
+    z_layer: 4xcls
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 4e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: null
+    img_size: 336
+    views: 2x336
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/openai/CLIP
+    notes: null
+    month: 1
+    year: 2021
+    license: MIT
+    is_official: true
+    is_industry: true
+    is_our_extract: true
+  compute:
+    n_pus: 256
+    pu_type: V100
+    time_hours: 288
+
+clip_vitL14_px336_extractB:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 32768
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 768
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vitl14 cls+avg
+    architecture: vitl
+    family: vit
+    patch_size: 14
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 303507456
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 2048
+    z_layer: cls+avg
+  optimization:
+    epochs: 32
+    batch_size: 32768
+    optimizer: adamw # larc
+    learning_rate: 4e-4 # not sure if this is correct, it's unclear if that the actual one or the one before linear scaling due to large batch size
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: CLIP
+    finetuning_data: null
+    img_size: 336
+    views: 2x336
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/openai/CLIP
+    notes: null
+    month: 1
+    year: 2021
+    license: MIT
+    is_official: true
+    is_industry: true
+    is_our_extract: true
   compute:
     n_pus: 256
     pu_type: V100
@@ -3726,7 +4222,7 @@ clip_vitL14:
     objective: clip
     ssl_mode: contrastive
     version: 1
-    n_negatives: 65536
+    n_negatives: 32768
     n_classes: null
     is_stopgrad: false
     is_ema: false
@@ -3774,6 +4270,7 @@ clip_vitL14:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: V100
@@ -3784,7 +4281,7 @@ clip_vitB32:
     objective: clip
     ssl_mode: contrastive
     version: 1
-    n_negatives: 65536
+    n_negatives: 32768
     n_classes: null
     is_stopgrad: false
     is_ema: false
@@ -3832,6 +4329,7 @@ clip_vitB32:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: V100
@@ -3842,7 +4340,7 @@ clip_vitB16:
     objective: clip
     ssl_mode: contrastive
     version: 1
-    n_negatives: 65536
+    n_negatives: 32768
     n_classes: null
     is_stopgrad: false
     is_ema: false
@@ -3890,6 +4388,7 @@ clip_vitB16:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: V100
@@ -3900,7 +4399,7 @@ clip_rn101:
     objective: clip
     ssl_mode: contrastive
     version: 1
-    n_negatives: 65536
+    n_negatives: 32768
     n_classes: null
     is_stopgrad: false
     is_ema: false
@@ -3948,6 +4447,7 @@ clip_rn101:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: V100
@@ -3958,7 +4458,7 @@ clip_rn50x64:
     objective: clip
     ssl_mode: contrastive
     version: 1
-    n_negatives: 65536
+    n_negatives: 32768
     n_classes: null
     is_stopgrad: false
     is_ema: false
@@ -4006,6 +4506,7 @@ clip_rn50x64:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 592
     pu_type: V100
@@ -4016,7 +4517,7 @@ clip_rn50x16:
     objective: clip
     ssl_mode: contrastive
     version: 1
-    n_negatives: 65536
+    n_negatives: 32768
     n_classes: null
     is_stopgrad: false
     is_ema: false
@@ -4064,6 +4565,7 @@ clip_rn50x16:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: V100
@@ -4074,7 +4576,7 @@ clip_rn50x4:
     objective: clip
     ssl_mode: contrastive
     version: 1
-    n_negatives: 65536
+    n_negatives: 32768
     n_classes: null
     is_stopgrad: false
     is_ema: false
@@ -4122,6 +4624,7 @@ clip_rn50x4:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: V100
@@ -4132,7 +4635,7 @@ clip_rn50:
     objective: clip
     ssl_mode: contrastive
     version: 1
-    n_negatives: 65536
+    n_negatives: 32768
     n_classes: null
     is_stopgrad: false
     is_ema: false
@@ -4180,10 +4683,605 @@ clip_rn50:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: V100
     time_hours: ???
+
+
+##### OPENCLIP #####
+
+openclip_vitB32:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 79104
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 512
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vitb32 cls
+    architecture: vitb
+    family: vit
+    patch_size: 32
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 87849216
+    projection_nparameters: 3e5
+  representation:
+    z_dim: 768
+    z_layer: cls
+  optimization:
+    epochs: 32
+    batch_size: 79104
+    optimizer: adamw # larc
+    learning_rate: 1e-3
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: LAION-2B
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 76.9
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/mlfoundations/open_clip
+    notes: null
+    month: 12
+    year: 2022
+    license: MIT
+    is_official: true
+    is_industry: false
+    is_our_extract: false
+  compute:
+    n_pus: 824
+    pu_type: A100
+    time_hours: 51
+
+openclip_vitL14:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 86016
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 768
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vitl14 cls
+    architecture: vitl
+    family: vit
+    patch_size: 14
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 303966208
+    projection_nparameters: 8e5
+  representation:
+    z_dim: 1024
+    z_layer: cls
+  optimization:
+    epochs: 32
+    batch_size: 86016
+    optimizer: adamw # larc
+    learning_rate: 1e-3
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: LAION-2B
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 83.5
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/mlfoundations/open_clip
+    notes: null
+    month: 12
+    year: 2022
+    license: MIT
+    is_official: true
+    is_industry: false
+    is_our_extract: false
+  compute:
+    n_pus: 1024
+    pu_type: A100
+    time_hours: 122
+
+openclip_vitH14:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 79104
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 1024
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vith14 cls
+    architecture: vith
+    family: vit
+    patch_size: 14
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 632076800
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 1280
+    z_layer: cls
+  optimization:
+    epochs: 32
+    batch_size: 79104
+    optimizer: adamw # larc
+    learning_rate: 5e-4
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: LAION-2B
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 84.9
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/mlfoundations/open_clip
+    notes: null
+    month: 12
+    year: 2022
+    license: MIT
+    is_official: true
+    is_industry: false
+    is_our_extract: false
+  compute:
+    n_pus: 824
+    pu_type: A100
+    time_hours: 279
+
+openclip_vitH14_extractPred:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 79104
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 1024
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vith14 proj
+    architecture: vith
+    family: vit
+    patch_size: 14
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 632076800
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 1024
+    z_layer: proj
+  optimization:
+    epochs: 32
+    batch_size: 79104
+    optimizer: adamw # larc
+    learning_rate: 5e-4
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: LAION-2B
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/mlfoundations/open_clip
+    notes: null
+    month: 12
+    year: 2022
+    license: MIT
+    is_official: true
+    is_industry: false
+    is_our_extract: true
+  compute:
+    n_pus: 824
+    pu_type: A100
+    time_hours: 279
+
+openclip_vitH14_extractS:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 79104
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 1024
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vith14 4xcls
+    architecture: vith
+    family: vit
+    patch_size: 14
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 632076800
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 5120
+    z_layer: 4xcls
+  optimization:
+    epochs: 32
+    batch_size: 79104
+    optimizer: adamw # larc
+    learning_rate: 5e-4
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: LAION-2B
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/mlfoundations/open_clip
+    notes: null
+    month: 12
+    year: 2022
+    license: MIT
+    is_official: true
+    is_industry: false
+    is_our_extract: true
+  compute:
+    n_pus: 824
+    pu_type: A100
+    time_hours: 279
+
+openclip_vitH14_extractB:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 79104
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 1024
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vith14 cls+avg
+    architecture: vith
+    family: vit
+    patch_size: 14
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 632076800
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 2560
+    z_layer: cls+avg
+  optimization:
+    epochs: 32
+    batch_size: 79104
+    optimizer: adamw # larc
+    learning_rate: 5e-4
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: LAION-2B
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/mlfoundations/open_clip
+    notes: null
+    month: 12
+    year: 2022
+    license: MIT
+    is_official: true
+    is_industry: false
+    is_our_extract: true
+  compute:
+    n_pus: 824
+    pu_type: A100
+    time_hours: 279
+
+openclip_vitG14:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 64000
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 1024
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vitg14 cls
+    architecture: vitg
+    family: vit
+    patch_size: 14
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 1012645632
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 1408
+    z_layer: cls
+  optimization:
+    epochs: 32
+    batch_size: 64000
+    optimizer: adamw # larc
+    learning_rate: 5e-4
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: LAION-2B
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: 84.1
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/mlfoundations/open_clip
+    notes: null
+    month: 12
+    year: 2022
+    license: MIT
+    is_official: true
+    is_industry: false
+    is_our_extract: false
+  compute:
+    n_pus: 800
+    pu_type: A100
+    time_hours: 137
+
+openclip_vitG14_extractPred:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 64000
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 1024
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vitg14 proj
+    architecture: vitg
+    family: vit
+    patch_size: 14
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 1012645632
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 1024
+    z_layer: proj
+  optimization:
+    epochs: 32
+    batch_size: 64000
+    optimizer: adamw # larc
+    learning_rate: 5e-4
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: LAION-2B
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/mlfoundations/open_clip
+    notes: null
+    month: 12
+    year: 2022
+    license: MIT
+    is_official: true
+    is_industry: false
+    is_our_extract: true
+  compute:
+    n_pus: 800
+    pu_type: A100
+    time_hours: 137
+
+openclip_vitG14_extractS:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 64000
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 1024
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vitg14 4xcls
+    architecture: vitg
+    family: vit
+    patch_size: 14
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 1012645632
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 5632
+    z_layer: 4xcls
+  optimization:
+    epochs: 32
+    batch_size: 64000
+    optimizer: adamw # larc
+    learning_rate: 5e-4
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: LAION-2B
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/mlfoundations/open_clip
+    notes: null
+    month: 12
+    year: 2022
+    license: MIT
+    is_official: true
+    is_industry: false
+    is_our_extract: true
+  compute:
+    n_pus: 800
+    pu_type: A100
+    time_hours: 137
+
+
+openclip_vitG14_extractB:
+  ssl:
+    objective: clip
+    ssl_mode: contrastive
+    version: 1
+    n_negatives: 64000
+    n_classes: null
+    is_stopgrad: false
+    is_ema: false
+  model:
+    pred_dim: 1024
+    projection_hid_width: null
+    projection_hid_depth: null
+    architecture_exact: vitg14 cls+avg
+    architecture: vitg
+    family: vit
+    patch_size: 14
+    projection1_arch: linear
+    projection2_arch: linear
+    projection_same: false
+    n_parameters: 1012645632
+    projection_nparameters: 1e6
+  representation:
+    z_dim: 2816
+    z_layer: cls+avg
+  optimization:
+    epochs: 32
+    batch_size: 64000
+    optimizer: adamw # larc
+    learning_rate: 5e-4
+    weight_decay: 0.2
+    scheduler: cosine
+  data:
+    pretraining_data: LAION-2B
+    finetuning_data: null
+    img_size: 224
+    views: 2x224
+    is_aug_invariant: true
+    augmentations:
+      - crop
+      - normalize
+  metrics:
+    top1acc_in1k_official: null
+    top1acc_in1k-1%_official: null
+    top1acc_in1k-c5_official: null
+  meta:
+    where: https://github.com/mlfoundations/open_clip
+    notes: null
+    month: 12
+    year: 2022
+    license: MIT
+    is_official: true
+    is_industry: false
+    is_our_extract: true
+  compute:
+    n_pus: 800
+    pu_type: A100
+    time_hours: 137
 
 ##### Lossyless #####
 lossyless_vitb32_b01:
@@ -4191,10 +5289,11 @@ lossyless_vitb32_b01:
     objective: clip+eb
     ssl_mode: contrastive
     version: 1
-    n_negatives: 65536
+    n_negatives: 32768
     n_classes: null
     is_stopgrad: false
     is_ema: false
+    other: beta 0.1
   model:
     pred_dim: 512
     projection_hid_width: null
@@ -4228,7 +5327,7 @@ lossyless_vitb32_b01:
       - crop
       - normalize
   metrics:
-    top1acc_in1k_official: null
+    top1acc_in1k_official: 76.0
     top1acc_in1k-1%_official: null
     top1acc_in1k-c5_official: null
   meta:
@@ -4239,6 +5338,7 @@ lossyless_vitb32_b01:
     license: MIT
     is_official: true
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: V100
@@ -4249,10 +5349,11 @@ lossyless_vitb32_b005:
     objective: clip+eb
     ssl_mode: contrastive
     version: 1
-    n_negatives: 65536
+    n_negatives: 32768
     n_classes: null
     is_stopgrad: false
     is_ema: false
+    other: beta 0.05
   model:
     pred_dim: 512
     projection_hid_width: null
@@ -4286,7 +5387,7 @@ lossyless_vitb32_b005:
       - crop
       - normalize
   metrics:
-    top1acc_in1k_official: null
+    top1acc_in1k_official: 76.3
     top1acc_in1k-1%_official: null
     top1acc_in1k-c5_official: null
   meta:
@@ -4297,6 +5398,7 @@ lossyless_vitb32_b005:
     license: MIT
     is_official: true
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: V100
@@ -4307,10 +5409,11 @@ lossyless_vitb32_b001:
     objective: clip+eb
     ssl_mode: contrastive
     version: 1
-    n_negatives: 65536
+    n_negatives: 32768
     n_classes: null
     is_stopgrad: false
     is_ema: false
+    other: beta 0.01
   model:
     pred_dim: 512
     projection_hid_width: null
@@ -4344,7 +5447,7 @@ lossyless_vitb32_b001:
       - crop
       - normalize
   metrics:
-    top1acc_in1k_official: null
+    top1acc_in1k_official: 76.6
     top1acc_in1k-1%_official: null
     top1acc_in1k-c5_official: null
   meta:
@@ -4355,6 +5458,7 @@ lossyless_vitb32_b001:
     license: MIT
     is_official: true
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: V100
@@ -4418,6 +5522,7 @@ speccl_resnet50_bs384_ep100:
     license: MIT
     is_official: true
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: GTX 1080
@@ -4480,6 +5585,7 @@ simclr_resnet50_d8192_e100_m2:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4542,6 +5648,7 @@ simclr_resnet50_dNone_e100_m2_headTNoneSNone:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4605,6 +5712,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSMlp:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4668,6 +5776,7 @@ simclr_resnet50_dNone_e100_m2_headTMlpSLin:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4730,6 +5839,7 @@ simclr_resnet50_dNone_e100_m2_headTLinSLin:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4792,6 +5902,7 @@ simclr_resnet50_dNone_e100_m2_data030:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4854,6 +5965,7 @@ simclr_resnet50_dNone_e100_m2_data010:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4916,6 +6028,7 @@ simclr_resnet50_dNone_e100_m2:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -4978,6 +6091,7 @@ dissl_resnet50_d4096_e100_m2:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -5041,6 +6155,7 @@ dissl_resnet50_dNone_e100_m2_headTMlpSMlp:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -5103,6 +6218,7 @@ dissl_resnet50_dNone_e100_m2_headTLinSLin:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -5166,6 +6282,7 @@ dissl_resnet50_dNone_e100_m2_augSmall:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -5229,6 +6346,7 @@ dissl_resnet50_dNone_e100_m2_augLarge:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -5292,6 +6410,7 @@ dissl_resnet50_d8192_e800_m8:
     license: MIT
     is_official: true
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -5354,6 +6473,7 @@ dissl_resnet50_d8192_e400_m6:
     license: MIT
     is_official: true
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -5416,6 +6536,7 @@ dissl_resnet50_dNone_e400_m6:
     license: MIT
     is_official: true
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -5478,6 +6599,7 @@ dissl_resnet50_dNone_e400_m2:
     license: MIT
     is_official: true
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -5540,6 +6662,7 @@ dissl_resnet50_d8192_e100_m2:
     license: MIT
     is_official: true
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -5602,6 +6725,7 @@ dissl_resnet50_dNone_e100_m2:
     license: MIT
     is_official: true
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: A100
@@ -5665,6 +6789,7 @@ simsiam_rn50_bs256_ep100:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: ???
@@ -5727,6 +6852,7 @@ simsiam_rn50_bs512_ep100:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: ???
@@ -5852,6 +6978,7 @@ selav2_rn50_ep400_2x224:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: ???
     pu_type: V100
@@ -5914,6 +7041,7 @@ dc2_rn50_ep800_2x224_6x96:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: V100
@@ -5976,6 +7104,7 @@ dc2_rn50_ep400_2x160_4x96:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: V100
@@ -6038,6 +7167,7 @@ dc2_rn50_ep400_2x224:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: V100
@@ -6100,6 +7230,7 @@ swav_rn50w4:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: V100
@@ -6162,6 +7293,7 @@ swav_rn50w2:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 128
     pu_type: V100
@@ -6224,6 +7356,7 @@ swav_rn50_ep400_bs256:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 4
     pu_type: V100
@@ -6286,6 +7419,7 @@ swav_rn50_ep400_2x224:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: V100
@@ -6348,6 +7482,7 @@ swav_rn50_ep400:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: V100
@@ -6410,6 +7545,7 @@ swav_rn50_ep200_bs256:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 4
     pu_type: V100
@@ -6472,6 +7608,7 @@ swav_rn50_ep200:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: V100
@@ -6534,6 +7671,7 @@ swav_rn50_ep100:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: V100
@@ -6596,6 +7734,7 @@ swav_rn50:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: V100
@@ -6660,6 +7799,7 @@ vicreg_rn50w2:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: Tesla V100
@@ -6723,6 +7863,7 @@ vicreg_rn50:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: Tesla V100
@@ -6738,6 +7879,7 @@ vicregl_rn50_alpha09:
     n_classes: null
     is_stopgrad: false
     is_ema: false
+    other: alpha 0.9
   model:
     pred_dim: 8192
     projection_hid_width: 8192
@@ -6787,6 +7929,7 @@ vicregl_rn50_alpha09:
     license: Creative Commons Attribution-NonCommercial 4.0 International License
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: Tesla V100
@@ -6801,6 +7944,7 @@ vicregl_rn50_alpha075:
     n_classes: null
     is_stopgrad: false
     is_ema: false
+    other: alpha 0.75
   model:
     pred_dim: 8192
     projection_hid_width: 8192
@@ -6850,6 +7994,7 @@ vicregl_rn50_alpha075:
     license: Creative Commons Attribution-NonCommercial 4.0 International License
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: Tesla V100
@@ -6857,13 +8002,14 @@ vicregl_rn50_alpha075:
 
 vicregl_convnexts_alpha09:
   ssl:
-    objective: hierarchical
-    ssl_mode: siamese
+    objective: vicregl
+    ssl_mode: hierarchical
     version: 1
     n_negatives: 3072
     n_classes: null
     is_stopgrad: false
     is_ema: false
+    other: alpha 0.9
   model:
     pred_dim: 8192
     projection_hid_width: 8192
@@ -6913,6 +8059,7 @@ vicregl_convnexts_alpha09:
     license: Creative Commons Attribution-NonCommercial 4.0 International License
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: Tesla V100
@@ -6920,13 +8067,14 @@ vicregl_convnexts_alpha09:
 
 vicregl_convnexts_alpha075:
   ssl:
-    objective: hierarchical
-    ssl_mode: siamese
+    objective: vicregl
+    ssl_mode: hierarchical
     version: 1
     n_negatives: 3072
     n_classes: null
     is_stopgrad: false
     is_ema: false
+    other: alpha 0.75
   model:
     pred_dim: 8192
     projection_hid_width: 8192
@@ -6976,6 +8124,7 @@ vicregl_convnexts_alpha075:
     license: Creative Commons Attribution-NonCommercial 4.0 International License
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: Tesla V100
@@ -6983,13 +8132,14 @@ vicregl_convnexts_alpha075:
 
 vicregl_convnextb_alpha09:
   ssl:
-    objective: hierarchical
-    ssl_mode: siamese
+    objective: vicregl
+    ssl_mode: hierarchical
     version: 1
     n_negatives: 4608
     n_classes: null
     is_stopgrad: false
     is_ema: false
+    other: alpha 0.9
   model:
     pred_dim: 8192
     projection_hid_width: 8192
@@ -7039,6 +8189,7 @@ vicregl_convnextb_alpha09:
     license: Creative Commons Attribution-NonCommercial 4.0 International License
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: Tesla V100
@@ -7046,13 +8197,14 @@ vicregl_convnextb_alpha09:
 
 vicregl_convnextb_alpha075:
   ssl:
-    objective: hierarchical
-    ssl_mode: siamese
+    objective: vicregl
+    ssl_mode: hierarchical
     version: 1
     n_negatives: 4608
     n_classes: null
     is_stopgrad: false
     is_ema: false
+    other: alpha 0.75
   model:
     pred_dim: 8192
     projection_hid_width: 8192
@@ -7102,6 +8254,7 @@ vicregl_convnextb_alpha075:
     license: Creative Commons Attribution-NonCommercial 4.0 International License
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: Tesla V100
@@ -7166,6 +8319,7 @@ vicregl_convnextxl_alpha075:
     license: Creative Commons Attribution-NonCommercial 4.0 International License
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: Tesla V100
@@ -7231,6 +8385,7 @@ pirl_rn50w2_headMLP:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: ???
@@ -7294,6 +8449,7 @@ pirl_rn50w2:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: ???
@@ -7357,6 +8513,7 @@ pirl_rn50_ep200_headMLP:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: ???
@@ -7420,6 +8577,7 @@ pirl_rn50_headMLP:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: ???
@@ -7483,6 +8641,7 @@ pirl_rn50_ep200:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: ???
@@ -7546,6 +8705,7 @@ pirl_rn50:
     license: MIT
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: ???
@@ -7661,6 +8821,7 @@ npidpp_rn50:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: ???
@@ -7721,6 +8882,7 @@ npid_rn50:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -7781,6 +8943,7 @@ clusterfit_rn50:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -7841,6 +9004,7 @@ jigsaw_rn50:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -7901,6 +9065,7 @@ jigsaw_rn50_in22k:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -7962,6 +9127,7 @@ simclr_rn101_ep100:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: ???
@@ -8023,6 +9189,7 @@ simclr_rn101:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: ???
@@ -8084,6 +9251,7 @@ simclr_rn50w4:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: ???
@@ -8145,6 +9313,7 @@ simclr_rn50w2_ep100:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: ???
@@ -8206,6 +9375,7 @@ simclr_rn50w2:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: ???
@@ -8267,6 +9437,7 @@ simclr_rn50_bs4096_ep100:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: ???
@@ -8328,6 +9499,7 @@ simclr_rn50_ep800:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: ???
@@ -8389,6 +9561,7 @@ simclr_rn50_ep400:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: ???
@@ -8450,6 +9623,7 @@ simclr_rn50_ep200:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: ???
@@ -8511,6 +9685,7 @@ simclr_rn50:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 64
     pu_type: ???
@@ -8570,6 +9745,7 @@ rotnet_rn50_in22k:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -8629,6 +9805,7 @@ rotnet_rn50_in1k:
     license: MIT
     is_official: false
     is_industry: false
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -8691,6 +9868,7 @@ mocov2_rn50_vissl:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 8
     pu_type: ???
@@ -8754,6 +9932,7 @@ barlow_rn50_ep300:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: ???
@@ -8817,6 +9996,7 @@ barlow_rn50:
     license: MIT
     is_official: false
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 32
     pu_type: ???
@@ -8881,6 +10061,7 @@ byol_rn50_bs4096:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -8944,6 +10125,7 @@ byol_rn50_bs2048:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -9007,6 +10189,7 @@ byol_rn50_bs1024:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -9070,6 +10253,7 @@ byol_rn50_bs512:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -9133,6 +10317,7 @@ byol_rn50_bs256:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -9196,6 +10381,7 @@ byol_rn50_bs128:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -9259,6 +10445,7 @@ byol_rn50_bs64:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -9318,6 +10505,7 @@ byol_rn50_augCropBlur:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -9378,6 +10566,7 @@ byol_rn50_augCropColor:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -9436,6 +10625,7 @@ byol_rn50_augCrop:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -9497,6 +10687,7 @@ byol_rn50_augNocolor:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -9559,6 +10750,7 @@ byol_rn50_augNogray:
     license: CC BY-NC 4.0
     is_official: true
     is_industry: true
+    is_our_extract: false
   compute:
     n_pus: 512
     pu_type: Cloud TPU v3
@@ -10183,28 +11375,6 @@ init_rn50_d1024:
     family: resnet
   representation:
     z_dim: 1024
-    z_layer: avgpool
-  data:
-    img_size: 224
-  metrics:
-    top1acc_in1k_official: null
-    top1acc_in1k-1%_official: null
-    top1acc_in1k-c5_official: null
-  meta:
-    where: https://github.com/pytorch/vision
-    license: BSD 3-Clause
-    is_official: false
-
-init_rn50_d8192:
-  ssl:
-    ssl_mode: initialized
-  model:
-    architecture_exact: resnet50d8192
-    architecture: resnet50
-    patch_size: null
-    family: resnet
-  representation:
-    z_dim: 8192
     z_layer: avgpool
   data:
     img_size: 224

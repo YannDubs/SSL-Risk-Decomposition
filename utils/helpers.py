@@ -47,12 +47,28 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-def _prettify_df(df, pretty_renamer):
+def clean_model_name(name, pretty_renamer):
+    name = name.replace(" ", "_")
+    if name.count("_") >= 2:
+        *model_arch, rest = name.split("_", 2)
+        model_arch = "_".join(model_arch)
+    else:
+        model_arch = name
+        rest = ""
+    model_arch = pretty_renamer[model_arch]
+    return model_arch, rest
+
+
+def _prettify_df(df, pretty_renamer, index=None):
     df = df.copy()
     df = df.rename(columns=pretty_renamer)
     for c in df.columns:
         if not is_numeric_dtype(df[c]):
             df[c] = df[c].apply(lambda x: pretty_renamer[x])
+    if index == "join":
+        df = df.rename(index=lambda x: " ".join(clean_model_name(x, pretty_renamer)))
+    elif index == "model_arch":
+        df = df.rename(index=lambda x: clean_model_name(x, pretty_renamer)[0])
     return df
 
 def ols_clean_df_(df, columns):

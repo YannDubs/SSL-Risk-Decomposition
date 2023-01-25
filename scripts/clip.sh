@@ -21,6 +21,23 @@ predictor=torch_linear_delta_hypopt
 "
 
 
+kwargs_multi="
+representor=clip_vitL14_px336_extractPred,clip_vitL14_px336_extractPredCls
+seed=123
+predictor=torch_linear_delta_hypopt
+"
+
+kwargs_multi="
+representor=clip_vitL14_px336_extractB,clip_vitL14_px336_extractS
+seed=123
+predictor=torch_linear_delta_hypopt
+"
+
+kwargs_multi="
+representor=clip_vitL14_px336_extractB
+seed=123
+predictor=torch_linear_delta_hypopt
+"
 
 if [ "$is_plot_only" = false ] ; then
   for kwargs_dep in ""

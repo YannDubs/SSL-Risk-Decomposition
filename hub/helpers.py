@@ -80,9 +80,10 @@ class VITWrapper(nn.Module):
         Which feature to use as the representation.
 
     """
-    def __init__(self, encoder : nn.Module, representation: str):
+    def __init__(self, encoder : nn.Module, representation: str, is_raise_unkown_rep: bool = True):
         super().__init__()
         self.encoder = encoder
+        self.representation = representation
 
         if representation == "cls+avg":
             self.n_last_blocks = 1
@@ -93,7 +94,7 @@ class VITWrapper(nn.Module):
         elif representation == "cls":
             self.n_last_blocks = 1
             self.avgpool_patchtokens = False
-        else:
+        elif is_raise_unkown_rep:
             raise ValueError(f"Unknown extract_mode={representation}")
 
     def forward(self, x: torch.Tensor):
@@ -105,6 +106,37 @@ class VITWrapper(nn.Module):
             output = output.reshape(output.shape[0], -1)
 
         return output
+
+class VITWrapperCLIP(VITWrapper):
+    def __init__(self, encoder, representation="cls"):
+        super().__init__(encoder=encoder, representation=representation, is_raise_unkown_rep=False)
+
+        if representation == "proj":
+            self.n_last_blocks = 1
+            self.avgpool_patchtokens = False
+
+        if "proj+" in representation:
+            self.is_add_proj = True
+        else:
+            self.is_add_proj = False
+
+    def forward(self, x):
+        intermediate_output = self.encoder.get_intermediate_layers(x, self.n_last_blocks)
+        output = torch.cat([x[:, 0] for x in intermediate_output], dim=-1)
+
+        if self.representation == "proj":
+            return output @ self.encoder.proj
+
+        if self.avgpool_patchtokens:
+            output = torch.cat([output, intermediate_output[-1][:, 1:].mean(dim=1)], dim=-1)
+
+        if self.is_add_proj:
+            output = torch.cat([output, intermediate_output[-1][:, 0] @ self.encoder.proj], dim=-1)
+
+        return output
+
+
+
 
 def interpolate_pos_encoding(x, pos_embed):
     """Interpolated the position encoding to the input size. Should not be needed if using the same input size as trained on."""
@@ -148,6 +180,30 @@ def get_intermediate_layers(self, x, n=1):
 
         if len(self.blocks) - i <= n:
             output.append(self.norm(x))
+
+    return output
+
+def get_intermediate_layers_clip(self, x, n=1):
+    """Replicates https://github.com/facebookresearch/dino/blob/3247a0cacb4c0642270469e06facf96e895f56de
+    /vision_transformer.py#L225 for CLIP models.
+    """
+
+    x = self.conv1(x)  # shape = [*, width, grid, grid]
+    x = x.reshape(x.shape[0], x.shape[1], -1)  # shape = [*, width, grid ** 2]
+    x = x.permute(0, 2, 1)  # shape = [*, grid ** 2, width]
+    x = torch.cat([self.class_embedding.to(x.dtype) +
+                   torch.zeros(x.shape[0], 1, x.shape[-1], dtype=x.dtype, device=x.device), x],
+                  dim=1)  # shape = [*, grid ** 2 + 1, width]
+    x = x + self.positional_embedding.to(x.dtype)
+    x = self.ln_pre(x)
+    x = x.permute(1, 0, 2)  # NLD -> LND
+
+    output = []
+    for i, blk in enumerate(self.transformer.resblocks):
+        x = blk(x)
+
+        if len(self.transformer.resblocks) - i <= n:
+            output.append(self.ln_post(x.permute(1, 0, 2)))  # LND -> NLD and normalize
 
     return output
 

@@ -14,7 +14,13 @@ timeout=$time
 "
 
 kwargs_multi="
-representor=msn_vits16_ep800,msn_vitb16_ep600,msn_vitl16_ep600,msn_vitl7_ep200,msn_vitb4_ep300
+representor=msn_vits16_ep800,msn_vitb16_ep600,msn_vitl16_ep600,msn_vitl7_ep200,msn_vitb4_ep300,msn_vitl7_ep200_extractb,msn_vitl7_ep200_extracts
+seed=123
+predictor=torch_linear_delta_hypopt
+"
+
+kwargs_multi="
+representor=msn_vitb4_ep300_extracts,msn_vitb4_ep300_extractb
 seed=123
 predictor=torch_linear_delta_hypopt
 "

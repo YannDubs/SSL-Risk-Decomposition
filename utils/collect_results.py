@@ -32,7 +32,7 @@ from optuna.samplers import TPESampler
 from optuna.visualization.matplotlib import plot_param_importances, plot_optimization_history, plot_parallel_coordinate
 
 import hubconf
-from utils.helpers import _prettify_df, ols_clean_df_, powerset
+from utils.helpers import _prettify_df, ols_clean_df_, powerset, clean_model_name
 from utils.pretty_renamer import PRETTY_RENAMER
 
 COMPONENTS_ONLY = ["approx", "usability", "probe_gen", "enc_gen"]
@@ -357,7 +357,10 @@ def f_replace_arch(arch):
     # all the following are assumed to have zero approximation error given that they are upperbounded
     # by resnet50w which achieve 0.8% and those are much better with larger dim
     # and are much better models
-    if arch in ["resnet50w4", "resnet50w16", "resnet50w64", "vith14 cls", "convnextxl"]:
+    if arch in ["resnet50w4", "resnet50w16", "resnet50w64", "vith14 cls", "vitg14 cls", "convnextxl"]:
+        arch = "zero"
+
+    if "vitg14" in arch:
         arch = "zero"
     #arch = arch.replace("vith14 cls", "zero")
 
@@ -767,16 +770,6 @@ def melt(df, components=COMPONENTS, var_name="component", **kwargs):
                    var_name=var_name,
                    **kwargs)
 
-def clean_model_name(name, pretty_renamer=PRETTY_RENAMER):
-    name = name.replace(" ", "_")
-    if name.count("_") >= 2:
-        *model_arch, rest = name.split("_", 2)
-        model_arch = "_".join(model_arch)
-    else:
-        model_arch = name
-        rest = ""
-    model_arch = pretty_renamer[model_arch]
-    return model_arch, rest
 
 
 def filter_by_quantile(df, col="agg_risk", is_year=True, quantile=0.1):
@@ -1176,7 +1169,56 @@ def get_df_shap(model, X, y, normalize_by=None, df=None):
     return joined, shap_values
 
 
-def prettify_df(df, pretty_renamer=PRETTY_RENAMER):
-    return _prettify_df(df, pretty_renamer)
+def prettify_df(df, pretty_renamer=PRETTY_RENAMER, **kwargs):
+    return _prettify_df(df, pretty_renamer, **kwargs)
+
+
+def table_to_tex(table, size_other=r"\tiny", size_all=None, **kwargs):
+    table = table.copy()
+    model_arch, rest = zip(*[clean_model_name(i, pretty_renamer=PRETTY_RENAMER) for i in table.index])
+    table["Objective"], table["Arch."] = zip(*[m.rsplit(" ", 1) for m in model_arch])
+    rest = [r.replace('_', '\_') for r in rest]
+    table["Other"] = [size_other + rf"{{{r}}}" for r in rest]  # can use \miniscule if want smaller
+    table = table.rename(columns=PRETTY_RENAMER).set_index(["Objective", "Arch.", "Epochs", "Other"])
+    # table.columns = pd.MultiIndex.from_arrays([[r"\textbf{Risk Component}"]*len(COMPONENTS_ONLY) + [r"\textbf{
+    # Aggregated Error}"]*len(CORE_METRICS), table.columns])
+    table = table.sort_index(level=[0, 1, 2])
+
+    styler = table.style.format(precision=2, na_rep="")
+    tex = styler.to_latex(multicol_align="c",
+                          hrules=True,
+                          position="h",
+                          multirow_align="t",
+                          position_float="centering",
+                          **kwargs
+                          )
+    tex = tex.replace("\\\\\n\\multirow", "\\\\\n\\midrule\n\\multirow")
+    unique_obj = table.groupby("Objective").nunique().max(axis=1)
+    for o in unique_obj[unique_obj == 1].index:
+        tex = tex.replace("\\\\\n" + o, "\\\\\n\\midrule\n" + o)
+    rows = tex.split("\n")
+
+    for i_col, r in enumerate(rows):
+        if r.startswith(" &  &  &  &"):
+            break
+
+    # bold and add all columns on the same row
+    new_cols = r"} & \textbf{".join([r" " + i for i in rows[i_col + 1].split("&  &")[0].split("&")]
+                                    ) + r"} & \textbf{" + r"} & \textbf{".join(rows[i_col].split("&  &")[-1].split("&"))
+    new_cols = r"\textbf{" + new_cols[:-2] + r"} \\"
+
+    if size_all:
+        print(rf"\begin{{{size_all}}}")
+    for r in rows:
+        if r.endswith(r"&  &  &  \\"):
+            continue
+        elif r == rows[i_col]:
+            print(new_cols)
+            continue
+
+        print(r)
+
+    if size_all:
+        print(rf"\end{{{size_all}}}")
 
 

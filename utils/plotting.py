@@ -19,12 +19,11 @@ import warnings
 from matplotlib.cbook import MatplotlibDeprecationWarning
 import seaborn as sns
 
-from utils.collect_results import COMPONENTS, COMPONENTS_ONLY_IMP, clean_model_name
-from utils.helpers import _prettify_df, min_max_scale
+from utils.collect_results import COMPONENTS, COMPONENTS_ONLY_IMP
+from utils.helpers import _prettify_df, min_max_scale, clean_model_name
 import math
 
 from utils.pretty_renamer import PRETTY_RENAMER
-#plt.rcParams['text.usetex'] = True
 
 @contextlib.contextmanager
 def plot_config(
@@ -294,6 +293,8 @@ def plot_radar_grid(results,
                     is_tex: bool = True,
                     space_per_col=3,
                     space_per_row=2.3,
+                    is_plot_rest=True,
+                    pad_inches=0.2,
                     **kwargs):
     """Plots a grid of radar plots"""
     with plot_config(**config_kwargs):
@@ -328,7 +329,7 @@ def plot_radar_grid(results,
         # first plot
         if is_label_first:
             if is_tex:
-                labels = [rf"\LARGE{{{pretty_renamer[c]}}}" for c in columns]
+                labels = [rf"\Large{{{pretty_renamer[c]}}}" for c in columns]
             else:
                 labels = [pretty_renamer[c] for c in columns]
         else:
@@ -341,11 +342,14 @@ def plot_radar_grid(results,
                    color=colors[0])
 
         for i, (model, row) in enumerate(rest_data.iterrows(), start=1):
-            model_arch, rest = clean_model_name(model)
+            model_arch, rest = clean_model_name(model, pretty_renamer=pretty_renamer)
             #rest = pretty_renamer[rest]
-            title = (rf"\Large{{{model_arch}}}"
-                     "\n"
-                     rf"\large{{{rest}}}")
+            if is_plot_rest:
+                title = (rf"\Large{{{model_arch}}}"
+                         "\n"
+                         rf"\large{{{rest}}}")
+            else:
+                title = rf"\Large{{{model_arch}}}"
             plot_radar(flat_axes[i], theta, row, title=title, is_ticks_label=False, color=colors[i])
 
         if len(rest_data) > 0:
@@ -357,7 +361,7 @@ def plot_radar_grid(results,
     if save_path is None:
         plt.show()
     else:
-        plt.savefig(save_path, bbox_inches='tight', pad_inches=0.2)
+        plt.savefig(save_path, bbox_inches='tight', pad_inches=pad_inches)
 
 
 def plot_trend_ax(data, is_min=False, ax=None, pretty_renamer=PRETTY_RENAMER, **kwargs):
@@ -371,19 +375,19 @@ def plot_trend_ax(data, is_min=False, ax=None, pretty_renamer=PRETTY_RENAMER, **
     if ax is None:
         ax = plt.gca()
 
-    ax = values.plot.area(alpha=0.7, ax=ax)
+    ax = values.plot.area(alpha=0.7, ax=ax, **kwargs)
     ax.set_ylabel("Error")
 
     return ax
 
 
-def plot_trend(df, is_min=False, save_path=None, figsize=(6.5, 5)):
+def plot_trend(df, is_min=False, save_path=None, figsize=(6.5, 5), **kwargs):
     """Plots a stacked plot to understand how components changed over time."""
     with plot_config(rc={'lines.linewidth': 2, 'font.family': 'sans-serif',
                          "ytick.labelsize": 13, "xtick.labelsize": 13},
                      ):
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=figsize)
-        plot_trend_ax(df, is_min=is_min, ax=ax)
+        plot_trend_ax(df, is_min=is_min, ax=ax, **kwargs)
 
         ax.xaxis.get_major_locator().set_params(integer=True)
 
@@ -442,12 +446,19 @@ def plot_shap_importance(model, X, y=None, n_feat=7, is_avg_imp=True, plot_size=
     plt.gca().set_xlabel("mean(|SHAP|)", fontsize=12)
     return plt.gca()
 
-def plot_shap_components(param, df_shap,height=2, aspect=4,is_normalize=False, config_kwargs={}, **kwargs):
+def plot_shap_components(param, df_shap,height=2, aspect=4,is_normalize=False, config_kwargs={},
+                         rc={'lines.linewidth': 2, "xtick.labelsize": 12, "legend.fontsize": 12},
+                         is_colorbar=False,
+                         **kwargs):
     variable = PRETTY_RENAMER[param]
     shap_prfx = PRETTY_RENAMER["normshap_"] if is_normalize else PRETTY_RENAMER["shap_"]
+    other={}
+
+    if is_colorbar:
+        kwargs["legend"] = False
 
     with plot_config(font_scale=1.4,
-                     rc={'lines.linewidth': 2, "xtick.labelsize": 12, "legend.fontsize": 12},
+                     rc=rc,
                      **config_kwargs):
 
         g=sns.catplot(data=_prettify_df(df_shap, pretty_renamer=PRETTY_RENAMER),
@@ -463,5 +474,24 @@ def plot_shap_components(param, df_shap,height=2, aspect=4,is_normalize=False, c
         for y in g.ax.get_yticks():
             plt.axhline(y=y, color = "gray", alpha=0.5, linewidth=0.5, linestyle=(0, (1, 5)))
         g.set(xlabel=shap_prfx.strip(), ylabel=None)
-        g._legend.set_title(None)
-    return g
+
+        if g._legend is not None:
+            g._legend.set_title(None)
+
+        if is_colorbar:
+            HueNorm = type(kwargs.get("hue_norm", plt.Normalize()))
+            norm = HueNorm(df_shap[param].min(), df_shap[param].max())
+            cmap = sns.cubehelix_palette(light=1, as_cmap=True)
+            sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+            sm.set_array([])
+            cb = g.figure.colorbar(sm, pad=0.01, aspect=10, drawedges=False)
+            cb.ax.tick_params(labelsize=plt.rcParams["xtick.labelsize"], width=0.5, length=4, which="both")
+            cb.outline.set_color('white')
+            cb.outline.set_linewidth(2)
+            cb.dividers.set_color('white')
+            cb.dividers.set_linewidth(2)
+            other["colorbar"] = cb
+
+    return g, other
+
+

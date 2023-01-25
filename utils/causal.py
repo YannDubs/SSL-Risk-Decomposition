@@ -101,7 +101,7 @@ def nodes2feat(node):
 TO_LOG = ["nviews", "z_dim", "batch_size", "n_parameters", "epochs"]
 
 
-def causal_graph(treatment, return_to_condition=True):
+def causal_graph(treatment, return_to_condition=True, is_log=True):
     g = gr.Digraph()
 
     top_hypopt = ["data"]
@@ -133,6 +133,9 @@ def causal_graph(treatment, return_to_condition=True):
     if return_to_condition:
         to_condition = [nodes2feat(n) for n in top_hypopt + core_hypopt + ["year", "is_industry", "is_official"]]
         to_condition = [c for c in to_condition if c != treatment]
+        if is_log:
+            to_condition = [f"np.log({c})" if c in TO_LOG else c for c in to_condition ]
+
         return g, to_condition
 
     return g

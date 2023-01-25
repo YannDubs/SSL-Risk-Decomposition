@@ -69,6 +69,7 @@ def metadata_df(is_multiindex=False, is_lower=True, **kwargs):
         else:
             df[df.columns[i_col]] = df.iloc[:, i_col].astype(dtype)
 
+
     return df
 
 
@@ -429,19 +430,19 @@ try:
     from hub.clip import get_clip_models as _get_clip_models
 
     def clip_rn50(**kwargs):
-        return _get_clip_models('RN50', **kwargs)
+        return _get_clip_models('RN50', family="resnet", **kwargs)
 
     def clip_rn50x4(**kwargs):
-        return _get_clip_models('RN50x4', **kwargs)
+        return _get_clip_models('RN50x4', family="resnet", **kwargs)
 
     def clip_rn50x16(**kwargs):
-        return _get_clip_models('RN50x16', **kwargs)
+        return _get_clip_models('RN50x16', family="resnet", **kwargs)
 
     def clip_rn50x64(**kwargs):
-        return _get_clip_models('RN50x64', **kwargs)
+        return _get_clip_models('RN50x64', family="resnet", **kwargs)
 
     def clip_rn101(**kwargs):
-        return _get_clip_models('RN101', **kwargs)
+        return _get_clip_models('RN101', family="resnet", **kwargs)
 
     def clip_vitB16(**kwargs):
         return _get_clip_models('ViT-B/16', **kwargs)
@@ -454,6 +455,57 @@ try:
 
     def clip_vitL14_px336(**kwargs):
         return _get_clip_models('ViT-L/14@336px', **kwargs)
+
+    def clip_vitL14_px336_extractPred(**kwargs):
+        return _get_clip_models('ViT-L/14@336px', representation="proj",  **kwargs)
+
+    def clip_vitL14_px336_extractPredCls(**kwargs):
+        return _get_clip_models('ViT-L/14@336px', representation="proj+cls",  **kwargs)
+
+    def clip_vitL14_px336_extractS(**kwargs):
+        return _get_clip_models('ViT-L/14@336px', representation="4xcls",  **kwargs)
+
+    def clip_vitL14_px336_extractB(**kwargs):
+        return _get_clip_models('ViT-L/14@336px', representation="cls+avg",  **kwargs)
+
+except ImportError as e:
+    _logging.warning(f"CLIP models not available because of the following import error: \n {e}")
+
+##### OPENCLIP #####
+# pretrained models are from https://github.com/mlfoundations/open_clip
+
+try:
+    from hub.openclip import get_openclip_models as _get_openclip_models
+
+    def openclip_vitB32(**kwargs):
+        return _get_openclip_models('laion2b_s34b_b79k', 'ViT-B-32', **kwargs)
+
+    def openclip_vitL14(**kwargs):
+        return _get_openclip_models('laion2b_s32b_b82k', 'ViT-L-14', **kwargs)
+
+    def openclip_vitH14(**kwargs):
+        return _get_openclip_models('laion2b_s32b_b79k', 'ViT-H-14', **kwargs)
+
+    def openclip_vitH14_extractPred(**kwargs):
+        return _get_openclip_models('laion2b_s32b_b79k', 'ViT-H-14', representation="proj", **kwargs)
+
+    def openclip_vitH14_extractS(**kwargs):
+        return _get_openclip_models('laion2b_s32b_b79k', 'ViT-H-14', representation="4xcls", **kwargs)
+
+    def openclip_vitH14_extractB(**kwargs):
+        return _get_openclip_models('laion2b_s32b_b79k', 'ViT-H-14', representation="cls+avg", **kwargs)
+
+    def openclip_vitG14(**kwargs):
+        return _get_openclip_models('laion2b_s12b_b42k', 'ViT-G-14', **kwargs)
+
+    def openclip_vitG14_extractPred(**kwargs):
+        return _get_openclip_models('laion2b_s12b_b42k', 'ViT-G-14', representation="proj",  **kwargs)
+
+    def openclip_vitG14_extractS(**kwargs):
+        return _get_openclip_models('laion2b_s12b_b42k', 'ViT-G-14', representation="4xcls",  **kwargs)
+
+    def openclip_vitG14_extractB(**kwargs):
+        return _get_openclip_models('laion2b_s12b_b42k', 'ViT-G-14', representation="cls+avg",  **kwargs)
 
 except ImportError as e:
     _logging.warning(f"CLIP models not available because of the following import error: \n {e}")
@@ -519,6 +571,12 @@ try:
     def ibot_vitS16_extractS(**kwargs):
         return _get_ibot_models("ibot_vitS16", "vits16", 'vit_small_patch16_224', representation="4xcls", **kwargs)
 
+    def ibot_vitL16_extractB(**kwargs):
+        return _get_ibot_models("ibot_vitL16", "vitl16", 'vit_large_patch16_224', representation="cls+avg", **kwargs)
+
+    def ibot_vitL16_extractS(**kwargs):
+        return _get_ibot_models("ibot_vitL16", "vitl16", 'vit_large_patch16_224', representation="4xcls", **kwargs)
+
 except ImportError as e:
     _logging.warning(f"IBOT models not available because of the following import error: \n {e}")
 
@@ -544,11 +602,20 @@ try:
     def mugs_vitl16_ep250(**kwargs):
         return _get_mugs_models("mugs_vitl16_ep250", 'vit_large_patch16_224', **kwargs)
 
+    def mugs_vitl16_ep250_extractB(**kwargs):
+        return _get_mugs_models("mugs_vitl16_ep250", 'vit_large_patch16_224', representation="cls+avg", **kwargs)
+
+    def mugs_vitl16_ep250_extractS(**kwargs):
+        return _get_mugs_models("mugs_vitl16_ep250", 'vit_large_patch16_224', representation="4xcls",**kwargs)
+
     def mugs_vits16_ep800_extractS(**kwargs):
         return _get_mugs_models("mugs_vits16_ep800", 'vit_small_patch16_224', representation="4xcls", **kwargs)
 
     def mugs_vitb16_ep400_extractB(**kwargs):
         return _get_mugs_models("mugs_vitb16_ep400", 'vit_base_patch16_224', representation="cls+avg", **kwargs)
+
+    def mugs_vitb16_ep400_extractS(**kwargs):
+        return _get_mugs_models("mugs_vitb16_ep400", 'vit_base_patch16_224', representation="4xcls", **kwargs)
 
 except ImportError as e:
     _logging.warning(f"MUGS models not available because of the following import error: \n {e}")
@@ -587,11 +654,24 @@ try:
     def msn_vitb4_ep300(**kwargs):
         return _get_msn_models("msn_vitb4_ep300", 'vit_base_patch4_224', **kwargs)
 
+    def msn_vitb4_ep300_extractb(**kwargs):
+        return _get_msn_models("msn_vitb4_ep300", 'vit_base_patch4_224', representation="cls+avg", **kwargs)
+
+    def msn_vitb4_ep300_extracts(**kwargs):
+        return _get_msn_models("msn_vitb4_ep300", 'vit_base_patch4_224', representation="4xcls", **kwargs)
+
     def msn_vitl16_ep600(**kwargs):
         return _get_msn_models("msn_vitl16_ep600", 'vit_large_patch16_224', **kwargs)
 
     def msn_vitl7_ep200(**kwargs):
         return _get_msn_models("msn_vitl7_ep200", 'vit_large_patch7_224', **kwargs)
+
+    def msn_vitl7_ep200_extractb(**kwargs):
+        return _get_msn_models("msn_vitl7_ep200", 'vit_large_patch7_224', representation="cls+avg", **kwargs)
+
+    def msn_vitl7_ep200_extracts(**kwargs):
+        return _get_msn_models("msn_vitl7_ep200", 'vit_large_patch7_224', representation="4xcls", **kwargs)
+
 
 except ImportError as e:
     _logging.warning(f"MSN models not available because of the following import error: \n {e}")
@@ -879,6 +959,7 @@ def _metadata_cols_to_types():
             'license': pd.StringDtype(),  # license of pretraining weights / code
             'is_official': "boolean",  # whether official pretraining weights
             'is_industry': "boolean",  # whether the hyper parameters were tuned in industry / big tech
+            'is_our_extract': "boolean",  # whether we use a different method for extracting the representation
             'n_pus': pd.Int64Dtype(),  # number of processors used for training
             'pu_type': pd.StringDtype(),  # type of processors used for training
             'time_hours': "float64",  # total training time

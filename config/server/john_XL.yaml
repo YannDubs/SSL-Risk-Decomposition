@@ -11,7 +11,7 @@ hydra:
     partition: john # jag-hi, jag-important, jag-standard, john (CPU)
     comment: null
     constraint: null # 12G,11G,24G,pascal,ampere,maxwell,turing,volta # TODO test if works if not will have to use gres
-    exclude: john11,john12,john13,john14,john15,john17
+    exclude: john11,john12,john13
     array_parallelism: 30 # max number of parallel tasks
     cpus_per_task: 2
     mem_gb: 42

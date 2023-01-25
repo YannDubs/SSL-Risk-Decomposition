@@ -23,7 +23,7 @@ data.kwargs.subset_raw_dataset=0.3
 "
 
 kwargs_multi="
-representor=clip_rn50x4
+representor=clip_vitL14_px336_extractS,clip_vitL14_px336_extractB
 seed=123
 predictor=sk_logistic_hypopt
 data.kwargs.is_avoid_raw_dataset=True
