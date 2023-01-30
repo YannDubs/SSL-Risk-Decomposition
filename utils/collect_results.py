@@ -1222,3 +1222,20 @@ def table_to_tex(table, size_other=r"\tiny", size_all=None, **kwargs):
         print(rf"\end{{{size_all}}}")
 
 
+def collect_best_results(df, metrics, keep=[], n=1):
+    indices = set()
+    for m in metrics:
+        indices.update(df[m].sort_values()[:n].index)
+    return df.loc[list(indices), metrics + keep]
+
+
+def collect_best_acc_by_cat(df, metrics, categories, **kwargs):
+    all_best = []
+    for i, c in enumerate(categories):
+        queried = df if c is None else df.query(c)
+        curr_df = collect_best_results(queried, metrics, **kwargs)
+        curr_df[metrics] = 100 - curr_df[metrics]
+        curr_df["category"] = i
+        all_best += [curr_df]
+
+    return prettify_df(pd.concat(all_best).drop_duplicates(subset=metrics), index="model_arch")

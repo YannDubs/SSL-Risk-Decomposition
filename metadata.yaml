@@ -1,5 +1,59 @@
-# TODO document each field
-# learning_rate : say that for bs 256
+# DOCUMENTATION for each field:
+#ssl:
+#  objective: (type: str) name of SSL objective
+#  ssl_mode: (type: {'clustering','hierarchical','contrastive','siamese','generative','transform'}) name of SSL. Details in Appx C.2.
+#  version: (type: int) version of the model
+#  n_negatives: (type: int) if applicable number of negatives examples per positive example. Typically 2*batch_size besides if there's a queue
+#  n_classes: (type: int) in case it can be seen as a clustering/classification objective, the number of classes to predict
+#  is_stopgrad: (type: bool) whether the model is trained with a stop gradient
+#  is_ema: (type: bool) whether the model is trained with a momentum encoder, i.e., one of the models is an exponential moving average of the other
+#model:
+#  pred_dim: (type: int) output dimension of the projection head
+#  projection_hid_width: (type: int) width of the projection head
+#  projection_hid_depth: (type: int) depth of the projection head
+#  architecture_exact: (type: str) precise architecture (includes all minor differences)
+#  architecture: (type: str) architecture (includes the size eg vitb or resnet50)
+#  family: (type: str) type of architecture (does not include size eg vit or resnet)
+#  patch_size: (type: int) if applicable it is the patch size
+#  projection1_arch: (type: str) architecture of one of the projection head (teacher in the case of distillation)
+#  projection2_arch: (type: str) if applicable, architecture of one of the other projection head (student in the case of distillation)
+#  projection_same: (type: bool) if applicable, whether the 2 projection heads are weight tied
+#  n_parameters: (type: int) approximate number of parameters for the encoder
+#  projection_nparameters: (type: int) if applicable, approximate number of parameters for the projection head
+#representation:
+#  z_dim: (type: int) dimensionality of the representation
+#  z_layer: (type: str) layer at which we extract the representation
+#optimization:
+#  epochs: (type: int) number of epochs
+#  batch_size: (type: int) batch size
+#  optimizer: (type: str) optimizer
+#  learning_rate: (type: int) learning rate for batch size 256 (after warmup, before decaying)
+#  weight_decay: (type: int) weight decay
+#  scheduler: (type: str) learning rate scheduler
+#data:
+#  pretraining_data: (type: str) pretraining dataset
+#  finetuning_data: (type: str) if applicable, finetuning dataset
+#  img_size: (type: int) size of the input image
+#  views: (type: int) pretraining views (size and number)
+#  is_aug_invariant: (type: bool) whether the encoder is pretrained to be augmentation invariant
+#  augmentations: (type: list of str) list of all pretraining augmentations
+#metrics:
+#  top1acc_in1k_official: (type: int) official imagenet-1k linear probing accuracy
+#  top1acc_in1k-1%_official: (type: int) official imagenet-1k linear probing accuracy when the probe is pretrained on 1/% of the data
+#  top1acc_in1k-c5_official: (type: int) official imagenet-1k linear probing accuracy for 5 shot
+#meta:
+#  where: (type: url) where the model can be found
+#  notes: (type: str) additional information
+#  month: (type: int) which month was the model published in
+#  year: (type: int) which year was the model published in
+#  license: (type: str) license for the weights of the pretrained models
+#  is_official: (type: bool) whether the pretraining weights are the official ones from the original authors
+#  is_industry: (type: bool) whether the model was pretrained in industry rather than academia
+#  is_our_extract: (type: bool) whether the layer at which we extract the representation is the official one or not
+#compute:
+#  n_pus: (type: int) total number of (G|T)PU used to pretrain the model
+#  pu_type: (type: str) type of the (G|T)PU used to pretrain the model
+#  time_hours: (type: int) number of hours used used to pretrain the model
 
 ### BEIT ###
 beitv2_vitB16_pt1k_extractB:

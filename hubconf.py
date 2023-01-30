@@ -1,6 +1,4 @@
-import pdb
-
-dependencies = [ "torch", "torchvision", "timm"]
+dependencies = [ "torch", "torchvision", "timm", ""]
 
 import logging as _logging
 import pathlib as _pathlib
@@ -27,7 +25,7 @@ def metadata_dict(drop_missing=True):
     return metadata
 
 def metadata_df(is_multiindex=False, is_lower=True, **kwargs):
-    """Returns the metadata as a pandas dataframe. If `is_multiindex` then returns then keeps
+    """Returns the metadata as a pandas dataframe. If `is_multiindex` then keeps
     the first level of keys as a multi index of columns. If `is_lower` then lower cases all the
     strings in the dataframe.
     """
@@ -68,10 +66,24 @@ def metadata_df(is_multiindex=False, is_lower=True, **kwargs):
             df[df.columns[i_col]] = pd.to_numeric(df.iloc[:, i_col].squeeze(), errors='coerce').astype('Int64').to_frame()
         else:
             df[df.columns[i_col]] = df.iloc[:, i_col].astype(dtype)
-
-
     return df
 
+def results_df(is_multiindex=True):
+    """
+    Returns all the results and metadata as a pandas dataframe. If `is_multiindex` then clusters the columns
+    into similar ones (hyperparameters, metrics, risk_decomposition, ...
+    """
+    try:
+        import pandas as pd
+        import numpy as np
+    except ImportError:
+        raise ImportError("Please install `pandas` to use metadata_df")
+
+    df = pd.read_csv("all_results.csv", index_col=0, header=[0, 1])
+
+    if not is_multiindex:
+        df = df.droplevel(0, axis=1)
+    return df
 
 
 ##### BYOL #####
@@ -704,16 +716,16 @@ except ImportError as e:
 # pretrained models are from https://github.com/facebookresearch/moco
 
 try:
-    from hub.moco import get_moco_models as get_moco_models
+    from hub.moco import get_moco_models as _get_moco_models
 
     def mocov1_rn50_ep200(**kwargs):
-        return get_moco_models("mocov1_rn50_ep200", **kwargs)
+        return _get_moco_models("mocov1_rn50_ep200", **kwargs)
 
     def mocov2_rn50_ep200(**kwargs):
-        return get_moco_models("mocov2_rn50_ep200", **kwargs)
+        return _get_moco_models("mocov2_rn50_ep200", **kwargs)
 
     def mocov2_rn50_ep800(**kwargs):
-        return get_moco_models("mocov2_rn50_ep800", **kwargs)
+        return _get_moco_models("mocov2_rn50_ep800", **kwargs)
 
 except ImportError as e:
     _logging.warning(f"MOCO models not available because of the following import error: \n {e}")
@@ -721,13 +733,13 @@ except ImportError as e:
 ### PYCONTRAST ###
 # pretrained models are from https://github.com/HobbitLong/PyContrast
 try:
-    from hub.pycontrast import get_pycontrast_models as get_pycontrast_models
+    from hub.pycontrast import get_pycontrast_models as _get_pycontrast_models
 
     def infomin_rn50_200ep(**kwargs):
-        return get_pycontrast_models("infomin_rn50_200ep", **kwargs)
+        return _get_pycontrast_models("infomin_rn50_200ep", **kwargs)
 
     def infomin_rn50_800ep(**kwargs):
-        return get_pycontrast_models("infomin_rn50_800ep", **kwargs)
+        return _get_pycontrast_models("infomin_rn50_800ep", **kwargs)
 
 except ImportError as e:
     _logging.warning(f"Pycontrast models not available because of the following import error: \n {e}")
@@ -736,25 +748,25 @@ except ImportError as e:
 ### MMSelfSup ###
 # pretrained models are from https://github.com/open-mmlab/mmselfsup/blob/master/docs/en/model_zoo.md
 try:
-    from hub.mmselfsup import get_mmselfsup_models as get_mmselfsup_models
+    from hub.mmselfsup import get_mmselfsup_models as _get_mmselfsup_models
 
     def relativeloc_rn50_70ep_mmselfsup(**kwargs):
-        return get_mmselfsup_models("relativeloc_rn50_70ep_mmselfsup", **kwargs)
+        return _get_mmselfsup_models("relativeloc_rn50_70ep_mmselfsup", **kwargs)
 
     def odc_rn50_440ep_mmselfsup(**kwargs):
-        return get_mmselfsup_models("odc_rn50_440ep_mmselfsup", **kwargs)
+        return _get_mmselfsup_models("odc_rn50_440ep_mmselfsup", **kwargs)
 
     def densecl_rn50_200ep_mmselfsup(**kwargs):
-        return get_mmselfsup_models("densecl_rn50_200ep_mmselfsup", **kwargs)
+        return _get_mmselfsup_models("densecl_rn50_200ep_mmselfsup", **kwargs)
 
     def simsiam_rn50_bs256_ep200_mmselfsup(**kwargs):
-        return get_mmselfsup_models("simsiam_rn50_bs256_ep200_mmselfsup", **kwargs)
+        return _get_mmselfsup_models("simsiam_rn50_bs256_ep200_mmselfsup", **kwargs)
 
     def simclr_rn50_bs256_ep200_mmselfsup(**kwargs):
-        return get_mmselfsup_models("simclr_rn50_bs256_ep200_mmselfsup", **kwargs)
+        return _get_mmselfsup_models("simclr_rn50_bs256_ep200_mmselfsup", **kwargs)
 
     def deepcluster_rn50_bs512_ep200_mmselfsup(**kwargs):
-        return get_mmselfsup_models("deepcluster_rn50_bs512_ep200_mmselfsup", **kwargs)
+        return _get_mmselfsup_models("deepcluster_rn50_bs512_ep200_mmselfsup", **kwargs)
 
 except ImportError as e:
     _logging.warning(f"MMSelfSup models not available because of the following import error: \n {e}")

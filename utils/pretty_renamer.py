@@ -5,11 +5,12 @@ from utils.helpers import StrFormatter
 __all__ = ["PRETTY_RENAMER"]
 
 PRETTY_RENAMER = StrFormatter(
-    exact_match={'train_test': r"100\%",
+    exact_match={'agg_risk': r"Full-shot",
+                 'train_test': r"Full-shot",
                  'train-balsbst-ntrain0.01_test': r"1\%",
-                'train-nperclass-5_test': "5 shot",
-'train-nperclass-3_test': "3 shot",
-'train-nperclass-30_test': "30 shot",
+                'train-nperclass-5_test': "5-shot",
+'train-nperclass-3_test': "3-shot",
+'train-nperclass-30_test': "30-shot",
                  },
     substring_replace={
         # Math stuff
@@ -22,8 +23,8 @@ PRETTY_RENAMER = StrFormatter(
         " --": r"⁻",
         " ++": r"⁺",
         # General
-        "Enc_Gen": "Enc. Gen.",
-        "Probe_Gen": "Probe Gen.",
+        "Enc_Gen": "Enc. gen.",
+        "Probe_Gen": "Probe gen.",
         "Approx": "Approx.",
         "Agg_": "Agg. ",
         "Train_": "",
@@ -67,8 +68,8 @@ PRETTY_RENAMER = StrFormatter(
         "Simsiam": "SimSiam",
         "Lossyless": "LossyLess",
         "Barlow": "BarlowTwins",
-        "Vicreg": "VICReg",
         "Vicregl": "VICRegL",
+        "Vicreg": "VICReg",
         "Beit": "BEiT",
         "Npidpp": "NPID++",
         "v1": "-v1",
