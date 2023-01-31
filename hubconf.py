@@ -1,4 +1,4 @@
-dependencies = [ "torch", "torchvision", "timm", ""]
+dependencies = [ "torch", "torchvision", "timm", "tqdm"]
 
 import logging as _logging
 import pathlib as _pathlib
@@ -520,7 +520,7 @@ try:
         return _get_openclip_models('laion2b_s12b_b42k', 'ViT-G-14', representation="cls+avg",  **kwargs)
 
 except ImportError as e:
-    _logging.warning(f"CLIP models not available because of the following import error: \n {e}")
+    _logging.warning(f"OpenCLIP models not available because of the following import error: \n {e}")
 
 ##### DINO #####
 # pretrained models are from https://github.com/facebookresearch/dino

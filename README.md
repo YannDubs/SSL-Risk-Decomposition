@@ -18,13 +18,17 @@ name = "dino_rn50" # example
 model, preprocessor = torch.hub.load('YannDubs/SSL-Risk-Decomposition:main', name)
 
 # gets all available models 
-available_names = torch.list('YannDubs/Invariant-Self-Supervised-Learning:main')
+available_names = torch.list('YannDubs/SSL-Risk-Decomposition:main')
 
 # gets all results and hyperparameters as a dataframe 
-results_df = torch.hub.load('YannDubs/Invariant-Self-Supervised-Learning:main', "results_df")
+results_df = torch.hub.load('YannDubs/SSL-Risk-Decomposition:main', "results_df")
 ```
 
-For using BYOL you additionally need `pip install dill` and for CLIP `pip install git+https://github.com/openai/CLIP.git`
+The necessary dependencies are: 
+- default: `pip install torch torchvision tqdm timm==0.6.12`
+- for all models (includes BYOL, CLIP, OpenCLIP): `pip install dill open_clip_torch git+https://github.com/openai/CLIP.git`
+
+For using BYOL you additionally need `pip install dill` and for CLIP ``
 
 ## Running
 - run any script you want in the `scripts` folder with the correct server (see `config/server`). E.g. `scripts/vit.sh -s `
