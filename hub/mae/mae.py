@@ -27,7 +27,7 @@ def get_mae_models(name, architecture, representation="cls", is_train_transform=
         file_name=name
     )["model"]
 
-    encoder = timm.create_model(architecture, pretrained=False, num_classes=0)
+    encoder = timm.create_model(architecture, num_classes=0)
     encoder.load_state_dict(state_dict, strict=True)
 
     # makes timm compatible with VITWrapper

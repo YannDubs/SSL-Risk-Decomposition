@@ -20,7 +20,7 @@ def get_initialized_models(model, new_dim=None, **kwargs):
         encoder.fc = torch.nn.Identity()
     else:
         from hub.timm import get_timm_models
-        encoder, _ = get_timm_models(model, pretrained=False, **kwargs)
+        encoder, _ = get_timm_models(model, **kwargs)
 
     preprocessor = get_augmentations(interpolation=transforms.InterpolationMode.BILINEAR,
                                      normalize="imagenet", pre_resize=256)

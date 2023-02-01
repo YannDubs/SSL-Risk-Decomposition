@@ -25,10 +25,9 @@ results_df = torch.hub.load('YannDubs/SSL-Risk-Decomposition:main', "results_df"
 ```
 
 The necessary dependencies are: 
-- default: `pip install torch torchvision tqdm timm==0.6.12`
-- for all models (includes BYOL, CLIP, OpenCLIP): `pip install dill open_clip_torch git+https://github.com/openai/CLIP.git`
+- for most models: `pip install torch torchvision tqdm timm==0.6.12`
+- for all models (adds BYOL, CLIP, OpenCLIP, results_df, metadata): `pip install dill pandas open_clip_torch git+https://github.com/openai/CLIP.git`
 
-For using BYOL you additionally need `pip install dill` and for CLIP ``
 
 ## Running
 - run any script you want in the `scripts` folder with the correct server (see `config/server`). E.g. `scripts/vit.sh -s `

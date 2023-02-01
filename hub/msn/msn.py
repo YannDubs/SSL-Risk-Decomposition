@@ -43,7 +43,7 @@ def get_msn_models(name, architecture, representation="cls", is_train_transform=
             qkv_bias=True, norm_layer=partial(nn.LayerNorm, eps=1e-6), num_classes=0)
 
     else:
-        encoder = timm.create_model(architecture, pretrained=False, num_classes=0)
+        encoder = timm.create_model(architecture, num_classes=0)
 
 
     encoder.load_state_dict(state_dict, strict=True)

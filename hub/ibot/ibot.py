@@ -27,7 +27,7 @@ def get_ibot_models(name, model, architecture, representation="cls", is_train_tr
     state_dict = {k: v for k, v in state_dict.items()
                   if not k.startswith("head.")}
 
-    encoder = timm.create_model(architecture, pretrained=False, num_classes=0)
+    encoder = timm.create_model(architecture, num_classes=0)
     encoder.load_state_dict(state_dict, strict=True)
 
     # makes timm compatible with VITWrapper

@@ -28,8 +28,7 @@ def get_beit_models(name, architecture, representation="cls", normalize="imagene
     )['model']
 
 
-    encoder = timm.create_model(architecture, pretrained=False,
-                                num_classes=0, global_pool='')
+    encoder = timm.create_model(architecture, num_classes=0, global_pool='')
 
     state_dict = {k: v for k, v in state_dict.items()
                   if ("relative_position_index" not in k) and

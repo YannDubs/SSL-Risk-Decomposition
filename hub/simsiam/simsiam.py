@@ -12,7 +12,7 @@ SIMSIAM_MODELS = {"simsiam_rn50_bs512_ep100": "https://dl.fbaipublicfiles.com/si
 
 def get_simsiam_models(name, is_train_transform=False):
 
-        encoder = tmodels.resnet.resnet50(pretrained=False, num_classes=0)
+        encoder = tmodels.resnet.resnet50(weights=None, num_classes=0)
         encoder.fc = torch.nn.Identity()
 
         state_dict = load_state_dict_from_url(

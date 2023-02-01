@@ -28,7 +28,7 @@ def get_mugs_models(name, architecture, representation="cls", is_train_transform
     state_dict = {k: v for k, v in state_dict.items()
                   if not k.startswith("relation_blocks.")}
 
-    encoder = timm.create_model(architecture, pretrained=False, num_classes=0)
+    encoder = timm.create_model(architecture, num_classes=0)
     encoder.load_state_dict(state_dict, strict=True)
 
     # makes timm compatible with VITWrapper

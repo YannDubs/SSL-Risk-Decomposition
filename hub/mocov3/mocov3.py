@@ -34,7 +34,7 @@ def get_mocov3_models(name, architecture, representation="cls", is_train_transfo
         encoder.head = nn.Identity()
 
     elif "vit" in architecture:
-        encoder = timm.create_model(architecture, pretrained=False, num_classes=0)
+        encoder = timm.create_model(architecture, num_classes=0)
         encoder.head = nn.Identity()
 
     elif architecture == "resnet50":
