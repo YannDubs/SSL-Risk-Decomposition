@@ -58,6 +58,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 data/
+notebooks/data
 
 # pyenv
 .python-version
