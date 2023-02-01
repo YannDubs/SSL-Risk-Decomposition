@@ -79,7 +79,7 @@ def results_df(is_multiindex=True):
     except ImportError:
         raise ImportError("Please install `pandas` to use metadata_df")
 
-    df = pd.read_csv("all_results.csv", index_col=0, header=[0, 1])
+    df = pd.read_csv(BASE_DIR/"all_results.csv", index_col=0, header=[0, 1])
 
     if not is_multiindex:
         df = df.droplevel(0, axis=1)

@@ -15,7 +15,7 @@ import torch
 
 # loads the desired pretrained model and preprocessing pipeline
 name = "dino_rn50" # example
-model, preprocessor = torch.hub.load('YannDubs/SSL-Risk-Decomposition:main', name)
+model, preprocessor = torch.hub.load('YannDubs/SSL-Risk-Decomposition:main', name, trust_repo=True)
 
 # gets all available models 
 available_names = torch.list('YannDubs/SSL-Risk-Decomposition:main')
