@@ -19,6 +19,7 @@ old
 .idea
 *old
 lightning_logs
+*.zip
 
 # pyotrch
 *.ckpt

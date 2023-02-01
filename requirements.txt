@@ -26,3 +26,4 @@ dill
 jupyterlab
 ipympl
 graphviz
+open-clip-torch

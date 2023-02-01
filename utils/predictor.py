@@ -6,7 +6,6 @@ from sklearn.preprocessing import MinMaxScaler
 from torch.nn import functional as F
 import pytorch_lightning as pl
 from typing import Any, Optional
-from torchmetrics.functional import accuracy
 
 
 from utils.architectures import get_Architecture
@@ -55,7 +54,7 @@ class Predictor(pl.LightningModule):
         loss = F.cross_entropy(Y_hat, y.squeeze().long())
 
         logs = dict()
-        logs["acc"] = accuracy(Y_hat.argmax(dim=-1), y)
+        logs["acc"] = (Y_hat.argmax(dim=-1) == y).sum() / y.shape[0]
         logs["err"] = 1 - logs["acc"]
         logs["loss"] = loss
 
