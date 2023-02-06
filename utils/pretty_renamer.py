@@ -13,6 +13,7 @@ PRETTY_RENAMER = StrFormatter(
 'train-nperclass-30_test': "30-shot",
                  },
     substring_replace={
+"projection_nparameters_hidden": "Proj. #param",
         # Math stuff
         "beta": r"$\beta$",
         "calFissl": r"$\mathcal{F}_{issl}$",

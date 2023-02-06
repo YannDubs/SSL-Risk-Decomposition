@@ -20,3 +20,4 @@ pytorch-lightning
 optuna
 dill
 open-clip-torch
+scikit-learn-intelex
