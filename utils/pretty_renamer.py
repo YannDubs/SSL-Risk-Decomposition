@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from utils.helpers import StrFormatter
+from utils.helpers_analysing import StrFormatter
 
 __all__ = ["PRETTY_RENAMER"]
 
@@ -75,17 +75,17 @@ PRETTY_RENAMER = StrFormatter(
         "v1": "-v1",
         "v2": "-v2",
         "v3": "-v3",
-        "Z Dim": "Z Dim.",
+        "Z Dim": "Z dim.",
         "Is Aug ": "",
-        "Rank": "Eff. Dim.",
-        "Agg. Risk Norm": "Agg. Risk Norm.",
+        "Rank": "Eff. dim.",
+        "Agg. Risk Norm": "Agg. risk norm.",
         "Is Industry": "Industry?",
-        "N Augmentations": "Num. Aug.",
-        "Nviews": "Num. Views",
+        "N Augmentations": "Num. aug.",
+        "Nviews": "Num. views",
         "Hidden": "Hid",
         #"Projection Nparameters Hidden": "Projection Nparameters",
         "Nparameters": "N Parameters",
-        "N Parameters": "Num. Param.",
+        "N Parameters": "Num. param.",
         "Architecture Exact": "Exact Arch.",
         "Architecture": "Arch.",
         "Arch": "Arch.",

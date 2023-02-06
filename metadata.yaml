@@ -3919,6 +3919,7 @@ dino_rn50:
     n_classes: 60000
     is_stopgrad: true
     is_ema: true
+    other: null
   model:
     pred_dim: 256
     projection_hid_width: 2048

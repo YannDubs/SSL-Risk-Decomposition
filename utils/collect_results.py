@@ -26,13 +26,14 @@ from sklearn.metrics import mean_squared_error, r2_score
 from lmfit import Model, Parameter
 import inspect
 from pandas.api.types import is_numeric_dtype
+from IPython.utils import io
 
 import optuna
 from optuna.samplers import TPESampler
 from optuna.visualization.matplotlib import plot_param_importances, plot_optimization_history, plot_parallel_coordinate
 
 import hubconf
-from utils.helpers import _prettify_df, ols_clean_df_, powerset, clean_model_name
+from utils.helpers_analysing import _prettify_df, ols_clean_df_, powerset, clean_model_name
 from utils.pretty_renamer import PRETTY_RENAMER
 
 COMPONENTS_ONLY = ["approx", "usability", "probe_gen", "enc_gen"]
@@ -594,8 +595,11 @@ def convert_type_cols(X, is_use_bool=False):
     X = X.copy()
     for c in X.columns:
         # convert categorical
-        if X[c].dtype == "string" or isinstance(X[c].dtype, pd.StringDtype):
-            X[c] = X[c].astype("category")
+        if X[c].dtype == "string" or isinstance(X[c].dtype, pd.StringDtype) or pd.api.types.is_object_dtype(X[c]):
+            try:
+                X[c] = X[c].astype("category")
+            except:
+                pass
         elif isinstance(X[c].dtype, pd.Int64Dtype):
             try:
                 X[c] = X[c].astype(int)

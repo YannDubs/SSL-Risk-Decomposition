@@ -92,11 +92,12 @@ For the actual code that we used (includes hyperparameter tuning) see: [main_ful
 ## Reproducing results
 
 Steps to reproduce all the paper:
-0. Install `requirements.txt` (pip) or `environment.yml` (conda) 
+0. Install `requirements_running.txt` (pip) or `environment_running.yml` (conda) to compute all risk components.
 1. to recompute all risk components run: `scripts/run_all.sh`. To recompute specific models the corresponding script in `scripts/` with the correct server (see `config/server`). E.g. `scripts/simsiam.sh -s nlprun`
 2. to recompute all few shot evaluation run: `script_sk/run_all.sh` (we use sklearn instead of pytorch for that).
-3. to reproduce all the analysis and plot from the main_paper run `notebooks/main_paper.ipynb`
-4. to reproduce all the analysis and plot from the appendices run `notebooks/appcs.ipynb`
+3. Install `requirements_analyzing.txt` (pip) or `environment_analyzing.yml` (conda) to analyze all results.
+4. to reproduce all the analysis and plot from the main_paper run `notebooks/main_paper.ipynb`
+5. to reproduce all the analysis and plot from the appendices run `notebooks/appcs.ipynb`
 
 ## Contributing
 

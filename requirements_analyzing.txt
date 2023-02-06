@@ -1,0 +1,16 @@
+regex
+tqdm
+matplotlib
+seaborn
+pandas
+scikit-learn
+xgboost
+ipywidgets
+shap
+jupyterlab
+graphviz
+statsmodels
+scipy
+lmfit
+optuna
+graphviz

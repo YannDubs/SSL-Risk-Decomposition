@@ -20,6 +20,8 @@ old
 *old
 lightning_logs
 *.zip
+node_modules
+yarn.lock
 
 # pyotrch
 *.ckpt

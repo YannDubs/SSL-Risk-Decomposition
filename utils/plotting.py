@@ -12,7 +12,6 @@ from matplotlib.transforms import Affine2D
 import shap
 import xgboost as xgb
 from matplotlib.colors import SymLogNorm, LogNorm
-from utils.helpers import save_fig
 
 import contextlib
 import warnings
@@ -20,7 +19,7 @@ from matplotlib.cbook import MatplotlibDeprecationWarning
 import seaborn as sns
 
 from utils.collect_results import COMPONENTS, COMPONENTS_ONLY_IMP
-from utils.helpers import _prettify_df, min_max_scale, clean_model_name
+from utils.helpers_analysing import _prettify_df, min_max_scale, clean_model_name
 import math
 
 from utils.pretty_renamer import PRETTY_RENAMER
@@ -364,7 +363,8 @@ def plot_radar_grid(results,
         plt.savefig(save_path, bbox_inches='tight', pad_inches=pad_inches)
 
 
-def plot_trend_ax(data, is_min=False, ax=None, pretty_renamer=PRETTY_RENAMER, **kwargs):
+def plot_trend_ax(data, is_min=False, ax=None, pretty_renamer=PRETTY_RENAMER, color=None, **kwargs):
+    # NB: catching color is on purpose to not go to the plotting function. Because seaborn by default tries to set it
     curr_df = data.copy()
     if is_min:
         curr_df = curr_df.loc[curr_df.groupby('year').agg_risk.idxmin()]
@@ -495,3 +495,25 @@ def plot_shap_components(param, df_shap,height=2, aspect=4,is_normalize=False, c
     return g, other
 
 
+def save_fig(
+    fig, filename, dpi=300, is_tight=True
+):
+    """General function for many different types of figures."""
+
+    # order matters ! and don't use elif!
+    if isinstance(fig, sns.FacetGrid):
+        fig = fig.fig
+
+    if isinstance(fig, plt.Artist):  # any type of axes
+        fig = fig.get_figure()
+
+    if isinstance(fig, plt.Figure):
+
+        plt_kwargs = {}
+        if is_tight:
+            plt_kwargs["bbox_inches"] = "tight"
+
+        fig.savefig(filename, dpi=dpi, **plt_kwargs)
+        plt.close(fig)
+    else:
+        raise ValueError(f"Unknown figure type {type(fig)}")

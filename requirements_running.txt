@@ -5,25 +5,18 @@ regex
 tqdm
 hydra-core
 matplotlib
-seaborn
 pandas
 wandb
 toma
 scipy
 torchmetrics
+seaborn
 scikit-learn
 hydra-submitit-launcher
 clip @ git+https://github.com/openai/CLIP.git@40f5484c1c74edd83cb9cf687c6ab92b28d8b656
 timm==0.6.x
 pyaml
 pytorch-lightning
-xgboost
-ipywidgets
-shap
 optuna
-statsmodels
 dill
-jupyterlab
-ipympl
-graphviz
 open-clip-torch
