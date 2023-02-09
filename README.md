@@ -3,7 +3,7 @@
 This repository contains:
 - [simple API to load](#all-pretrained-models-hyperparameters-results) 169 pretrained SSL models, their pretraining hyperparameters, and all results.
 - [simple code](#computing-the-loss-decomposition) to compute the loss decomposition of any SSL model.
-- [the code](#reproducing-results) to reproduce all results and figures from [Evaluating Self-Supervised Learning via Risk Decomposition](URL)
+- [the code](#reproducing-results) to reproduce all results and figures from [Evaluating Self-Supervised Learning via Risk Decomposition](https://arxiv.org/abs/2302.03068)
 
 ## All pretrained models, hyperparameters, results
 
