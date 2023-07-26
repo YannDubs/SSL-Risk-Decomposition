@@ -5,6 +5,11 @@ This repository contains:
 - [simple code](#computing-the-loss-decomposition) to compute the loss decomposition of any SSL model.
 - [the code](#reproducing-results) to reproduce all results and figures from [Evaluating Self-Supervised Learning via Risk Decomposition](https://arxiv.org/abs/2302.03068)
 
+  Other resources:
+  - [ICML 2023 Oral](https://youtu.be/otDrub-x5KY)
+  - [Paper](https://arxiv.org/abs/2302.03068)
+  - [Tweet]()
+
 ## All pretrained models, hyperparameters, results
 
 We release all pretrained weights, hyperparameters, and results on `torch.hub`, which can be loaded using:
