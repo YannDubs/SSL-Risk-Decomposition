@@ -8,7 +8,7 @@ This repository contains:
   Other resources:
   - [ICML 2023 Oral](https://youtu.be/otDrub-x5KY)
   - [Paper](https://arxiv.org/abs/2302.03068)
-  - [Tweet]()
+  - [Tweet](https://twitter.com/yanndubs/status/1684314179019087872)
 
 ## All pretrained models, hyperparameters, results
 
